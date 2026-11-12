@@ -1199,7 +1199,7 @@ button:focus-visible{outline:3px solid #3579bd;outline-offset:2px}
 
 /* 竖屏人际关系：顶部关系摘要、底部固定列表，和横屏保持独立排布。 */
 .demo[data-layout="portrait"] .app[data-view="relations"] .relations-screen{
-  height:100%;display:grid;grid-template-columns:1fr;grid-template-rows:34% minmax(0,66%);
+  height:100%;display:grid;grid-template-columns:1fr;grid-template-rows:minmax(0,50%) minmax(0,50%);
   grid-template-areas:"portrait" "list";overflow:hidden
 }
 .demo[data-layout="portrait"] .app[data-view="relations"] .relations-screen::before{display:none}
@@ -1213,7 +1213,7 @@ button:focus-visible{outline:3px solid #3579bd;outline-offset:2px}
 .demo[data-layout="portrait"] .app[data-view="relations"] .relations-name-tag strong{font-size:18px}
 .demo[data-layout="portrait"] .app[data-view="relations"] .relations-name-tag span{font-size:10px}
 .demo[data-layout="portrait"] .app[data-view="relations"] .relations-list-pane{
-  grid-area:list;min-height:0;padding:6px 12px 8px;gap:5px;overflow-y:auto
+  grid-area:list;min-height:0;padding:8px 12px 8px;gap:6px;overflow-y:auto;overscroll-behavior:contain
 }
 .demo[data-layout="portrait"] .app[data-view="relations"] .relations-list-pane>.section-label{
   padding:5px 10px;margin:0 0 1px;font-size:11px
