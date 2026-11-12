@@ -227,12 +227,12 @@ button:focus-visible{outline:3px solid #3579bd;outline-offset:2px}
 .battle-arena strong{font-size:clamp(17px,2cqw,24px)}
 .app[data-module="badge"]{--accent:#d7a83d;--canvas:#f5efdf;--ribbon-left:#b89038;--ribbon-center:#f5efdf;--ribbon-right:#eee1bd}
 .app[data-module="box"]{--accent:#5482b7;--canvas:#edf3f8;--ribbon-left:#3b648f;--ribbon-center:#edf3f8;--ribbon-right:#d9e5ef}
-.app[data-module="relations"]{--accent:#8f70aa;--canvas:#f2edf6;--ribbon-left:#715888;--ribbon-center:#f2edf6;--ribbon-right:#e4dcec}
+.app[data-module="relations"]{--accent:#4f9694;--canvas:#d3e7e6;--ribbon-left:#4f9694;--ribbon-center:#d3e7e6;--ribbon-right:#dceceb}
 .app[data-module="world"]{--accent:#45a59a;--canvas:#eaf5f1;--ribbon-left:#35837d;--ribbon-center:#eaf5f1;--ribbon-right:#d4e9df}
 .app[data-module="battle"]{--accent:#d45c45;--canvas:#f7ece8;--ribbon-left:#ad4537;--ribbon-center:#f7ece8;--ribbon-right:#ead2c8}
 .app[data-theme="night"][data-module="badge"]{--accent:#d3b366;--canvas:#292a2c;--ribbon-left:#50462e;--ribbon-center:#292a2c;--ribbon-right:#40392c}
 .app[data-theme="night"][data-module="box"]{--accent:#82a9cf;--canvas:#202b38;--ribbon-left:#34485d;--ribbon-center:#202b38;--ribbon-right:#2d3c4d}
-.app[data-theme="night"][data-module="relations"]{--accent:#b49bc7;--canvas:#292532;--ribbon-left:#493d55;--ribbon-center:#292532;--ribbon-right:#3a3343}
+.app[data-theme="night"][data-module="relations"]{--accent:#86b6b3;--canvas:#26363a;--ribbon-left:#456a6d;--ribbon-center:#26363a;--ribbon-right:#304246}
 .app[data-theme="night"][data-module="world"]{--accent:#75b9a7;--canvas:#1e302e;--ribbon-left:#304b45;--ribbon-center:#1e302e;--ribbon-right:#293d38}
 .app[data-theme="night"][data-module="battle"]{--accent:#d68d78;--canvas:#302725;--ribbon-left:#5a3933;--ribbon-center:#302725;--ribbon-right:#47332d}
 @container (max-width:500px){.menu-grid{height:100%;grid-template-columns:repeat(2,minmax(0,1fr));grid-template-rows:repeat(5,minmax(0,1fr));padding:0 4px}.menu-grid .menu-entry:nth-child(n){grid-column:auto;grid-row:auto}.menu-entry .disc{width:clamp(52px,16cqw,68px);height:clamp(52px,16cqw,68px)}.menu-entry .menu-label{font-size:clamp(11px,3.2cqw,14px);white-space:nowrap}.menu-entry .menu-icon-svg{width:60%;height:60%}.scaffold-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.box-grid{grid-template-columns:repeat(4,minmax(0,1fr))}.battle-arenas{grid-template-columns:1fr;overflow:auto}}
@@ -1039,34 +1039,51 @@ button:focus-visible{outline:3px solid #3579bd;outline-offset:2px}
 
 
 <style>
-/* ══════════════════════════════════════════════
-   人际关系 — 背包同款斜切三段背景
-   左段：浅粉白；中段：紫丁香；右段：淡紫灰
-   水印：rel 图标（居右下，旋转）
-   ══════════════════════════════════════════════ */
+/* 人际关系横屏：沿用背包三段斜切几何，关系页独立配置色板。 */
 .app[data-module="relations"]{
-  --accent:#8f70aa;--canvas:#ede5f4;
-  --ribbon-left:#715888;--ribbon-center:#ede5f4;--ribbon-right:#dcd4e8;
+  --accent:#4f9694;--canvas:#d3e7e6;
+  --ribbon-left:#4f9694;--ribbon-center:#d3e7e6;--ribbon-right:#dceceb;
 }
-.app[data-module="relations"] .backdrop{background:#ede5f4}
+.app[data-module="relations"] .backdrop{background:#d3e7e6}
 .app[data-module="relations"] .backdrop::before{
-  content:"";background:#65527e;
+  content:"";background:#4f9694;
   clip-path:polygon(44.2% 0,55.6% 0,30.5% 100%,19.1% 100%)
 }
 .app[data-module="relations"] .backdrop::after{
   content:"";
-  background:linear-gradient(128deg,#f8f4fb 0%,#ede5f4 48%,#e8dff2 100%);
+  background:linear-gradient(128deg,#ffffff 0%,#f2f9f8 48%,#e7f2f1 100%);
   clip-path:polygon(0 0,44.2% 0,19.1% 100%,0 100%)
 }
 /* 夜间 */
 .app[data-theme="night"][data-module="relations"]{
-  --accent:#b49bc7;--canvas:#2a2334;
-  --ribbon-left:#493d55;--ribbon-center:#2a2334;--ribbon-right:#352c43
+  --accent:#86b6b3;--canvas:#26363a;
+  --ribbon-left:#456a6d;--ribbon-center:#26363a;--ribbon-right:#304246
 }
-.app[data-theme="night"][data-module="relations"] .backdrop{background:#2a2334}
-.app[data-theme="night"][data-module="relations"] .backdrop::before{background:#5c4b72}
+.app[data-theme="night"][data-module="relations"] .backdrop{background:#26363a}
+.app[data-theme="night"][data-module="relations"] .backdrop::before{background:#456a6d}
 .app[data-theme="night"][data-module="relations"] .backdrop::after{
-  background:linear-gradient(128deg,#352840 0%,#2e2540 50%,#2b2238 100%)
+  background:linear-gradient(128deg,#27383b 0%,#2d4144 52%,#26383b 100%)
+}
+
+/* 竖屏人际关系背景单独绘制：沿用竖屏背包模板的色块比例和斜率，不缩放横屏背景。 */
+.demo[data-layout="portrait"] .app[data-module="relations"]{
+  --portrait-rel-base:#d3e7e6;
+  --portrait-rel-main:linear-gradient(128deg,#ffffff 0%,#f2f9f8 48%,#e7f2f1 100%);
+  --portrait-rel-stripe:#4f9694;
+  --portrait-rel-main-shape:polygon(0 0,81.2% 0,3.2% 100%,0 100%);
+  --portrait-rel-stripe-shape:polygon(81% 0,99% 0,21% 100%,3% 100%)
+}
+.demo[data-layout="portrait"] .app[data-theme="night"][data-module="relations"]{
+  --portrait-rel-base:#26363a;
+  --portrait-rel-main:linear-gradient(128deg,#27383b 0%,#2d4144 52%,#26383b 100%);
+  --portrait-rel-stripe:#456a6d
+}
+.demo[data-layout="portrait"] .app[data-module="relations"] .backdrop{background:var(--portrait-rel-base)}
+.demo[data-layout="portrait"] .app[data-module="relations"] .backdrop::before{
+  content:"";background:var(--portrait-rel-stripe);clip-path:var(--portrait-rel-stripe-shape)
+}
+.demo[data-layout="portrait"] .app[data-module="relations"] .backdrop::after{
+  content:"";background:var(--portrait-rel-main);clip-path:var(--portrait-rel-main-shape)
 }
 
 /* 人际关系布局 — 左侧立绘区 + 右侧列表 */
@@ -1118,14 +1135,14 @@ button:focus-visible{outline:3px solid #3579bd;outline-offset:2px}
   padding:clamp(12px,1.8cqw,22px) clamp(10px,1.5cqw,20px) clamp(10px,1.5cqw,18px) 0;
   overflow-y:auto;
   scrollbar-width:thin;
-  scrollbar-color:rgba(100,70,140,.3) transparent;
+  scrollbar-color:rgba(55,112,113,.35) transparent;
 }
 .relations-list-pane>.section-label{
   flex:0 0 auto;margin:0 0 2px;padding:7px 12px;border-radius:999px;
-  background:rgba(255,255,255,.76);color:#4e4359;
-  box-shadow:0 2px 7px rgba(50,30,80,.08)
+  background:rgba(255,255,255,.76);color:#315e60;
+  box-shadow:0 2px 7px rgba(25,76,78,.1)
 }
-.app[data-theme="night"] .relations-list-pane>.section-label{background:rgba(47,39,60,.88);color:#e7dff0}
+.app[data-theme="night"] .relations-list-pane>.section-label{background:rgba(39,57,60,.92);color:#c7e2df}
 .relation-row{
   position:relative;width:100%;
   min-height:clamp(48px,6.5cqw,74px);
@@ -1135,10 +1152,10 @@ button:focus-visible{outline:3px solid #3579bd;outline-offset:2px}
   border:0;border-radius:999px;
   background:rgba(255,255,255,.72);color:#17191d;
   text-align:left;cursor:pointer;
-  box-shadow:0 4px 10px rgba(50,30,80,.1);
+  box-shadow:0 4px 10px rgba(25,76,78,.1);
   transition:background .12s,color .12s,box-shadow .12s;
 }
-.app[data-theme="night"] .relation-row{background:rgba(55,44,72,.82);color:#ede5f8}
+.app[data-theme="night"] .relation-row{background:rgba(47,67,70,.9);color:#e1f0ee}
 .relation-row[aria-pressed="true"],.relation-row:hover,.relation-row.is-pointer-active{
   background:#17181f;color:#fff;box-shadow:0 6px 16px rgba(0,0,0,.22)
 }
@@ -1151,10 +1168,10 @@ button:focus-visible{outline:3px solid #3579bd;outline-offset:2px}
 }
 .relation-role-tag--rival{background:rgba(207,64,105,.15);color:#cf4069}
 .relation-role-tag--contact{background:rgba(96,144,180,.15);color:#5b8bb0}
-.relation-role-tag--relations{background:rgba(143,112,170,.15);color:#8f70aa}
+.relation-role-tag--relations{background:rgba(79,150,148,.15);color:#3f7d7b}
 .app[data-theme="night"] .relation-role-tag--rival{background:rgba(207,64,105,.25)}
 .app[data-theme="night"] .relation-role-tag--contact{background:rgba(96,144,180,.25)}
-.app[data-theme="night"] .relation-role-tag--relations{background:rgba(143,112,170,.25)}
+.app[data-theme="night"] .relation-role-tag--relations{background:rgba(134,182,179,.22);color:#a5d0cd}
 .relation-row[aria-pressed="true"] .relation-role-tag,
 .relation-row:hover .relation-role-tag,
 .relation-row.is-pointer-active .relation-role-tag{background:rgba(255,255,255,.18);color:#fff}
@@ -1179,6 +1196,34 @@ button:focus-visible{outline:3px solid #3579bd;outline-offset:2px}
 .relation-row[aria-pressed="true"] .affinity-bar-mini,
 .relation-row:hover .affinity-bar-mini,
 .relation-row.is-pointer-active .affinity-bar-mini{background:rgba(255,255,255,.25)}
+
+/* 竖屏人际关系：顶部关系摘要、底部固定列表，和横屏保持独立排布。 */
+.demo[data-layout="portrait"] .app[data-view="relations"] .relations-screen{
+  height:100%;display:grid;grid-template-columns:1fr;grid-template-rows:34% minmax(0,66%);
+  grid-template-areas:"portrait" "list";overflow:hidden
+}
+.demo[data-layout="portrait"] .app[data-view="relations"] .relations-screen::before{display:none}
+.demo[data-layout="portrait"] .app[data-view="relations"] .relations-portrait-pane{
+  grid-area:portrait;min-height:0;padding:8px 12px 4px;justify-content:center;overflow:hidden
+}
+.demo[data-layout="portrait"] .app[data-view="relations"] .relations-avatar-placeholder{
+  width:min(38%,118px);font-size:34px
+}
+.demo[data-layout="portrait"] .app[data-view="relations"] .relations-name-tag{margin-top:4px}
+.demo[data-layout="portrait"] .app[data-view="relations"] .relations-name-tag strong{font-size:18px}
+.demo[data-layout="portrait"] .app[data-view="relations"] .relations-name-tag span{font-size:10px}
+.demo[data-layout="portrait"] .app[data-view="relations"] .relations-list-pane{
+  grid-area:list;min-height:0;padding:6px 12px 8px;gap:5px;overflow-y:auto
+}
+.demo[data-layout="portrait"] .app[data-view="relations"] .relations-list-pane>.section-label{
+  padding:5px 10px;margin:0 0 1px;font-size:11px
+}
+.demo[data-layout="portrait"] .app[data-view="relations"] .relation-row{
+  min-height:45px;padding:6px 10px;border-radius:999px
+}
+.demo[data-layout="portrait"] .app[data-view="relations"] .relation-name{font-size:13px}
+.demo[data-layout="portrait"] .app[data-view="relations"] .relation-role-tag{font-size:9px}
+.demo[data-layout="portrait"] .app[data-view="relations"] .affinity-num{font-size:12px}
 
 /* ══════════════════════════════════════════════
    城镇地图 + 世界 — 设置同款中心聚焦背景
