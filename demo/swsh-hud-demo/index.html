@@ -1038,6 +1038,310 @@ button:focus-visible{outline:3px solid #3579bd;outline-offset:2px}
 </main>
 
 
+<style>
+/* ══════════════════════════════════════════════
+   人际关系 — 背包同款斜切三段背景
+   左段：浅粉白；中段：紫丁香；右段：淡紫灰
+   水印：rel 图标（居右下，旋转）
+   ══════════════════════════════════════════════ */
+.app[data-module="relations"]{
+  --accent:#8f70aa;--canvas:#ede5f4;
+  --ribbon-left:#715888;--ribbon-center:#ede5f4;--ribbon-right:#dcd4e8;
+}
+.app[data-module="relations"] .backdrop{background:#ede5f4}
+.app[data-module="relations"] .backdrop::before{
+  content:"";background:#65527e;
+  clip-path:polygon(44.2% 0,55.6% 0,30.5% 100%,19.1% 100%)
+}
+.app[data-module="relations"] .backdrop::after{
+  content:"";
+  background:linear-gradient(128deg,#f8f4fb 0%,#ede5f4 48%,#e8dff2 100%);
+  clip-path:polygon(0 0,44.2% 0,19.1% 100%,0 100%)
+}
+/* 夜间 */
+.app[data-theme="night"][data-module="relations"]{
+  --accent:#b49bc7;--canvas:#2a2334;
+  --ribbon-left:#493d55;--ribbon-center:#2a2334;--ribbon-right:#352c43
+}
+.app[data-theme="night"][data-module="relations"] .backdrop{background:#2a2334}
+.app[data-theme="night"][data-module="relations"] .backdrop::before{background:#5c4b72}
+.app[data-theme="night"][data-module="relations"] .backdrop::after{
+  background:linear-gradient(128deg,#352840 0%,#2e2540 50%,#2b2238 100%)
+}
+
+/* 人际关系布局 — 左侧立绘区 + 右侧列表 */
+.relations-screen{
+  position:relative;isolation:isolate;height:100%;
+  display:grid;
+  grid-template-columns:38% 62%;
+  grid-template-rows:100%;
+  overflow:hidden;
+}
+.relations-screen::before{
+  content:"";position:absolute;z-index:0;left:62%;top:74%;
+  width:min(86%,46cqw,840px);aspect-ratio:1;pointer-events:none;
+  opacity:.08;transform:translate(-50%,-50%);
+  background:var(--module-watermark-url,none) center/contain no-repeat;
+}
+.relations-portrait-pane{
+  position:relative;z-index:1;
+  display:flex;flex-direction:column;align-items:center;justify-content:flex-end;
+  padding:0 0 clamp(10px,2cqw,24px) 4%;
+  overflow:hidden;
+}
+.relations-avatar{
+  position:relative;z-index:1;
+  width:min(72%,220px);max-height:62%;object-fit:contain;
+  filter:drop-shadow(0 12px 18px rgba(30,20,50,.18));
+}
+.relations-avatar-placeholder{
+  position:relative;z-index:1;
+  width:min(68%,200px);aspect-ratio:1;
+  display:flex;align-items:center;justify-content:center;
+  border-radius:50%;
+  background:color-mix(in srgb,var(--accent) 15%,transparent);
+  border:2px dashed color-mix(in srgb,var(--accent) 35%,transparent);
+  color:color-mix(in srgb,var(--accent) 60%,transparent);
+  font-size:clamp(32px,6cqw,72px);
+}
+.relations-name-tag{
+  position:relative;z-index:1;margin-top:clamp(6px,1cqw,12px);
+  text-align:center;color:var(--text);
+}
+.relations-name-tag strong{font-size:clamp(16px,2.2cqw,28px);font-weight:900;display:block}
+.relations-name-tag span{font-size:clamp(10px,1cqw,13px);color:var(--muted);font-weight:750}
+
+/* 右侧列表区 */
+.relations-list-pane{
+  position:relative;z-index:1;
+  display:flex;flex-direction:column;gap:clamp(6px,.8cqw,10px);
+  padding:clamp(12px,1.8cqw,22px) clamp(10px,1.5cqw,20px) clamp(10px,1.5cqw,18px) 0;
+  overflow-y:auto;
+  scrollbar-width:thin;
+  scrollbar-color:rgba(100,70,140,.3) transparent;
+}
+.relations-list-pane>.section-label{
+  flex:0 0 auto;margin:0 0 2px;padding:7px 12px;border-radius:999px;
+  background:rgba(255,255,255,.76);color:#4e4359;
+  box-shadow:0 2px 7px rgba(50,30,80,.08)
+}
+.app[data-theme="night"] .relations-list-pane>.section-label{background:rgba(47,39,60,.88);color:#e7dff0}
+.relation-row{
+  position:relative;width:100%;
+  min-height:clamp(48px,6.5cqw,74px);
+  display:grid;grid-template-columns:minmax(0,1fr) auto;
+  align-items:center;gap:10px;
+  padding:7px clamp(10px,1.4cqw,18px);
+  border:0;border-radius:999px;
+  background:rgba(255,255,255,.72);color:#17191d;
+  text-align:left;cursor:pointer;
+  box-shadow:0 4px 10px rgba(50,30,80,.1);
+  transition:background .12s,color .12s,box-shadow .12s;
+}
+.app[data-theme="night"] .relation-row{background:rgba(55,44,72,.82);color:#ede5f8}
+.relation-row[aria-pressed="true"],.relation-row:hover,.relation-row.is-pointer-active{
+  background:#17181f;color:#fff;box-shadow:0 6px 16px rgba(0,0,0,.22)
+}
+.relation-row-left{min-width:0;display:flex;flex-direction:column;gap:3px}
+.relation-name{font-size:clamp(13px,1.6cqw,19px);font-weight:850;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.relation-role-tag{
+  display:inline-flex;align-items:center;gap:4px;
+  padding:1px 7px;border-radius:999px;
+  font-size:clamp(9px,.9cqw,11px);font-weight:800;width:max-content;
+}
+.relation-role-tag--rival{background:rgba(207,64,105,.15);color:#cf4069}
+.relation-role-tag--contact{background:rgba(96,144,180,.15);color:#5b8bb0}
+.relation-role-tag--relations{background:rgba(143,112,170,.15);color:#8f70aa}
+.app[data-theme="night"] .relation-role-tag--rival{background:rgba(207,64,105,.25)}
+.app[data-theme="night"] .relation-role-tag--contact{background:rgba(96,144,180,.25)}
+.app[data-theme="night"] .relation-role-tag--relations{background:rgba(143,112,170,.25)}
+.relation-row[aria-pressed="true"] .relation-role-tag,
+.relation-row:hover .relation-role-tag,
+.relation-row.is-pointer-active .relation-role-tag{background:rgba(255,255,255,.18);color:#fff}
+
+.relation-affinity-mini{
+  display:flex;flex-direction:column;align-items:flex-end;gap:3px;
+  flex:0 0 auto;min-width:clamp(50px,6cqw,80px);
+}
+.affinity-num{font-size:clamp(11px,1.3cqw,16px);font-weight:900}
+.affinity-bar-mini{
+  width:100%;height:5px;border-radius:99px;
+  background:rgba(0,0,0,.1);overflow:hidden;
+}
+.app[data-theme="night"] .affinity-bar-mini{background:rgba(255,255,255,.12)}
+.affinity-fill{height:100%;border-radius:inherit;background:var(--accent);transition:width .3s ease}
+.relation-row[aria-pressed="true"] .affinity-fill,
+.relation-row:hover .affinity-fill,
+.relation-row.is-pointer-active .affinity-fill{background:#fff}
+.relation-row[aria-pressed="true"] .affinity-num,
+.relation-row:hover .affinity-num,
+.relation-row.is-pointer-active .affinity-num{color:#fff}
+.relation-row[aria-pressed="true"] .affinity-bar-mini,
+.relation-row:hover .affinity-bar-mini,
+.relation-row.is-pointer-active .affinity-bar-mini{background:rgba(255,255,255,.25)}
+
+/* ══════════════════════════════════════════════
+   城镇地图 + 世界 — 设置同款中心聚焦背景
+   设置用 --settings-band-angle 114deg 双色带
+   这里各自用各模块颜色
+   水印：对应菜单图标
+   ══════════════════════════════════════════════ */
+.app[data-module="map"]{
+  --accent:#38a5a0;--canvas:#e8f4f3;
+  --ribbon-left:#318f8e;--ribbon-center:#e8f4f3;--ribbon-right:#d2e9e6;
+  --map-band-angle:114deg;
+  --map-edge-left:#d6eeed;--map-band:#a8d8d6;--map-main:#e8f4f3;--map-edge-right:#d2e9e6;
+}
+.app[data-module="map"] .backdrop{background:var(--map-main)}
+.app[data-module="map"] .backdrop::before{
+  background:linear-gradient(var(--map-band-angle),
+    var(--map-edge-left) 0 11.3%,var(--map-band) 11.3% 22%,
+    var(--map-main) 22% 79%,var(--map-band) 79% 89.3%,
+    var(--map-edge-right) 89.3% 100%
+  )
+}
+.app[data-module="map"] .backdrop::after{
+  content:"";inset:auto;
+  left:62%;top:74%;
+  width:min(86%,46cqw,880px);aspect-ratio:1;
+  background:url("") center/contain no-repeat;
+  opacity:.09;transform:translate(-50%,-50%);
+  /* watermark SVG injected by JS as data-url */
+}
+.app[data-theme="night"][data-module="map"]{
+  --accent:#66b7ad;--canvas:#1a2c31;
+  --map-edge-left:#263f3e;--map-band:#2d5050;--map-main:#1a2c31;--map-edge-right:#243a38
+}
+.app[data-theme="night"][data-module="map"] .backdrop{background:var(--map-main)}
+
+.app[data-module="world"]{
+  --accent:#617ba8;--canvas:#eef1f7;
+  --ribbon-left:#4f6a92;--ribbon-center:#eef1f7;--ribbon-right:#d9e1ed;
+  --world-band-angle:118deg;
+  --world-edge-left:#dde3ef;--world-band:#b4c2d8;--world-main:#eef1f7;--world-edge-right:#d9e1ed;
+}
+.app[data-module="world"] .backdrop{background:var(--world-main)}
+.app[data-module="world"] .backdrop::before{
+  background:linear-gradient(var(--world-band-angle),
+    var(--world-edge-left) 0 11.3%,var(--world-band) 11.3% 22%,
+    var(--world-main) 22% 79%,var(--world-band) 79% 89.3%,
+    var(--world-edge-right) 89.3% 100%
+  )
+}
+.app[data-theme="night"][data-module="world"]{
+  --accent:#91a9d1;--canvas:#1e2a3a;
+  --world-edge-left:#253244;--world-band:#2e3f56;--world-main:#1e2a3a;--world-edge-right:#263345
+}
+.app[data-theme="night"][data-module="world"] .backdrop{background:var(--world-main)}
+
+/* SVG 水印 backdrop::after 注入 — 由 JS 动态设 background-image */
+.app[data-module="map"] .backdrop::after,
+.app[data-module="world"] .backdrop::after{
+  content:"";position:absolute;
+  left:62%;top:74%;
+  width:min(86%,46cqw,840px);aspect-ratio:1;
+  pointer-events:none;
+  opacity:.08;transform:translate(-50%,-50%);
+  background-repeat:no-repeat;background-position:center;background-size:contain;
+  background-image:var(--module-watermark-url,none);
+}
+
+/* 地图页布局 */
+.map-screen{
+  position:relative;isolation:isolate;height:100%;
+  display:grid;
+  grid-template-columns:minmax(190px,.72fr) minmax(0,1.28fr);
+  gap:clamp(10px,1.6cqw,20px);
+  padding:clamp(10px,1.6cqw,22px);
+}
+.map-info-card{
+  position:relative;z-index:1;
+  display:flex;flex-direction:column;gap:clamp(6px,1cqw,12px);
+  padding:clamp(12px,1.8cqw,22px);
+  border-radius:22px;background:var(--surface-2);
+  border:1px solid var(--line);
+}
+.map-location-label{font-size:clamp(10px,.95cqw,12px);font-weight:800;letter-spacing:.1em;color:var(--accent)}
+.map-current-location{font-size:clamp(18px,2.4cqw,30px);font-weight:950;line-height:1.1}
+.map-meta-row{display:flex;align-items:center;gap:7px;font-size:clamp(11px,1.1cqw,14px);color:var(--muted);font-weight:750}
+.map-meta-row b{color:var(--text);font-weight:900}
+.map-nearby-card{
+  margin-top:auto;padding:10px 12px;border-radius:14px;
+  background:var(--surface);border:1px solid var(--line);
+  font-size:clamp(11px,1.05cqw,13px);line-height:1.6;color:var(--text);
+}
+.map-nearby-title{font-size:clamp(10px,.95cqw,11px);font-weight:800;letter-spacing:.08em;color:var(--accent);margin-bottom:4px}
+.map-canvas{
+  position:relative;z-index:1;overflow:hidden;
+  border-radius:24px;
+  background:linear-gradient(135deg,color-mix(in srgb,var(--accent) 10%,var(--surface)),var(--surface));
+  border:1px solid var(--line);
+}
+.map-node{
+  position:absolute;display:flex;flex-direction:column;align-items:center;gap:4px;
+  font-size:clamp(9px,.95cqw,12px);font-weight:850;color:var(--text);
+  transform:translateX(-50%);pointer-events:none;
+}
+.map-node b{
+  width:clamp(18px,2.2cqw,26px);height:clamp(18px,2.2cqw,26px);
+  border-radius:50%;background:color-mix(in srgb,var(--accent) 60%,transparent);
+  border:2px solid var(--surface);box-shadow:0 2px 6px rgba(0,0,0,.12);
+}
+.map-node.is-current b{
+  background:var(--swsh-red);border-color:#fff;
+  box-shadow:0 0 0 4px rgba(227,50,65,.22),0 2px 8px rgba(0,0,0,.2);
+}
+.map-node.is-current span{font-weight:950;color:var(--swsh-red)}
+.map-route-line{
+  position:absolute;border-top:2px dashed color-mix(in srgb,var(--accent) 38%,transparent);
+  pointer-events:none;
+}
+
+/* 世界页布局 */
+.world-screen{
+  position:relative;isolation:isolate;height:100%;
+  display:grid;
+  grid-template-columns:minmax(0,1.15fr) minmax(0,.85fr);
+  grid-template-rows:auto minmax(0,1fr);
+  gap:clamp(8px,1.2cqw,14px);
+  padding:clamp(10px,1.6cqw,22px);
+}
+.world-env-strip{
+  grid-column:1/-1;
+  display:flex;align-items:center;gap:clamp(10px,1.6cqw,22px);
+  padding:7px clamp(10px,1.4cqw,18px);
+  border-radius:999px;background:var(--surface);
+  border:1px solid var(--line);flex-wrap:wrap;
+  font-size:clamp(11px,1.1cqw,13px);font-weight:750;
+}
+.world-env-chip{display:flex;align-items:center;gap:5px;white-space:nowrap}
+.world-env-chip b{color:var(--text);font-weight:900}
+.world-env-chip span{color:var(--muted)}
+.world-tasks,.world-events{
+  position:relative;z-index:1;
+  display:flex;flex-direction:column;gap:clamp(6px,.9cqw,10px);overflow:auto;
+}
+.world-section-title{
+  font-size:clamp(9px,.9cqw,11px);font-weight:800;letter-spacing:.12em;
+  color:var(--muted);text-transform:uppercase;margin-bottom:2px;
+}
+.world-task-card{
+  padding:clamp(10px,1.4cqw,16px) clamp(12px,1.6cqw,18px);
+  border-radius:16px;background:var(--surface);border:1px solid var(--line);
+}
+.world-task-type{
+  font-size:clamp(9px,.9cqw,11px);font-weight:900;letter-spacing:.1em;margin-bottom:4px;
+}
+.world-task-text{font-size:clamp(12px,1.3cqw,15px);line-height:1.6;color:var(--text)}
+.world-task-empty{color:var(--muted);font-style:italic}
+.world-event-card{
+  padding:clamp(8px,1.1cqw,13px) clamp(10px,1.4cqw,16px);
+  border-radius:14px;background:var(--surface);
+  border:1px solid var(--line);border-left:3px solid var(--accent);
+}
+.world-event-type{font-size:clamp(9px,.9cqw,11px);font-weight:900;color:var(--muted);margin-bottom:3px}
+.world-event-text{font-size:clamp(11px,1.15cqw,14px);line-height:1.55;color:var(--text)}
+</style>
 <script>
 "use strict";
 // Icon geometry reused from src/swsh/swsh-icons.js for reliable standalone local preview.
@@ -1146,12 +1450,37 @@ const SETTINGS = [
 ];
 const SETTING_DEFAULTS = [2,1,1,0,0,0,0,0,1,0,1,0];
 const BOX_TEAM = {party:[0,1,2,3,4,5]};
-const S = {view:"home",stack:[],menu:0,party:0,tab:0,dex:0,bag:0,item:0,box:0,boxMon:0,boxSource:"box",boxDetail:false,setting:0,settingValues:SETTING_DEFAULTS.slice(),theme:"day"};
+/* ── 弦九接口桥接层 ── */
+const MOCK_STAT={
+  训练家:{名字:"伯劳",活力:3,活力上限:3,金钱:31400,徽章:"木杆|石锁",身份:"训练家",声望:"12 新人",气场:"无",可命令等级:20},
+  人际关系:{"赫普":{好感度:85,注记:"从小认识的朋友，聪明但有些傲气。"},"索妮亚":{好感度:72,注记:"研究者，大教授的孙女，对远古神兽很感兴趣。"},"玛俐":{好感度:45,注记:"在尖钉镇认识的训练家，实力不俗。"},"丹帝":{好感度:60,注记:"现任冠军，态度和善，时常给予帮助。"}},
+  劲敌:{"赫普":{好感度:55,注记:"同乡劲敌，总是走在自己前面，让人不服气。"}},
+  通讯录:{"泽芙":{好感度:30,注记:"木杆镇精灵中心护士，热心肠，总是笑脸相迎。"}},
+  任务:{主线:"前往拳关市，挑战第三道馆馆主 卡布",支线:"寻找在旷野地带失踪的绵绵羊群主人",传说:"调查旷野地带出现的异常能量波动现象"},
+  世界事件:{附近遭遇:"林中发现稀有闪光精灵目击报告",地区新闻:"冠军杯预选赛报名截止日期临近，各地训练家汇聚",区域动态:"旷野地带今日天气：雷暴，特殊精灵出现率大幅提升"},
+  环境:{当前地点:"机擎市",日期:"11月12日",时间:"下午三点",赛程:"伽勒尔道馆挑战"}
+};
+const swshBridge={
+  _win:(function(){try{if(window.parent&&window.parent!==window&&window.parent.document){return window.parent;}}catch(e){}return window;})(),
+  getLiveStatData:function(){
+    try{var mv=this._win.Mvu||window.Mvu;if(!mv||!mv.getMvuData)return null;
+    var mes=this._win.document.querySelectorAll('.mes');
+    for(var i=mes.length-1;i>=0;i--){var mid=parseInt(mes[i].getAttribute('mesid')||'');if(isNaN(mid))continue;
+    var d=mv.getMvuData({type:'message',message_id:mid});if(d&&d.stat_data&&d.stat_data.训练家)return d.stat_data;}}catch(e){}return null;
+  },
+  getStat:function(){return this.getLiveStatData()||MOCK_STAT;},
+  getRelations:function(stat){
+    var result=[],seen={};
+    function add(obj,role){for(var n in (obj||{})){if(!seen[n]){seen[n]=true;result.push({name:n,role:role,好感度:+(obj[n].好感度)||0,注记:obj[n].注记||''});}}}
+    add(stat.人际关系,'人际');add(stat.劲敌,'劲敌');add(stat.通讯录,'通讯录');return result;
+  }
+};
+const S = {view:"home",stack:[],menu:0,party:0,tab:0,dex:0,bag:0,item:0,box:0,boxMon:0,boxSource:"box",boxDetail:false,setting:0,relation:0,settingValues:SETTING_DEFAULTS.slice(),theme:"day"};
 let manualLayout=false;
 let boxModalConfirm=null;
 const $ = function(sel,root){return (root||document).querySelector(sel);};
 const app = $("#app"), demo = $("#demo");
-const selectionArrow=$("#selectionArrow",app),selectionSelector=".menu-entry,.party-member,.detail-tab-icon[data-tab],.data-row,.item-row,.bag-cats button";
+const selectionArrow=$("#selectionArrow",app),selectionSelector=".menu-entry,.party-member,.detail-tab-icon[data-tab],.data-row,.item-row,.bag-cats button,.relation-row";
 let hoveredSelection=null,focusedSelection=null;
 function selectionTarget(node){if(!node||!node.closest)return null;const target=node.closest(selectionSelector);return target&&app.contains(target)?target:null;}
 function committedSelection(){
@@ -1161,6 +1490,7 @@ function committedSelection(){
   if(S.view==="dex")return app.querySelector('.data-row[aria-pressed="true"]');
   if(S.view==="bag")return app.querySelector('.item-row[aria-pressed="true"]')||app.querySelector('.bag-cats button[aria-pressed="true"]');
   if(S.view==="settings")return app.querySelector('.setting-row.is-selected');
+  if(S.view==="relations")return app.querySelector('.relation-row[aria-pressed="true"]');
   return null;
 }
 function updateSelectionArrow(target){
@@ -1359,9 +1689,127 @@ function scaffoldPage(key){
 }
 function actionKey(key){return '<img class="action-key" src="assets/menu/original/button_icon_'+key+'_00^t.png" alt="'+key+'">';}
 function actionMarkup(){if(S.view==="home")return '<span class="action">'+actionKey("A")+'确定</span>';if(S.view==="team")return '<span class="action">'+actionKey("A")+'确定</span><span class="action">'+actionKey("Y")+'替换宝可梦</span><button class="action action-back" type="button" data-action="back">'+actionKey("B")+'返回</button>';if(S.view==="party-detail")return '<span class="action">'+actionKey("A")+'持有物</span><span class="action">'+actionKey("X")+'标记</span><button class="action action-back" type="button" data-action="back">'+actionKey("B")+'返回</button>';if(S.view==="dex")return '<span class="action">'+actionKey("A")+'选择条目</span><button class="action action-back" type="button" data-action="back">'+actionKey("B")+'返回菜单</button>';if(S.view==="settings")return '<span class="action">'+actionKey("A")+'确定</span><button class="action action-back" type="button" data-action="settings-reset">'+actionKey("Y")+'初始化</button><button class="action action-back" type="button" data-action="back">'+actionKey("B")+'保存设置后退出</button>';return '<span class="action">'+actionKey("A")+'确认</span><button class="action action-back" type="button" data-action="back">'+actionKey("B")+'返回</button>';}
+function updateRelationDetail(i){
+  const stat=swshBridge.getStat(),rels=swshBridge.getRelations(stat);
+  if(!rels[i])return;
+  S.relation=i;
+  app.querySelectorAll('.relation-row').forEach(function(r){r.setAttribute('aria-pressed',String(Number(r.dataset.relation)===i));});
+  // Update portrait pane
+  const sel=rels[i];
+  const pct=Math.round(Math.min(100,Math.max(0,sel.好感度)));
+  const rc=sel.role==='劲敌'?'rival':sel.role==='通讯录'?'contact':'relations';
+  const portraitPane=app.querySelector('.relations-portrait-pane');
+  if(portraitPane)portraitPane.innerHTML=
+    '<div class="relations-avatar-placeholder">'+swshIcon(rc==='rival'?'rivals':rc==='contact'?'command':'rel',64)+'</div>'+
+    '<div class="relations-name-tag"><strong>'+esc(sel.name)+'</strong>'+
+    '<span>好感度 '+pct+'／100</span></div>';
+  updateSelectionArrow();
+}
+function renderRelations(){
+  const stat=swshBridge.getStat(),rels=swshBridge.getRelations(stat);
+  if(!rels.length)return '<div class="module-scaffold"><header class="module-heading"><div><h2>人际关系</h2><p>尚无关系记录。</p></div><span class="module-kicker">RELATIONSHIPS</span></header></div>';
+  const idx=Math.max(0,Math.min(S.relation,rels.length-1));
+  const sel=rels[idx];
+  const rc=sel.role==='劲敌'?'rival':sel.role==='通讯录'?'contact':'relations';
+  const selPct=Math.round(Math.min(100,Math.max(0,sel.好感度)));
+  const portraitHTML=
+    '<div class="relations-avatar-placeholder">'+swshIcon(rc==='rival'?'rivals':rc==='contact'?'command':'rel',64)+'</div>'+
+    '<div class="relations-name-tag"><strong>'+esc(sel.name)+'</strong>'+
+    '<span>好感度 '+selPct+'／100</span></div>';
+  const rows=rels.map(function(r,i){
+    const pct=Math.round(Math.min(100,Math.max(0,r.好感度)));
+    const rtag=r.role==='劲敌'?'rival':r.role==='通讯录'?'contact':'relations';
+    return '<button class="relation-row selection-target" type="button" data-relation="'+i+'" aria-pressed="'+String(i===idx)+'">'+
+      '<span class="relation-row-left">'+
+        '<span class="relation-name">'+esc(r.name)+'</span>'+
+        '<span class="relation-role-tag relation-role-tag--'+rtag+'">'+esc(r.role)+'</span>'+
+      '</span>'+
+      '<span class="relation-affinity-mini">'+
+        '<span class="affinity-num">'+pct+'</span>'+
+        '<span class="affinity-bar-mini"><i class="affinity-fill" style="width:'+pct+'%"></i></span>'+
+      '</span>'+
+    '</button>';
+  }).join('');
+  return '<div class="relations-screen">'+
+    '<div class="relations-portrait-pane">'+portraitHTML+'</div>'+
+    '<div class="relations-list-pane"><div class="section-label"><span>旅途中遇见的人</span><span>'+rels.length+' 人</span></div>'+rows+'</div>'+
+  '</div>';
+}
+function renderMapPage(){
+  const stat=swshBridge.getStat(),env=stat.环境||{},events=stat.世界事件||{};
+  const cur=env.当前地点||'未知地点';
+  const nodes=[
+    {n:'木杆镇',x:'12%',y:'25%'},{n:'机擎市',x:'40%',y:'50%'},
+    {n:'尖钉镇',x:'24%',y:'72%'},{n:'拳关市',x:'64%',y:'24%'},
+    {n:'旷野地带',x:'50%',y:'64%'},{n:'独剑镇',x:'78%',y:'50%'},
+    {n:'锤锤市',x:'64%',y:'80%'}
+  ];
+  const mapNodes=nodes.map(function(nd){
+    const isCur=nd.n===cur||cur.indexOf(nd.n)>=0||nd.n.indexOf(cur)>=0;
+    return '<span class="map-node'+(isCur?' is-current':'')+'" style="left:'+nd.x+';top:'+nd.y+'"><b></b><span>'+esc(nd.n)+'</span></span>';
+  }).join('');
+  const routes=[
+    {x:'12%',y:'40%',w:'30%',r:'-10deg'},{x:'40%',y:'50%',w:'26%',r:'-22deg'},
+    {x:'40%',y:'56%',w:'22%',r:'18deg'},{x:'62%',y:'60%',w:'18%',r:'28deg'}
+  ].map(function(rt){
+    return '<span class="map-route-line" style="left:'+rt.x+';top:'+rt.y+';width:'+rt.w+';transform:rotate('+rt.r+')"></span>';
+  }).join('');
+  return '<div class="map-screen">'+
+    '<div class="map-info-card">'+
+      '<div class="map-location-label">CURRENT LOCATION</div>'+
+      '<div class="map-current-location">'+esc(cur)+'</div>'+
+      (env.日期?'<div class="map-meta-row"><b>日期</b><span>'+esc(env.日期)+'</span></div>':'')+
+      (env.时间?'<div class="map-meta-row"><b>时间</b><span>'+esc(env.时间)+'</span></div>':'')+
+      (env.赛程?'<div class="map-meta-row"><b>赛程</b><span>'+esc(env.赛程)+'</span></div>':'')+
+      (events.区域动态?'<div class="map-nearby-card"><div class="map-nearby-title">区域动态</div>'+esc(events.区域动态)+'</div>':'')+
+    '</div>'+
+    '<div class="map-canvas">'+routes+mapNodes+'</div>'+
+  '</div>';
+}
+function renderWorld(){
+  const stat=swshBridge.getStat(),tasks=stat.任务||{},events=stat.世界事件||{},env=stat.环境||{};
+  const chips=[['地点',env.当前地点],['日期',env.日期],['时间',env.时间],['赛程',env.赛程]]
+    .filter(function(c){return !!c[1];})
+    .map(function(c){return '<span class="world-env-chip"><span>'+esc(c[0])+'</span><b>'+esc(c[1])+'</b></span>';}).join('');
+  const tDefs=[{k:'主线',l:'MAIN QUEST',c:'#e33241'},{k:'支线',l:'SIDE QUEST',c:'#5482b7'},{k:'传说',l:'LEGEND',c:'#8f70aa'}];
+  const taskHTML=tDefs.map(function(t){
+    const txt=tasks[t.k];
+    return '<div class="world-task-card">'+
+      '<div class="world-task-type" style="color:'+t.c+'">'+t.l+'</div>'+
+      '<div class="world-task-text'+(txt?'':' world-task-empty')+'">'+esc(txt||'暂无任务')+'</div>'+
+    '</div>';
+  }).join('');
+  const evDefs=[['附近遭遇',events.附近遭遇],['地区新闻',events.地区新闻],['区域动态',events.区域动态]].filter(function(e){return !!e[1];});
+  const evHTML=evDefs.map(function(e){
+    return '<div class="world-event-card">'+
+      '<div class="world-event-type">'+esc(e[0])+'</div>'+
+      '<div class="world-event-text">'+esc(e[1])+'</div>'+
+    '</div>';
+  }).join('');
+  return '<div class="world-screen">'+
+    '<div class="world-env-strip">'+chips+'</div>'+
+    '<div class="world-tasks"><div class="world-section-title">任务 · QUESTS</div>'+taskHTML+'</div>'+
+    '<div class="world-events"><div class="world-section-title">世界事件 · EVENTS</div>'+evHTML+'</div>'+
+  '</div>';
+}
 function render(){
   const view=S.view,module=activeModule();
   app.dataset.view=view;app.dataset.module=module;app.dataset.theme=S.theme;
+  // 注入地图/世界水印：把对应菜单图标SVG写入backdrop::after的CSS变量
+  (function injectWatermark(){
+    const wm={map:'map',world:'globe',relations:'rel'};
+    const key=wm[module];
+    if(key){
+      const svgRaw=swshIcon(key,180);
+      // Extract viewBox and paths, encode as data:image/svg+xml
+      const colored=svgRaw.replace('stroke="currentColor"','stroke="#888"');
+      const encoded='url("data:image/svg+xml,'+encodeURIComponent(colored)+'")';
+      // Set as CSS variable on the app element
+      app.style.setProperty('--module-watermark-url',encoded);
+    } else {
+      app.style.setProperty('--module-watermark-url','none');
+    }
+  })();
   let content="";
   if(view==="home")content=renderHome();
   else if(view==="team")content=renderParty();
@@ -1369,7 +1817,9 @@ function render(){
   else if(view==="dex")content=renderDex();
   else if(view==="bag")content=renderBag();
   else if(view==="settings")content=renderSettings();
-  else if(view==="map")content=renderMap();
+  else if(view==="map")content=renderMapPage();
+  else if(view==="relations")content=renderRelations();
+  else if(view==="world")content=renderWorld();
   else content=scaffoldPage(view);
   $("#screenContent").innerHTML=content;$("#actionbar").innerHTML=actionMarkup();
   if(view==="settings"){const list=app.querySelector(".settings-rows"),track=app.querySelector(".settings-scrollbar");if(list){list.id="settingsRows";list.addEventListener("scroll",updateSettingsScrollbar,{passive:true});}if(track){track.removeAttribute("aria-hidden");track.setAttribute("role","scrollbar");track.setAttribute("aria-label","设置列表滚动条");track.setAttribute("aria-controls","settingsRows");track.setAttribute("aria-orientation","vertical");track.setAttribute("aria-valuemin","0");track.setAttribute("aria-valuemax","100");track.tabIndex=0;}requestAnimationFrame(updateSettingsScrollbar);}
@@ -1422,6 +1872,7 @@ document.addEventListener("pointerover",function(event){
     return;
   }
   if(target.dataset.party!==undefined&&S.view==="team")previewParty(Number(target.dataset.party));
+  if(target.dataset.relation!==undefined&&S.view==="relations")updateRelationDetail(Number(target.dataset.relation));
   if(target.dataset.dex!==undefined&&S.view==="dex")updateDexSelection(Number(target.dataset.dex));
   if(target.dataset.bag!==undefined&&S.view==="bag")updateBagCategory(Number(target.dataset.bag));
   if(target.dataset.item!==undefined&&S.view==="bag")updateBagSelection(Number(target.dataset.item));
@@ -1462,6 +1913,7 @@ document.addEventListener("click",function(event){
   if(target.dataset.menu!==undefined){S.menu=Number(target.dataset.menu);if(S.view==="home")render();openMenuItem(MENU[S.menu]);return;}
   if(target.dataset.party!==undefined){const i=Number(target.dataset.party);if(S.view==="bag"){S.party=i;app.querySelectorAll(".bag-party-list .party-member").forEach(function(row){row.setAttribute("aria-pressed",String(Number(row.dataset.party)===i));});return;}if(i===S.party)openDetails();else selectParty(i);return;}
   if(target.dataset.tab!==undefined){S.tab=Number(target.dataset.tab);render();return;}
+  if(target.dataset.relation!==undefined&&S.view==="relations"){updateRelationDetail(Number(target.dataset.relation));return;}
   if(target.dataset.dex!==undefined){selectDex(Number(target.dataset.dex));return;}
   if(target.dataset.bag!==undefined){updateBagCategory(Number(target.dataset.bag));return;}
   if(target.dataset.item!==undefined){updateBagSelection(Number(target.dataset.item));return;}
