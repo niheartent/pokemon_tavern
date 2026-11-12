@@ -1,1 +1,7 @@
+# ROM / dumps / toolchain / harvested assets: never commit
 /sword/
+/extracted/
+/tools/
+/tmp/
+/ui_assets/
+*.log
