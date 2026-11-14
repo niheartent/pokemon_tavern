@@ -1,0 +1,678 @@
+"use strict";
+// Icon geometry reused from src/swsh/swsh-icons.js for reliable standalone local preview.
+function swshIcon(key,size){
+  var art={
+    bag:'<g transform="rotate(-12 24 24)"><path d="M15 18.5v-3.2c0-6 3.7-10 9-10s9 4 9 10v3.2"/><path d="M13.5 18c-3 .2-5 2.5-5 5.7V38c0 3 2.4 5.4 5.4 5.4h20.2c3 0 5.4-2.4 5.4-5.4V23.7c0-3.2-2-5.5-5-5.7"/><path d="M16.2 17.8c1.9-3.4 4.3-4.9 7.8-4.9s5.9 1.5 7.8 4.9M13.8 19.2v7.1c0 3.3 3 5.8 6.1 5.8h8.2c3.2 0 6.1-2.5 6.1-5.8v-7.1"/><path class="swsh-icon-detail" d="M20.4 21.5c1.8-1.3 5.4-1.3 7.2 0M20 26h8m-4-5v9M8.5 25l-3 2.3v9.2l3 2.2M39.5 25l3 2.3v9.2l-3 2.2"/></g>',
+    box:'<g transform="rotate(-5 24 24)"><rect x="5" y="9" width="38" height="26" rx="5"/><path d="M5 29h38M12 35v4h24v-4M12 39h24"/><circle cx="16" cy="19" r="4.8"/><path class="swsh-icon-detail" d="M16 14.2v9.6m-4.8-4.8h9.6M27 17h10m-10 5h7"/></g>',
+    rel:'<g transform="rotate(-10 24 24)"><path d="M8 9h32v28H8z"/><path d="M13 32h22M15 16a4.2 4.2 0 1 1 8.4 0 4.2 4.2 0 0 1-8.4 0zM12.5 27c.4-4.1 3-6.1 6.7-6.1s6.3 2 6.7 6.1"/><path class="swsh-icon-detail" d="M29 16h6m-6 4h6m-6 4h4"/></g>',
+    rivals:'<path d="M10 36c0-5.3 3.1-8.7 8.5-9.4M38 36c0-5.3-3.1-8.7-8.5-9.4"/><circle cx="17" cy="19" r="5"/><circle cx="31" cy="19" r="5"/><path d="M8.5 37h31M23.5 35v-4.5m1-5.7 3-3"/><path class="swsh-icon-detail" d="m10 11 4-3m20 0 4 3"/>',
+    breeding:'<path d="M24 5c8 0 15 13 15 24a15 15 0 0 1-30 0C9 18 16 5 24 5z"/><path class="swsh-icon-detail" d="M15 28c1 6.2 4.3 9.4 9 9.4m7-22 2.2 4.7m-14.1 2.4 2.3-2.6 2.5 2.1 2.3-2.1 2.6 2.6"/>',
+    pokedex:'<g transform="rotate(-15 24 24)"><rect x="10" y="6" width="31" height="35" rx="5"/><path d="M10 15H7.5a3 3 0 0 0-3 3v19a3 3 0 0 0 3 3H10M15 17h21v13H15z"/><circle cx="23" cy="23.5" r="4.5"/><path class="swsh-icon-detail" d="M16 11h12m4 0h3M15 34h11m4 0h6M16 38h5m4 0h4"/></g>',
+    badge:'<path d="M24 5 29 11 37 9 36 19 42 24 36 29 37 39 29 37 24 43 19 37 11 39 12 29 6 24 12 19 11 9 19 11z"/><path d="M24 14 29 19 34 24 29 29 24 34 19 29 14 24 19 19z"/><path class="swsh-icon-detail" d="M24 17v14m-7-7h14"/>',
+    map:'<g transform="rotate(-8 24 24)"><path d="M5 11 17 7l14 4 12-4v31l-12 4-14-4-12 4zM17 7v31M31 11v31"/><circle cx="25" cy="21" r="4"/><path class="swsh-icon-detail" d="m24.5 25 5 8m-11-6-5 6m23-14 3-2"/></g>',
+    settings:'<path d="M8.9 4.52 10.25 2.05 13.75 2.05 15.1 4.52 17.79 3.73 20.27 6.21 19.48 8.9 21.95 10.25 21.95 13.75 19.48 15.1 20.27 17.79 17.79 20.27 15.1 19.48 13.75 21.95 10.25 21.95 8.9 19.48 6.21 20.27 3.73 17.79 4.52 15.1 2.05 13.75 2.05 10.25 4.52 8.9 3.73 6.21 6.21 3.73z" transform="scale(2)"/><circle cx="24" cy="24" r="5.4"/><circle class="swsh-icon-detail" cx="24" cy="24" r="2.2"/>',
+    typechart:'<circle cx="12.5" cy="24" r="8"/><circle cx="35.5" cy="24" r="8"/><path d="M20.5 24h7m-3-3 3 3-3 3"/><path class="swsh-icon-detail" d="M9 24h7m-3.5-3.5v7M32 24h7"/>',
+    pin:'<path d="M24 43S10 28 10 19a14 14 0 0 1 28 0c0 9-14 24-14 24z"/><circle cx="24" cy="19" r="5.5"/>',
+    news:'<g transform="rotate(-6 24 24)"><path d="M9 7h31v32H12a6 6 0 0 1-6-6V13h3"/><path d="M9 33H6m8-20h9v9h-9z"/><path class="swsh-icon-detail" d="M28 14h8m-8 4h8m-22 9h22m-22 5h18"/></g>',
+    globe:'<circle cx="24" cy="24" r="18"/><path d="M6 24h36M24 6c-6 5-9 11-9 18s3 13 9 18M24 6c6 5 9 11 9 18s-3 13-9 18"/><path class="swsh-icon-detail" d="M10 15h28m-28 18h28"/>',
+    schedule:'<rect x="7" y="10" width="34" height="32" rx="3"/><path d="M7 19h34M15 6v8M33 6v8"/><path class="swsh-icon-detail" d="M14 26h6m7 0h6m-19 7h6m7 0h6"/>',
+    command:'<rect x="5" y="11" width="38" height="27" rx="5"/><path d="M11 18h4m5 0h4m5 0h4M11 25h4m5 0h4m5 0h4M16 32h16"/><path class="swsh-icon-detail" d="M37 18h2m-2 7h2"/>',
+    training:'<path d="M24 8v31m-9-9 9 9 9-9M9 13h30M9 13l4 9h22l4-9"/><path d="M13 22c0 5 4.3 8 11 8s11-3 11-8"/><path class="swsh-icon-detail" d="M18 13v4m12-4v4M19 43h10"/>',
+    dodge:'<path d="M7 29h18l-5 6m5-6-5-6M11 17h30m-8-6 8 6-8 6M6 39h31"/><path class="swsh-icon-detail" d="M7 22h8m19 7h7"/>',
+    initiative:'<path d="M28 4 11 27h12l-3 17 17-24H25z"/><path class="swsh-icon-detail" d="m25 13-6 10h9m-2 3-3 9"/>',
+    guard:'<path d="M24 5 40 11v12c0 11-6.8 17.5-16 21-9.2-3.5-16-10-16-21V11z"/><path d="m15 24 6 6 12-13"/><path class="swsh-icon-detail" d="M13 15 24 11l11 4"/>',
+    revive:'<path d="M24 43c-9 0-15-5.5-15-14 0-8 5-13.5 6-20 4 2.5 6 6.5 5.5 11C24 16 26 10 27 5c8 7 12 14 12 23 0 9-6 15-15 15z"/><path d="M24 41c-4.5 0-7.5-3-7.5-7.3 0-4.1 3-6.6 4.2-9.7 3.4 2 4.4 5 4 7.3 2.3-2 3.4-4.7 3.7-7.2 3.8 3.3 5.6 6.6 5.6 10.1 0 4.4-3 7.5-7.8 7.5z"/>',
+    mega:'<path d="m24 4 4.1 10.6L39 10l-4.6 10.9L45 25l-10.6 4.1L39 40l-10.9-4.6L24 46l-4.1-10.6L9 40l4.6-10.9L3 25l10.6-4.1L9 10l10.9 4.6z"/><path d="m17 31 2-12 5 8 5-8 2 12"/><path class="swsh-icon-detail" d="M18.5 34h11"/>',
+    clash:'<path d="M7 8 34 35m-3 4 8-8M41 8 14 35m3 4-8-8"/><path d="m6 5 8 3-5 5zM42 5l-8 3 5 5z"/><path class="swsh-icon-detail" d="M19 20 28 29m1-9-9 9"/>',
+    help:'<circle cx="24" cy="24" r="18"/><path d="M18.5 18a5.5 5.5 0 1 1 9.5 3.7c-2.6 2.1-4 3.2-4 6.3"/><circle cx="24" cy="34" r="1"/>',
+    arrow:'<path d="M7 24h34m-12-12 12 12-12 12"/>',
+    chevron:'<path d="m18 9 12 15-12 15"/>'
+  };
+  var px=Math.max(14,Math.min(48,Number(size)||24));
+  return '<svg class="swsh-icon swsh-icon-'+key+'" width="'+px+'" height="'+px+'" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2.25" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">'+(art[key]||art.pokedex)+'</svg>';
+}
+const MENU = [
+  {key:"dex",label:"图鉴",icon:"xmenu_button_icon_pokedex_00^s-render.png",title:"POKÉDEX"},
+  {key:"team",label:"宝可梦",icon:"xmenu_button_icon_pokemon_00^s-render.png",title:"POKÉMON"},
+  {key:"bag",label:"包包",icon:"xmenu_button_icon_bag_00^s-render.png",title:"BAG"},
+  {key:"badge",label:"联盟卡",nativeIcon:"icon_license.png",title:"LEAGUE CARD"},
+  {key:"box",label:"盒子",nativeIcon:"icon_camp.png",title:"POKÉMON BOX"},
+  {key:"map",label:"城镇地图",icon:"xmenu_button_icon_map_00^s-render.png",title:"MAP"},
+  {key:"relations",label:"人际关系",nativeIcon:"icon_report.png",title:"RELATIONSHIPS"},
+  {key:"world",label:"世界",nativeIcon:"icon_live.png",title:"WORLD"},
+  {key:"battle",label:"战场",nativeIcon:"icon_bs.png",title:"BATTLE"},
+  {key:"settings",label:"设置",icon:"xmenu_button_icon_config_00^s-render.png",title:"OPTIONS"}
+];
+const PARTY = [
+  {name:"敲音猴",dex:"#810",level:8,gender:"♂",types:["草"],hp:"19 / 26",exp:"328",nextExp:"91",trainer:"伯劳",trainerId:"852516",metDate:"2026年11月04日",metPlace:"化朗镇",metLevel:"Lv.5",ability:"茂盛",abilityDescription:"HP 减少的时候，草属性的招式威力会提高。",nature:"胆小",held:"无",stats:[19,14,14,11,11,17],sprite:"assets/pokemon/poke_icon_0810_00s_n.png",moves:[["抓","一般",34,35],["叫声","一般",39,40],["木枝突刺","草",35,40],["挑衅","恶",20,20]]},
+  {name:"泪眼蜥",dex:"#816",level:7,gender:"♀",types:["水"],hp:"18 / 23",exp:"226",nextExp:"74",trainer:"伯劳",trainerId:"852516",metDate:"2026年11月04日",metPlace:"化朗镇",metLevel:"Lv.5",ability:"激流",abilityDescription:"HP 减少的时候，水属性的招式威力会提高。",nature:"认真",held:"无",stats:[26,16,15,27,18,24],sprite:"assets/pokemon/poke_icon_0816_00s_n.png",moves:[["拍击","一般",33,35],["水枪","水",24,25],["瞪眼","一般",30,30],["水之波动","水",18,20]]},
+  {name:"绿毛虫",dex:"#010",level:6,gender:"♂",types:["虫"],hp:"16 / 20",exp:"142",nextExp:"48",trainer:"伯劳",trainerId:"852516",metDate:"2026年11月04日",metPlace:"化朗镇",metLevel:"Lv.3",ability:"鳞粉",abilityDescription:"不会受到招式的追加效果影响。",nature:"温和",held:"无",stats:[20,15,13,10,12,14],sprite:"assets/pokemon/poke_icon_0010_00s_n.png",moves:[["撞击","一般",28,35],["吐丝","虫",38,40]]},
+  {name:"妙蛙种子",dex:"#001",level:9,gender:"♀",types:["草","毒"],hp:"24 / 29",exp:"401",nextExp:"116",trainer:"伯劳",trainerId:"852516",metDate:"2026年11月04日",metPlace:"化朗镇",metLevel:"Lv.5",ability:"茂盛",abilityDescription:"HP 减少的时候，草属性的招式威力会提高。",nature:"内敛",held:"无",stats:[29,16,17,23,22,16],sprite:"assets/pokemon/poke_icon_0001_00s_n.png",moves:[["撞击","一般",30,35],["藤鞭","草",24,25],["生长","一般",39,40]]},
+  {name:"小火龙",dex:"#004",level:10,gender:"♂",types:["火"],hp:"27 / 31",exp:"526",nextExp:"143",trainer:"伯劳",trainerId:"852516",metDate:"2026年11月04日",metPlace:"化朗镇",metLevel:"Lv.5",ability:"猛火",abilityDescription:"HP 减少的时候，火属性的招式威力会提高。",nature:"急躁",held:"无",stats:[31,20,16,24,17,25],sprite:"assets/pokemon/poke_icon_0004_00s_n.png",moves:[["抓","一般",31,35],["叫声","一般",38,40],["火花","火",22,25]]},
+  {name:"杰尼龟",dex:"#007",level:8,gender:"♀",types:["水"],hp:"21 / 25",exp:"362",nextExp:"98",trainer:"伯劳",trainerId:"852516",metDate:"2026年11月04日",metPlace:"化朗镇",metLevel:"Lv.4",ability:"激流",abilityDescription:"HP 减少的时候，水属性的招式威力会提高。",nature:"大胆",held:"无",stats:[25,15,22,17,21,14],sprite:"assets/pokemon/poke_icon_0007_00s_n.png",moves:[["撞击","一般",30,35],["水枪","水",23,25],["缩入壳中","水",37,40]]}
+];
+const DEX = [
+  {no:"001",name:"敲音猴",caught:true,seen:true,index:0},
+  {no:"002",name:"啪咚猴",caught:false,seen:true,index:1},
+  {no:"003",name:"狙射树枭",caught:false,seen:false,index:0},
+  {no:"004",name:"炎兔儿",caught:false,seen:false,index:1},
+  {no:"005",name:"腾蹴小将",caught:false,seen:false,index:0},
+  {no:"006",name:"闪焰王牌",caught:false,seen:false,index:1},
+  {no:"007",name:"泪眼蜥",caught:true,seen:true,index:1},
+  {no:"008",name:"绿毛虫",caught:true,seen:true,index:2},
+  {no:"009",name:"妙蛙种子",caught:true,seen:true,index:3},
+  {no:"010",name:"小火龙",caught:true,seen:true,index:4},
+  {no:"011",name:"杰尼龟",caught:true,seen:true,index:5},
+  {no:"012",name:"毛辫羊",caught:false,seen:true,index:0},
+  {no:"013",name:"贪心栗鼠",caught:false,seen:false,index:0},
+  {no:"014",name:"稚山雀",caught:false,seen:false,index:1},
+  {no:"015",name:"来电汪",caught:false,seen:false,index:0}
+];
+let dexCatalog=null;
+let dexRegionalCatalog=null;
+let dexCatalogPromise=null;
+let dexCategory="all";
+let dexCategoryMode="region";
+let dexCategoryOpen=false;
+function dexGenerationOf(no){const n=Number(no)||0;return n<=151?1:n<=251?2:n<=386?3:n<=493?4:n<=649?5:n<=721?6:n<=809?7:n<=905?8:n<=1025?9:10;}
+function dexPartyMatch(no){const target=Number(no)||0;for(let i=0;i<PARTY.length;i++){const m=String(PARTY[i].dex||'').match(/\d+/);if(m&&Number(m[0])===target)return i;}return -1;}
+function loadDexCatalog(){if(dexCatalogPromise)return dexCatalogPromise;const localDex=window.PK_DEX_CATALOG||null,localRegions=window.PK_REGIONAL_DEX||null;dexCatalogPromise=Promise.all([localDex?Promise.resolve(localDex):fetch("assets/data/dex-list.json").then(function(r){return r.ok?r.json():null;}),localRegions?Promise.resolve(localRegions):fetch("assets/data/regional-dex.json").then(function(r){return r.ok?r.json():null;})]).then(function(parts){const raw=parts[0]&&Array.isArray(parts[0].data)?parts[0].data:[];dexCatalog=raw.map(function(item){const no=Number(item.no)||0;const partyIndex=dexPartyMatch(no);const party=partyIndex>=0?PARTY[partyIndex]:null;return {no:String(no).padStart(3,'0'),name:party?party.name:String(item.name||''),catalogName:String(item.name||''),caught:!!party,seen:!!party,index:partyIndex,generation:dexGenerationOf(no),types:item.types||[]};}).filter(function(item){return item.no!=='000';});dexRegionalCatalog=parts[1]&&typeof parts[1]==='object'?parts[1]:{};if(S.view==='dex')render();return {entries:dexCatalog,regions:dexRegionalCatalog};}).catch(function(){dexCatalog=null;dexRegionalCatalog=null;return null;});return dexCatalogPromise;}
+function dexCategoryEntries(){if(!dexCatalog||!dexCatalog.length)return DEX;const m=String(dexCategory||'all');if(m==='all')return dexCatalog;if(m.indexOf('gen-')===0){const g=Number(m.slice(4));return dexCatalog.filter(function(d){return d.generation===g;});}if(m.indexOf('region-')===0&&dexRegionalCatalog){const region=m.slice(7),ids={};(dexRegionalCatalog[region]||[]).forEach(function(item){ids[String(item.ndex||item.id||'').padStart(3,'0')]=true;});return dexCatalog.filter(function(d){return !!ids[d.no];});}return dexCatalog;}
+function dexCategoryLabel(value){const v=String(value||'all');if(v==='all')return '全国图鉴';if(v.indexOf('gen-')===0)return '第'+v.slice(4)+'世代';if(v.indexOf('region-')===0)return v.slice(7);return '全国图鉴';}
+function dexCategoryOptionsHTML(){const sel=function(value){return String(dexCategory)===String(value)?' aria-selected="true"':'';};const labels=[];labels.push(['all','全国图鉴']);if(dexCategoryMode==='generation'){for(let g=1;g<=10;g++)labels.push(['gen-'+g,'第'+g+'世代']);}else{const regions=dexRegionalCatalog?Object.keys(dexRegionalCatalog):['关都','城都','丰缘','神奥','合众','卡洛斯','阿罗拉','伽勒尔','铠岛','王冠雪原','帕底亚','北上乡','蓝莓学院'];regions.forEach(function(region){labels.push(['region-'+region,region]);});}return labels.map(function(item,index){const tone=Math.round(34+(index/Math.max(1,labels.length-1))*154);const text=tone>72?'#252629':'#f5f7fa';const row=Math.floor(index/3);return '<button class="dex-category-option" type="button" role="option" data-dex-category="'+esc(item[0])+'"'+sel(item[0])+' style="--dex-option-index:'+index+';--dex-option-row-index:'+row+';--dex-tone:'+tone+'%;--dex-label:'+text+';color:'+text+'">'+esc(item[1])+'</button>';}).join('');}
+const BAGS = [
+  {name:"回复",icon:"回复.png",color:"#ffa6c4",items:[["伤药","回复少量 HP。",4,"0017"],["解麻药","治愈麻痹状态。",2,"0022"],["解毒药","治愈中毒状态。",3,"0019"]]},
+  {name:"精灵球",icon:"精灵球.png",color:"#ff9494",items:[["精灵球","捕捉野生宝可梦的道具。",12,"0004"],["超级球","比精灵球更容易捕捉。",5,"0003"],["高级球","捕捉能力较强的球。",2,"0002"]]},
+  {name:"战斗道具",icon:"战斗道具.png",color:"#ffb98b",items:[["攻击增强剂","战斗中提升攻击。",2,"0027"],["速度增强剂","战斗中提升速度。",1,"0029"]]},
+  {name:"树果",icon:"树果.png",color:"#86c270",items:[["樱子果","治愈麻痹状态。",3,"0034"],["桃桃果","治愈中毒状态。",2,"0036"]]},
+  {name:"道具",icon:"道具.png",color:"#94c8ff",items:[["全满药","回复 HP 并治愈异常状态。",1,"0025"],["经验糖果 S","给予宝可梦少量经验。",4,"0033"]]},
+  {name:"招式学习器",icon:"招式学习器.png",color:"#c49dff",items:[["招式学习器 01","让宝可梦学会新的招式。",1,"0029"],["招式记录 12","记录可学习的招式。",2,"0029"]]},
+  {name:"重要物品",icon:"重要物品.png",color:"#ffdf94",items:[["宝可梦图鉴","记录遇见和捕获的宝可梦。",1,"0035"],["自行车","可以快速移动的折叠自行车。",1,"0038"]]},
+  {name:"食材",icon:"食材.png",color:"#7fd4c0",items:[["咖喱食材","用于露营烹饪。",4,"0037"],["新鲜香草","提升料理风味。",2,"0040"]]}
+];
+const BOXES = [
+  {name:"草地",pokemon:[0,1,2,3,4,5]},
+  {name:"冒险伙伴",pokemon:[2,3,4]},
+  {name:"等待整理",pokemon:[]},
+  {name:"远征队",pokemon:[]},
+  {name:"收藏",pokemon:[]},
+  {name:"新朋友",pokemon:[]},
+  {name:"培育",pokemon:[]},
+  {name:"备用",pokemon:[]}
+];
+const TABS = ["概要","数值","招式","信息","奖章"];
+const TAB_SVGS = [
+  '<svg viewBox="0 0 36 36" aria-hidden="true"><circle cx="18" cy="18" r="14"/><path d="M4 18h28M18 4v10m0 8v10"/><circle cx="18" cy="18" r="5"/></svg>',
+  '<svg viewBox="0 0 36 36" aria-hidden="true"><path d="M18 3 32 11v14l-14 8L4 25V11z"/><path d="M18 10v16m-7-12 14 8m0-8-14 8"/></svg>',
+  '<svg viewBox="0 0 36 36" aria-hidden="true"><path d="m18 3 4 9 10 1-7 7 2 11-9-5-9 5 2-11-7-7 10-1z"/><path d="M8 30h20"/></svg>',
+  '<svg viewBox="0 0 36 36" aria-hidden="true"><path d="M8 4h20v28H8zM13 11h10M13 17h10M13 23h6"/><path d="m23 25 7-12 3 2-7 12-4 2z"/></svg>',
+  '<svg viewBox="0 0 36 36" aria-hidden="true"><circle cx="18" cy="13" r="9"/><path d="m12 21-3 12 9-5 9 5-3-12M18 8v10m-5-5h10"/></svg>'
+];
+const STAT_NAMES = ["HP","攻击","防御","特攻","特防","速度"];
+const TYPE_COLORS = {"草":"#61a94a","水":"#408bd1","一般":"#8c929c"};
+const SETTINGS = [
+  {name:"语速",values:["慢","普通","快"],description:"可以选择 3 种\n不同的信息显示速度。"},
+  {name:"对战动画",values:["看","不看"],description:"选择对战时是否播放招式动画。"},
+  {name:"比赛规则",values:["替换","连战"],description:"选择胜出后是否替换当前队伍中的宝可梦。"},
+  {name:"同行／盒子",values:["自己选择","自动发送"],description:"选择新获得的宝可梦由你决定去向，或自动发送到盒子。"},
+  {name:"给宝可梦取昵称",values:["取昵称","不取昵称"],description:"设置获得宝可梦时是否为它取昵称。"},
+  {name:"陀螺仪感应器",values:["使用","不使用"],description:"设置是否使用陀螺仪感应器。"},
+  {name:"镜头　上／下",values:["默认","反转"],description:"选择镜头上下方向的操作设置。"},
+  {name:"滚动测试 08",values:["关闭","开启"],description:"临时测试项：验证设置列表向下滚动。"},
+  {name:"滚动测试 09",values:["关闭","标准","开启"],description:"临时测试项：验证滚动时选中行与选项对齐。"},
+  {name:"滚动测试 10",values:["选项 A","选项 B"],description:"临时测试项：验证滚动条位置随内容移动。"},
+  {name:"滚动测试 11",values:["默认","反转"],description:"临时测试项：验证滚动条拖动与滚轮同步。"},
+  {name:"滚动测试 12",values:["关闭","开启"],description:"临时测试项：验证列表末尾可滚动到位。"}
+];
+const SETTING_DEFAULTS = [2,1,1,0,0,0,0,0,1,0,1,0];
+const BOX_TEAM = {party:[0,1,2,3,4,5]};
+/* ── 弦九接口桥接层 ── */
+const MOCK_STAT={
+  训练家:{名字:"伯劳",活力:3,活力上限:3,金钱:31400,徽章:"木杆|石锁",身份:"训练家",声望:"12 新人",气场:"无",可命令等级:20},
+  人际关系:{"赫普":{好感度:85,注记:"从小认识的朋友，聪明但有些傲气。"},"索妮亚":{好感度:72,注记:"研究者，大教授的孙女，对远古神兽很感兴趣。"},"玛俐":{好感度:45,注记:"在尖钉镇认识的训练家，实力不俗。"},"丹帝":{好感度:60,注记:"现任冠军，态度和善，时常给予帮助。"}},
+  劲敌:{"赫普":{好感度:55,注记:"同乡劲敌，总是走在自己前面，让人不服气。"}},
+  通讯录:{"泽芙":{好感度:30,注记:"木杆镇精灵中心护士，热心肠，总是笑脸相迎。"}},
+  任务:{主线:"前往拳关市，挑战第三道馆馆主 卡布",支线:"寻找在旷野地带失踪的绵绵羊群主人",传说:"调查旷野地带出现的异常能量波动现象"},
+  世界事件:{附近遭遇:"林中发现稀有闪光精灵目击报告",地区新闻:"冠军杯预选赛报名截止日期临近，各地训练家汇聚",区域动态:"旷野地带今日天气：雷暴，特殊精灵出现率大幅提升"},
+  环境:{当前地点:"机擎市",日期:"11月12日",时间:"下午三点",赛程:"伽勒尔道馆挑战"}
+};
+const swshBridge={
+  _win:(function(){try{if(window.parent&&window.parent!==window&&window.parent.document){return window.parent;}}catch(e){}return window;})(),
+  getLiveStatData:function(){
+    try{var mv=this._win.Mvu||window.Mvu;if(!mv||!mv.getMvuData)return null;
+    var mes=this._win.document.querySelectorAll('.mes');
+    for(var i=mes.length-1;i>=0;i--){var mid=parseInt(mes[i].getAttribute('mesid')||'');if(isNaN(mid))continue;
+    var d=mv.getMvuData({type:'message',message_id:mid});if(d&&d.stat_data&&d.stat_data.训练家)return d.stat_data;}}catch(e){}return null;
+  },
+  getStat:function(){return this.getLiveStatData()||MOCK_STAT;},
+  getRelations:function(stat){
+    var result=[],seen={};
+    function add(obj,role){for(var n in (obj||{})){if(!seen[n]){seen[n]=true;result.push({name:n,role:role,好感度:+(obj[n].好感度)||0,注记:obj[n].注记||''});}}}
+    add(stat.人际关系,'人际');add(stat.劲敌,'劲敌');add(stat.通讯录,'通讯录');return result;
+  }
+};
+const S = {view:"home",stack:[],menu:0,party:0,tab:0,dex:0,bag:0,item:0,box:0,boxMon:0,boxSource:"box",boxDetail:false,boxPanel:"none",boxPanelOrigin:"none",setting:0,relation:0,settingValues:SETTING_DEFAULTS.slice(),theme:"day"};
+let manualLayout=false;
+let boxModalConfirm=null;
+const $ = function(sel,root){return (root||document).querySelector(sel);};
+const app = $("#app"), demo = $("#demo");
+const selectionArrow=$("#selectionArrow",app),selectionSelector=".menu-entry,.party-member,.detail-tab-icon[data-tab],.data-row,.item-row,.bag-cats button,.relation-row";
+let hoveredSelection=null,focusedSelection=null;
+function selectionTarget(node){if(!node||!node.closest)return null;const target=node.closest(selectionSelector);return target&&app.contains(target)?target:null;}
+function committedSelection(){
+  if(S.view==="home")return app.querySelector('.menu-entry[aria-pressed="true"]');
+  if(S.view==="team")return app.querySelector('.party-member[aria-pressed="true"]');
+  if(S.view==="party-detail")return app.querySelector('.detail-tab-icon[data-tab][aria-pressed="true"]');
+  if(S.view==="dex")return app.querySelector('.data-row[aria-pressed="true"]');
+  if(S.view==="bag")return app.querySelector('.item-row[aria-pressed="true"]')||app.querySelector('.bag-cats button[aria-pressed="true"]');
+  if(S.view==="settings")return app.querySelector('.setting-row.is-selected');
+  if(S.view==="relations")return app.querySelector('.relation-row[aria-pressed="true"]');
+  return null;
+}
+function updateSelectionArrow(target){
+  if(!selectionArrow)return;
+  if(S.view==="dex"&&dexCategoryOpen){selectionArrow.classList.remove("is-visible");selectionArrow.style.display="none";return;}
+  selectionArrow.style.display="";
+  if(target&&!app.contains(target))target=null;
+  target=target||(hoveredSelection&&app.contains(hoveredSelection)?hoveredSelection:null)||(focusedSelection&&app.contains(focusedSelection)?focusedSelection:null)||committedSelection();
+  if(!target||!app.contains(target)){selectionArrow.classList.remove("is-visible");return;}
+  const anchor=target.matches(".menu-entry")?target.querySelector(".disc"):target;
+  if(!anchor){selectionArrow.classList.remove("is-visible");return;}
+  const frame=app.getBoundingClientRect(),rect=anchor.getBoundingClientRect(),width=selectionArrow.offsetWidth||52,height=selectionArrow.offsetHeight||52;
+  const left=rect.left-frame.left-width+26;
+  const top=rect.top-frame.top+(rect.height-height)/2;
+  const x=Math.round(Math.max(2,Math.min(frame.width-width-2,left))),y=Math.round(Math.max(2,Math.min(frame.height-height-2,top)));
+  selectionArrow.style.transform="translate3d("+x+"px,"+y+"px,0)";
+  selectionArrow.classList.add("is-visible");
+}
+function setHoveredSelection(target){
+  if(hoveredSelection===target){updateSelectionArrow(target);return;}
+  if(hoveredSelection&&app.contains(hoveredSelection))hoveredSelection.classList.remove("is-pointer-active");
+  hoveredSelection=target&&app.contains(target)?target:null;
+  if(hoveredSelection&&focusedSelection&&focusedSelection!==hoveredSelection){if(app.contains(focusedSelection))focusedSelection.classList.remove("is-focus-active");focusedSelection=null;}
+  if(hoveredSelection)hoveredSelection.classList.add("is-pointer-active");
+  updateSelectionArrow();
+}
+function setFocusedSelection(target){
+  if(focusedSelection&&app.contains(focusedSelection))focusedSelection.classList.remove("is-focus-active");
+  focusedSelection=target&&app.contains(target)?target:null;
+  if(focusedSelection&&hoveredSelection&&hoveredSelection!==focusedSelection){if(app.contains(hoveredSelection))hoveredSelection.classList.remove("is-pointer-active");hoveredSelection=null;}
+  if(focusedSelection)focusedSelection.classList.add("is-focus-active");
+  updateSelectionArrow();
+}
+function selectSetting(index,focus){
+  const rows=app.querySelectorAll(".setting-row[data-setting]");
+  if(!rows.length)return;
+  S.setting=Math.max(0,Math.min(rows.length-1,index));
+  rows.forEach(function(row,i){row.classList.toggle("is-selected",i===S.setting);});
+  const description=app.querySelector("#setting-description");
+  if(description)description.textContent=SETTINGS[S.setting].description;
+  updateSelectionArrow();
+  if(focus){rows[S.setting].focus();rows[S.setting].scrollIntoView({block:"nearest",behavior:"smooth"});}
+  updateSettingsScrollbar();
+}
+function updateBoxInfoScrollbar(){const list=app.querySelector(".box-info-pane .box-detail-content"),track=app.querySelector(".box-info-scrollbar"),thumb=track&&track.querySelector(".box-info-scrollbar-thumb");if(!list||!track||!thumb)return;list.onscroll=updateBoxInfoScrollbar;const viewport=list.clientHeight,total=list.scrollHeight,trackHeight=track.clientHeight;if(!trackHeight)return;const maxScroll=Math.max(0,total-viewport),thumbHeight=maxScroll?Math.min(trackHeight,Math.max(30,trackHeight*viewport/total)):trackHeight,maxThumbTop=Math.max(0,trackHeight-thumbHeight);thumb.style.height=thumbHeight+"px";thumb.style.top=(maxScroll?maxThumbTop*list.scrollTop/maxScroll:0)+"px";track.classList.toggle("is-disabled",maxScroll<=1)}
+function setBoxInfoScrollPosition(clientY,track){const list=app.querySelector(".box-info-pane .box-detail-content"),thumb=track&&track.querySelector(".box-info-scrollbar-thumb");if(!list||!track||!thumb)return;const trackRect=track.getBoundingClientRect(),travel=trackRect.height-thumb.offsetHeight,maxScroll=list.scrollHeight-list.clientHeight;if(travel<=0||maxScroll<=0)return;list.scrollTop=Math.max(0,Math.min(1,(clientY-trackRect.top-thumb.offsetHeight/2)/travel))*maxScroll;updateBoxInfoScrollbar()}
+let boxInfoScrollbarDrag=null;
+function updateSettingsScrollbar(){
+  const list=app.querySelector(".settings-rows"),track=app.querySelector(".settings-scrollbar");
+  if(!list||!track)return;
+  const thumb=track.querySelector(".settings-scrollbar-thumb"),viewport=list.clientHeight,total=list.scrollHeight,trackHeight=track.clientHeight;
+  if(!thumb||!trackHeight)return;
+  const maxScroll=Math.max(0,total-viewport),thumbHeight=maxScroll?Math.min(trackHeight,Math.max(24,trackHeight*viewport/total)):trackHeight;
+  const maxThumbTop=Math.max(0,trackHeight-thumbHeight),thumbTop=maxScroll?maxThumbTop*(list.scrollTop/maxScroll):0;
+  thumb.style.height=thumbHeight+"px";thumb.style.top=thumbTop+"px";
+  track.classList.toggle("is-disabled",maxScroll<=1);
+  track.setAttribute("aria-valuenow",String(maxScroll?Math.round(list.scrollTop/maxScroll*100):0));
+  const selected=app.querySelector(".setting-row.is-selected");
+  if(selected){const rowRect=selected.getBoundingClientRect(),listRect=list.getBoundingClientRect();if(rowRect.bottom<=listRect.top||rowRect.top>=listRect.bottom)selectionArrow.classList.remove("is-visible");else updateSelectionArrow(selected);}
+}
+function setSettingsScrollPosition(clientY,track){
+  const list=app.querySelector(".settings-rows"),thumb=track&&track.querySelector(".settings-scrollbar-thumb");
+  if(!list||!track||!thumb)return;
+  const trackRect=track.getBoundingClientRect(),travel=trackRect.height-thumb.offsetHeight,maxScroll=list.scrollHeight-list.clientHeight;
+  if(travel<=0||maxScroll<=0)return;
+  const ratio=Math.max(0,Math.min(1,(clientY-trackRect.top-thumb.offsetHeight/2)/travel));
+  list.scrollTop=ratio*maxScroll;updateSettingsScrollbar();
+}
+let settingsScrollbarDrag=null;
+function setSettingValue(rowIndex,valueIndex){
+  const setting=SETTINGS[rowIndex];if(!setting)return;
+  S.settingValues[rowIndex]=(valueIndex+setting.values.length)%setting.values.length;
+  const row=app.querySelector('.setting-row[data-setting="'+rowIndex+'"]');if(!row)return;
+  row.querySelectorAll(".setting-option").forEach(function(button){button.setAttribute("aria-pressed",String(Number(button.dataset.settingOption)===S.settingValues[rowIndex]));});
+}
+function resetSettings(){S.settingValues=SETTING_DEFAULTS.slice();S.setting=0;render();}
+function esc(value){return String(value).replace(/[&<>\"']/g,function(ch){return {"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#39;"}[ch];});}
+function monSprite(mon,cls){return mon.sprite ? '<img class="'+cls+'" src="'+esc(mon.sprite)+'" alt="">' : '<span class="'+cls+' empty-mon" aria-hidden="true">◌</span>';}
+function selectedMenu(){return MENU[S.menu];}
+function setLayout(layout,manual){if(manual)manualLayout=true;demo.dataset.layout=layout;document.querySelectorAll("[data-layout-choice]").forEach(function(btn){btn.setAttribute("aria-pressed",String(btn.dataset.layoutChoice===layout));});render();}
+function setTheme(theme){S.theme=theme;app.dataset.theme=theme;$("#themeToggle").textContent=theme==="day"?"切换暗色":"切换白天";$("#themeToggle").setAttribute("aria-pressed",String(theme==="night"));}
+function feedback(message){const box=$("#feedback");box.textContent=message;box.classList.add("show");clearTimeout(feedback.timer);feedback.timer=setTimeout(function(){box.classList.remove("show");},1500);}
+function pushView(view){S.stack.push(S.view);S.view=view;render();}
+function goBack(){if(S.view==="box"&&document.querySelector('.demo[data-layout="portrait"]')){if(S.boxPanel==="detail"){S.boxPanel=S.boxPanelOrigin||"none";S.boxPanelOrigin="none";S.boxDetail=false;render();return;}if(S.boxPanel!=="none"){S.boxPanel="none";S.boxDetail=false;render();return;}}if(S.stack.length){S.view=S.stack.pop();render();}else if(S.view!=="home"){S.view="home";render();}}
+function openMenuItem(item){if(!item)return;pushView(item.key);}
+function activeModule(){return S.view==="party-detail"?"team":S.view;}
+function renderHome(){
+  const buttons=MENU.map(function(m,i){const icon=m.nativeIcon?'<img class="menu-icon-native" src="assets/menu/native/'+esc(m.nativeIcon)+'" alt="">':m.iconKey?swshIcon(m.iconKey,48).replace('class="swsh-icon ','class="menu-icon-svg swsh-icon '):'<img class="menu-icon-source" src="assets/menu/original/'+esc(m.icon)+'" alt="">';return '<button class="menu-entry selection-target" type="button" data-menu="'+i+'" aria-pressed="'+String(i===S.menu)+'" aria-label="'+esc(m.label)+'"><span class="disc">'+icon+'</span><span class="menu-label">'+esc(m.label)+'</span></button>';}).join("");
+  return '<div class="home-screen"><div class="menu-grid" role="group" aria-label="主菜单">'+buttons+'</div></div>';
+}
+function pokemonBanner(mon,cls){return '<div class="'+cls+'"><span class="pokeball-mark" aria-hidden="true"></span><strong class="banner-name">'+esc(mon.name)+'</strong><span class="banner-level">Lv.'+esc(mon.level)+'</span><span class="banner-gender">'+esc(mon.gender)+'</span></div>';}
+function partyHeroHTML(mon){return '<section class="party-hero"><div class="model-rings" aria-hidden="true"></div>'+monSprite(mon,"profile-sprite")+'<div class="party-hero-info"><strong>'+esc(mon.name)+'</strong><span>'+esc(mon.dex)+'</span>'+typeIconTags(mon.types)+'</div><div class="swsh-preview-controls" role="group" aria-label="切换队伍宝可梦"><button type="button" data-action="party-prev" aria-label="预览上一只宝可梦"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m9 5 7 7-7 7"/></svg></button><span class="swsh-preview-ball" aria-hidden="true"></span><button type="button" data-action="party-next" aria-label="预览下一只宝可梦"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m9 5 7 7-7 7"/></svg></button></div></section>';}
+function renderParty(){
+  const mon=PARTY[S.party];
+  const rows=PARTY.map(function(p,i){return {p:p,i:i};}).filter(function(row){return !!row.p.sprite;}).map(function(row){
+    const p=row.p,parts=p.hp.split("/").map(function(v){return Number(v.trim());}),ratio=parts[1]?Math.round(parts[0]/parts[1]*100):0;
+    return '<button class="party-member selection-target" type="button" data-party="'+row.i+'" aria-pressed="'+String(row.i===S.party)+'" aria-label="'+esc(p.name+"，等级 "+p.level)+'"><img class="member-sprite" src="'+esc(p.sprite)+'" alt=""><span class="member-info"><span class="member-top"><strong>'+esc(p.name)+'</strong><i class="member-gender">'+esc(p.gender)+'</i></span><span class="member-hp"><i class="'+(ratio<30?'low':'')+'" style="width:'+ratio+'%"></i></span><span class="member-bottom"><span>'+esc(p.hp)+'</span>'+typeIconTags(p.types)+'</span></span><span class="member-level">Lv.'+esc(p.level)+'</span></button>';
+  }).join("");
+  return '<div class="party-screen"><section class="party-side"><div class="party-heading"><span aria-label="POKÉMON"></span><small>'+PARTY.filter(function(p){return !!p.sprite;}).length+' / 06</small></div><div class="party-list">'+rows+'</div></section>'+partyHeroHTML(mon)+'</div>';
+}
+function previewParty(i){
+  const mon=PARTY[i];if(!mon||!mon.sprite||i===S.party)return;
+  S.party=i;
+  app.querySelectorAll(".party-member").forEach(function(button){button.setAttribute("aria-pressed",String(Number(button.dataset.party)===i));});
+  const banner=app.querySelector(".party-banner"),hero=app.querySelector(".party-hero");
+  if(banner)banner.outerHTML=pokemonBanner(mon,"party-banner");
+  if(hero)hero.outerHTML=partyHeroHTML(mon);
+}
+function radarMarkup(values,hp){
+  const center={x:150,y:132},radius=91;
+  const angles=[-90,-30,30,90,150,210];
+  const rings=[1,.75,.5,.25].map(function(r){return angles.map(function(a){const rad=a*Math.PI/180;return (center.x+Math.cos(rad)*radius*r).toFixed(1)+","+(center.y+Math.sin(rad)*radius*r).toFixed(1);}).join(" ");}).map(function(points){return '<polygon class="radar-grid" points="'+points+'"></polygon>';}).join("");
+  const max=Math.max.apply(null,values.concat([60]));
+  const points=values.map(function(v,i){const rad=angles[i]*Math.PI/180,radiusValue=radius*Math.max(.12,v/max);return (center.x+Math.cos(rad)*radiusValue).toFixed(1)+","+(center.y+Math.sin(rad)*radiusValue).toFixed(1);}).join(" ");
+  const labels=[['HP',0,150,20],['攻击',1,250,75],['防御',2,245,220],['速度',5,150,258],['特防',4,55,220],['特攻',3,48,75]].map(function(label){return '<text class="radar-label" x="'+label[2]+'" y="'+label[3]+'">'+label[0]+' '+(label[1]===0?hp:values[label[1]])+'</text>';}).join("");
+  return '<svg class="radar-chart" viewBox="0 0 300 270" role="img" aria-label="能力雷达图">'+rings+angles.map(function(a){const rad=a*Math.PI/180;return '<line x1="150" y1="132" x2="'+(150+Math.cos(rad)*radius)+'" y2="'+(132+Math.sin(rad)*radius)+'" stroke="#f7f7f7" stroke-width="2"></line>';}).join("")+'<polygon class="radar-data" points="'+points+'"></polygon>'+labels+'</svg>';
+}
+function renderDetail(){
+  const mon=PARTY[S.party];
+  const tabs=TABS.map(function(tab,i){return '<button class="detail-tab-icon selection-target" type="button" data-tab="'+i+'" aria-pressed="'+String(i===S.tab)+'" aria-label="'+tab+'" title="'+tab+'"></button>';}).join("");
+  let pane="";
+  if(S.tab===0){pane='<div class="profile-overview"><div class="profile-row"><span>名字</span><span>'+esc(mon.name)+'</span></div><div class="profile-row"><span>属性</span><span><b class="profile-type">'+typeIconTags(mon.types)+'</b></span></div><div class="profile-row"><span>初训家</span><span>'+esc(mon.trainer)+'</span></div><div class="profile-row"><span>ID No.</span><span>'+esc(mon.trainerId)+'</span></div><div class="profile-exp"><div class="profile-exp-line"><span>现在的经验值</span><b>'+esc(mon.exp)+'</b></div></div><div class="profile-exp"><div class="profile-exp-line"><span>距离下一级　还有</span><b>'+esc(mon.nextExp)+'</b></div><div class="profile-exp-track"><i></i></div></div><div class="profile-mark-row" aria-label="奖章标记"><span>◉</span><span>●</span><span>▲</span><span>■</span><span>♥</span><span>★</span><span>◆</span></div></div>';}
+  if(S.tab===1){pane='<div class="profile-stats"><div class="radar-wrap">'+radarMarkup(mon.stats,mon.hp)+'</div><div class="profile-stat-foot"><span>极巨化等级</span><b>▰ ▰ ▰ ▰ ▱ ▱ ▱ ▱ ▱ ▱</b></div><div class="profile-stat-foot"><span>特性</span><b>'+esc(mon.ability)+'</b></div><p class="profile-description">'+esc(mon.abilityDescription)+'</p></div>';}
+  if(S.tab===2){pane='<div class="profile-moves">'+mon.moves.map(function(move){return '<div class="profile-move"><strong class="profile-move-name">'+esc(move[0])+'</strong><span class="profile-move-type" data-type="'+esc(move[1])+'">'+typeIconTags([move[1]])+'</span><span class="profile-move-pp">'+esc(move[2])+'/'+esc(move[3])+'</span></div>';}).join("")+'</div>';}
+  if(S.tab===3){pane='<div class="profile-info"><p><span class="emphasis">'+esc(mon.nature)+'</span>的性格。</p><p>'+esc(mon.metDate)+'<br>在<span class="emphasis">'+esc(mon.metPlace)+'</span>，<br>遇见了当时'+esc(mon.metLevel)+'的它。</p><p>身体强壮。</p></div>';}
+  if(S.tab===4){pane='<div class="profile-medals">没有奖章</div>';}
+  return '<div class="detail-screen"><nav class="detail-tabs" role="tablist" aria-label="宝可梦详情分页"><button class="detail-tab-icon" type="button" data-action="prev-tab" aria-label="上一页">‹</button>'+tabs+'<button class="detail-tab-icon" type="button" data-action="next-tab" aria-label="下一页">›</button></nav>'+pokemonBanner(mon,"detail-banner")+'<section class="detail-pane">'+pane+'</section><section class="detail-art"><div class="model-rings" aria-hidden="true"></div>'+monSprite(mon,"profile-sprite")+'</section></div>';
+}
+function updateDexScrollbar(){const list=app.querySelector(".dex-list"),track=app.querySelector(".dex-scrollbar"),thumb=track&&track.querySelector(".dex-scrollbar-thumb");if(!list||!track||!thumb)return;list.onscroll=updateDexScrollbar;const viewport=list.clientHeight,total=list.scrollHeight,trackHeight=track.clientHeight;if(!trackHeight)return;const maxScroll=Math.max(0,total-viewport),thumbHeight=maxScroll?Math.min(trackHeight,Math.max(28,trackHeight*viewport/total)):trackHeight,maxThumbTop=Math.max(0,trackHeight-thumbHeight);thumb.style.height=thumbHeight+"px";thumb.style.top=(maxScroll?maxThumbTop*list.scrollTop/maxScroll:0)+"px";track.classList.toggle("is-disabled",maxScroll<=1);track.setAttribute("aria-valuenow",String(maxScroll?Math.round(list.scrollTop/maxScroll*100):0))}
+function setDexScrollPosition(clientY,track){const list=app.querySelector(".dex-list"),thumb=track&&track.querySelector(".dex-scrollbar-thumb");if(!list||!track||!thumb)return;const r=track.getBoundingClientRect(),travel=r.height-thumb.offsetHeight,max=list.scrollHeight-list.clientHeight;if(travel<=0||max<=0)return;list.scrollTop=Math.max(0,Math.min(1,(clientY-r.top-thumb.offsetHeight/2)/travel))*max;updateDexScrollbar()}
+function renderDex(){
+  const entries=dexCategoryEntries();
+  if(S.dex>=entries.length)S.dex=0;
+  const selected=entries[S.dex]||entries[0]||DEX[0];
+  const rows=entries.map(function(d,i){const p=PARTY[d.index],known=d.caught||d.seen,name=known?d.name:"??????",statusIcon=d.caught?"pokedex_icon_get^s.png":(d.seen?"pokedex_icon_none^s.png":"");const thumb=d.caught&&p?monSprite(p,"sprite-mini"):'<img class="sprite-mini dex-question" src="assets/pokelist/pokedex_icon_not_found^s.png" alt="">';const status=statusIcon?'<img class="dex-pokeball" src="assets/pokelist/'+statusIcon+'" alt="">':'';return '<button class="data-row selection-target" type="button" data-dex="'+i+'" aria-pressed="'+String(i===S.dex)+'"><span class="dex-monid">'+thumb+'<span class="dex-number">No.'+String(d.no).padStart(3,"0")+'</span></span><span class="row-name">'+esc(name)+'</span><span class="row-meta">'+status+'</span></button>';}).join("");
+  return '<div class="dex-layout'+(dexCategoryOpen?' is-category-open':'')+'"><div class="dex-focus">'+dexFocusHTML(selected)+'</div><button class="dex-category-mode" type="button" data-action="dex-mode" aria-label="切换地区或世代图鉴">'+(dexCategoryMode==='region'?'地区':'世代')+'</button><div class="dex-category-picker"><button class="dex-category-select" type="button" data-action="dex-category-toggle" aria-haspopup="listbox" aria-expanded="'+String(dexCategoryOpen)+'" aria-label="选择图鉴分类">'+esc(dexCategoryLabel(dexCategory))+'</button><div class="dex-category-menu" role="listbox" aria-label="图鉴分类"'+(dexCategoryOpen?'':' hidden')+'>'+dexCategoryOptionsHTML()+'</div></div><div class="dex-list" aria-label="图鉴列表">'+rows+'</div><div class="dex-scrollbar" aria-label="图鉴列表滚动条" role="scrollbar" aria-controls="dexRows" aria-orientation="vertical" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" tabindex="0"><span class="dex-scrollbar-thumb"></span></div></div>';
+}
+function dexFocusHTML(d){const p=d&&d.index>=0?PARTY[d.index]:null,known=!!(d&&d.caught||d&&d.seen),name=known?d.name:"未知宝可梦",heroSprite=p&&p.sprite?p.sprite:"";return '<div class="detail-stage">'+(d&&d.caught&&heroSprite?'<img class="big-sprite" src="'+esc(heroSprite)+'" alt="">':'<span class="big-sprite empty-mon">?</span>')+'<span class="stage-name">'+esc(name)+'</span><div class="dex-data"><div class="dex-number">No.'+String(d&&d.no||'000').padStart(3,"0")+'</div><h2>'+esc(known?d.name:"??????")+'</h2><div class="count-pair"><span class="count-chip">遇见 '+(d&&d.seen?"✓":"—")+'</span><span class="count-chip">捕获 '+(d&&d.caught?"✓":"—")+'</span></div><p class="stage-sub">'+(known?'已记录的宝可梦。':'尚未发现此宝可梦。')+'</p></div></div>';}
+function bagIconMarkup(bag){return '<img class="bag-cat-icon" src="assets/bag-categories/'+esc(bag.icon)+'" alt="">';}
+function bagRibbonMarkup(layout,bag){
+  const width=48,left=26;
+  return '<div class="bag-ribbon-track bag-ribbon-track--'+esc(layout)+'" aria-hidden="true"><span class="bag-slant bag-slant--'+esc(layout)+'" style="--bag-ribbon-left:'+left+'%;--bag-ribbon-width:'+width+'%;--bag-ribbon-color:'+esc(bag.color)+'">'+esc(bag.name)+'</span></div>';
+}
+function partyRowsMarkup(){
+  return PARTY.filter(function(p){return !!p.sprite;}).map(function(p){
+    const i=PARTY.indexOf(p),parts=p.hp.split("/").map(function(v){return Number(v.trim());}),ratio=parts[1]?Math.round(parts[0]/parts[1]*100):0;
+    return '<button class="party-member selection-target" type="button" data-party="'+i+'" aria-pressed="'+String(i===S.party)+'" aria-label="'+esc(p.name+"，等级 "+p.level)+'"><img class="member-sprite" src="'+esc(p.sprite)+'" alt=""><span class="member-info"><span class="member-top"><strong>'+esc(p.name)+'</strong><i class="member-gender">'+esc(p.gender)+'</i></span><span class="member-hp"><i class="'+(ratio<30?'low':'')+'" style="width:'+ratio+'%"></i></span><span class="member-bottom"><span>'+esc(p.hp)+'</span>'+typeIconTags(p.types)+'</span></span><span class="member-level">Lv.'+esc(p.level)+'</span></button>';
+  }).join("");
+}
+function renderBag(){
+  const bag=BAGS[S.bag],items=bag.items;
+  const cats=BAGS.map(function(b,i){return '<button class="selection-target" type="button" data-bag="'+i+'" aria-label="'+esc(b.name)+'" aria-pressed="'+String(i===S.bag)+'" style="--bag-cat-color:'+b.color+'">'+bagIconMarkup(b)+'<span>'+esc(b.name)+'</span></button>';}).join("");
+  const selected=items[S.item];
+  const bagLayout=demo.dataset.layout==="portrait"?"portrait":"landscape";
+  const nav='<div class="bag-category-nav" style="--bag-cat-color:'+bag.color+'"><button type="button" data-action="bag-prev" aria-label="上一类"></button><div class="bag-cats" role="tablist" aria-label="背包分类">'+cats+'</div><button type="button" data-action="bag-next" aria-label="下一类"></button></div>';
+  return '<div class="bag-layout bag-layout--'+bagLayout+'" data-bag-layout="'+bagLayout+'"><header class="bag-heading"><img src="assets/bag/bag-title-black.png" alt="BAG"></header><section class="bag-content"><div class="bag-content-head"><span class="bag-content-title">'+esc(bag.name)+'</span><span class="bag-money">₽ 31,400</span></div>'+nav+bagRibbonMarkup('landscape',bag)+bagRibbonMarkup('portrait',bag)+'<div class="item-list">'+bagRowsMarkup(items)+'</div></section><section class="item-description">'+bagDescriptionMarkup(selected)+'</section></div>';
+}
+function bagRowsMarkup(items){return items.map(function(it,i){return '<button class="item-row selection-target" type="button" data-item="'+i+'" aria-pressed="'+String(i===S.item)+'"><img class="item-icon" src="assets/bag/items/item_'+esc(it[3]||"0017")+'.png" alt=""><span class="row-name">'+esc(it[0])+'</span><span class="row-meta"><span>×</span><b>'+it[2]+'</b></span></button>';}).join("");}
+function bagDescriptionMarkup(item){return '<h3>'+esc(item[0])+'</h3><p>'+esc(item[1])+'</p><p style="margin-top:9px">持有数量：×'+item[2]+'</p>';}
+function updateDexSelection(i){const entries=dexCategoryEntries();if(!entries[i]||S.dex===i)return;S.dex=i;app.querySelectorAll(".data-row").forEach(function(row){row.setAttribute("aria-pressed",String(Number(row.dataset.dex)===i));});const focus=app.querySelector(".dex-focus");if(focus)focus.innerHTML=dexFocusHTML(entries[i]);updateSelectionArrow();}
+function updateBagRibbon(){
+  const bag=BAGS[S.bag];if(!bag)return;
+  const width=48,left=26;
+  const title=app.querySelector('.bag-content-title');if(title)title.textContent=bag.name;
+  app.querySelectorAll(".bag-slant").forEach(function(ribbon){
+    ribbon.style.setProperty("--bag-ribbon-left",left+"%");
+    ribbon.style.setProperty("--bag-ribbon-width",width+"%");
+    ribbon.style.setProperty("--bag-ribbon-color",bag.color);
+    ribbon.textContent=bag.name;
+  });
+  const nav=app.querySelector(".bag-category-nav");
+  if(nav)nav.style.setProperty("--bag-cat-color",bag.color);
+}
+function updateBagCategory(i){if(!BAGS[i])return;S.bag=i;S.item=0;app.querySelectorAll(".bag-cats button").forEach(function(button){button.setAttribute("aria-pressed",String(Number(button.dataset.bag)===i));});updateBagRibbon();const list=app.querySelector(".item-list");if(list)list.innerHTML=bagRowsMarkup(BAGS[i].items);updateBagSelection(0);}
+function updateBagSelection(i){const bag=BAGS[S.bag];if(!bag||!bag.items[i])return;S.item=i;app.querySelectorAll(".item-row").forEach(function(row){row.setAttribute("aria-pressed",String(Number(row.dataset.item)===i));});const box=app.querySelector(".item-description");if(box)box.innerHTML=bagDescriptionMarkup(bag.items[i]);updateSelectionArrow();}
+function renderSettings(){const rows=SETTINGS.map(function(setting,i){const values=setting.values.map(function(value,j){return '<button class="setting-option" type="button" data-setting-option="'+j+'" aria-pressed="'+String(S.settingValues[i]===j)+'" aria-label="'+esc(setting.name)+'：'+esc(value)+'">'+esc(value)+'</button>';}).join('');return '<div class="setting-row setting-row--'+(setting.values.length===3?'three':'two')+(S.setting===i?' is-selected':'')+'" data-setting="'+i+'" tabindex="-1" aria-selected="'+String(S.setting===i)+'"><span class="setting-focus-base" aria-hidden="true"></span><span class="setting-label">'+esc(setting.name)+'</span>'+values+'</div>';}).join('');return '<section class="settings-screen" aria-label="设置"><img class="settings-title" src="assets/settings/scene-title-option-mask.png" alt="OPTION"><div class="settings-rows" role="list" aria-label="选项">'+rows+'</div><div class="settings-scrollbar" aria-hidden="true"><span class="settings-scrollbar-thumb"></span></div></section>';}
+function renderMap(){return '<div class="map-area" aria-label="示意地图"><div class="map-path"></div><span class="map-point" style="left:16%;top:27%"><b></b>木杆镇</span><span class="map-point" style="left:46%;top:53%"><b></b>机擎市</span><span class="map-point" style="left:76%;top:29%"><b></b>拳关市</span><span class="map-point" style="left:69%;top:72%"><b></b>旷野地带</span></div>';}
+function boxCurrentPokemon(){return S.boxMon===null||S.boxMon===undefined?null:PARTY[S.boxMon]||null;}
+function boxPartySlots(){return Array.from({length:6},function(_,slot){const pokemonIndex=BOX_TEAM.party[slot];return pokemonIndex===null||pokemonIndex===undefined?null:pokemonIndex;});}function boxPartyCount(){return boxPartySlots().filter(function(pokemonIndex){return pokemonIndex!==null;}).length;}function boxTransferLabel(){return S.boxSource==="party"?"放入当前盒子":"取出到队伍中";}
+function boxDetailActionHTML(mon){if(!mon)return "";return '<div class="box-info-actions"><button class="box-transfer-action" type="button" data-action="box-transfer-open">'+esc(boxTransferLabel())+'</button></div>';}
+function closeBoxModal(){const modal=$("#boxModal");if(!modal)return;modal.hidden=true;boxModalConfirm=null;$("#boxModalBody").innerHTML="";}
+function openBoxRenameModal(){const box=BOXES[S.box],modal=$("#boxModal");$("#boxModalTitle").textContent="修改盒子名称";$("#boxModalBody").innerHTML='<p class="box-modal-help">为当前盒子输入一个名称。</p><input class="box-modal-input" id="boxModalInput" type="text" maxlength="20" value="'+esc(box.name)+'" aria-label="盒子名称">';$(".box-modal-confirm",modal).textContent="保存";boxModalConfirm=function(){const input=$("#boxModalInput"),name=input&&input.value.trim();if(!name){if(input)input.focus();return;}box.name=name;closeBoxModal();render();};modal.hidden=false;const input=$("#boxModalInput");input.focus();input.select();}
+function openBoxTransferModal(){const mon=boxCurrentPokemon();if(!mon)return;if(S.boxSource==="party"){$("#boxModalTitle").textContent="放入当前盒子？";$("#boxModalBody").innerHTML='<p class="box-modal-help">'+esc(mon.name)+' 将从队伍移出，放入“'+esc(BOXES[S.box].name)+'”。</p>';$(".box-modal-confirm").textContent="放入当前盒子";boxModalConfirm=function(){transferBoxPokemon();closeBoxModal();};$("#boxModal").hidden=false;return;}const slots=boxPartySlots().map(function(index,slot){const occupied=index!==null,label=occupied?PARTY[index].name:"空位";return '<button class="box-modal-slot" type="button" data-modal-slot="'+slot+'" aria-pressed="false"'+(occupied?' disabled aria-disabled="true"':'')+'>'+String(slot+1)+' 号位<small>'+esc(label)+'</small></button>';}).join('');$("#boxModalTitle").textContent="选择队伍位置";$("#boxModalBody").innerHTML='<p class="box-modal-help">选择要放入的队伍位置。已有宝可梦的位置不可选。</p><div class="box-modal-slot-grid">'+slots+'</div>';$(".box-modal-confirm").textContent="取出到队伍中";boxModalConfirm=function(){const selected=$(".box-modal-slot[aria-pressed=true]");if(!selected)return;const position=Number(selected.dataset.modalSlot),pokemonIndex=S.boxMon,list=BOXES[S.box].pokemon,at=list.indexOf(pokemonIndex);if(BOX_TEAM.party[position]!==null&&BOX_TEAM.party[position]!==undefined)return;if(at>=0)list.splice(at,1);BOX_TEAM.party[position]=pokemonIndex;S.boxSource="party";S.boxDetail=true;closeBoxModal();render();};$("#boxModal").hidden=false;const first=$(".box-modal-slot:not(:disabled)");if(first)first.setAttribute("aria-pressed","true");}
+const TYPE_ICON_KEYS={"一般":"normal","格斗":"kakutou","飞行":"hikou","毒":"doku","地面":"jimen","岩石":"iwa","虫":"mushi","幽灵":"ghost","钢":"hagane","火":"honoo","水":"mizu","草":"kusa","电":"denki","超能力":"esper","冰":"koori","龙":"dragon","恶":"aku","妖精":"yousei"};
+function typeIconTags(types){return '<span class="box-type-row">'+types.map(function(type){const key=TYPE_ICON_KEYS[type]||"normal";return '<img class="box-type" src="assets/types/'+key+'.png" alt="'+esc(type)+'" title="'+esc(type)+'">';}).join('')+'</span>';}
+function boxTypeTags(mon){return '<div class="box-type-row">'+mon.types.map(function(type){const key=TYPE_ICON_KEYS[type]||"normal";return '<img class="box-type" src="assets/types/'+key+'.png" alt="'+esc(type)+'" title="'+esc(type)+'">';}).join('')+'</div>';}
+function boxPreviewHTML(mon){return boxDetailHTML(mon);}function boxDetailHTML(mon){if(!mon)return '<div class="box-empty-preview"><div>点击队伍或盒子里的宝可梦查看资料<small>悬停只显示名称和等级</small></div></div>';const stats=STAT_NAMES.map(function(name,i){return '<div class="box-stat"><span>'+esc(name)+'</span><b>'+esc(mon.stats[i])+'</b></div>';}).join('');const moves=mon.moves.map(function(move){return '<div class="box-move"><strong>'+esc(move[0])+'</strong><span>'+esc(move[1])+'</span><small>'+esc(move[2])+'/'+esc(move[3])+' PP</small></div>';}).join('');const facts='<div class="box-detail-facts"><span>编号</span><b>'+esc(mon.dex)+'</b><span>性别</span><b>'+esc(mon.gender)+'</b><span>HP</span><b>'+esc(mon.hp)+'</b><span>持有物</span><b>'+esc(mon.held||"无")+'</b><span>性格</span><b>'+esc(mon.nature)+'性格</b><span>训练家</span><b>'+esc(mon.trainer)+' · '+esc(mon.trainerId)+'</b></div>';return '<article class="box-detail-card"><header class="box-detail-top"><strong>'+esc(mon.name)+'</strong><span>Lv.'+esc(mon.level)+'</span></header><div class="box-detail-content"><div class="box-detail-hero"><div class="box-detail-art">'+monSprite(mon,"box-detail-sprite")+'</div><div class="box-detail-hero-meta">'+boxTypeTags(mon)+'<p>特性：'+esc(mon.ability)+'</p></div></div>'+facts+'<div class="box-stat-grid">'+stats+'</div><div class="box-ability"><span>特性说明</span><strong>'+esc(mon.ability)+'</strong><small>'+esc(mon.abilityDescription)+'</small></div><section class="box-moves"><h4>招式</h4>'+moves+'</section>'+boxDetailActionHTML(mon)+'</div></article>';}
+function boxPortraitPreviewHTML(mon){return boxDetailHTML(mon);}function boxPartyMarkup(){return boxPartySlots().map(function(pokemonIndex){if(pokemonIndex===null)return `<div class='box-party-row box-party-row--empty' aria-hidden='true'></div>`;const mon=PARTY[pokemonIndex];return `<button class='box-party-row' type='button' data-boxparty='${pokemonIndex}' aria-pressed='${String(S.boxSource==='party'&&S.boxMon===pokemonIndex)}' aria-label='预览队伍中的${esc(mon.name)}'>${monSprite(mon,'box-party-sprite')}<span class='box-party-meta'><strong>${esc(mon.name)}</strong>${typeIconTags(mon.types)}</span><span class='box-party-level'>Lv.${esc(mon.level)}</span></button>`;}).join('');}
+function renderBoxPage(){const box=BOXES[S.box],mon=boxCurrentPokemon(),count=box.pokemon.length,slotCount=count<20?25:30+Math.max(0,Math.ceil((count-25)/5))*5,isScrollable=count>=20,slots=Array.from({length:slotCount},function(_,slot){const pokemonIndex=box.pokemon[slot];if(pokemonIndex===undefined)return '<div class="box-slot is-empty" aria-hidden="true"></div>';const p=PARTY[pokemonIndex];return '<button class="box-slot" type="button" data-boxmon="'+pokemonIndex+'" aria-label="'+esc(p.name)+', '+esc(p.dex)+'" aria-pressed="'+String(S.boxSource==="box"&&S.boxMon===pokemonIndex)+'"><span class="box-slot-art">'+monSprite(p,"box-slot-sprite")+'</span><span class="box-slot-hover-label"><b>'+esc(p.name)+'</b><small>Lv.'+esc(p.level)+'</small></span></button>';}).join('');const boxOptions=BOXES.map(function(item,index){return '<option value="'+index+'"'+(index===S.box?' selected':'')+'>'+esc(item.name)+'</option>';}).join('');const boxNav='<header class="box-storage-head"><button class="box-switch" type="button" data-action="box-prev" aria-label="上一个盒子">'+swshIcon("chevron",24)+'</button><button class="box-portrait-team-toggle" type="button" data-action="box-team-open" aria-label="打开队伍">队伍</button><select class="box-title-select" data-action="box-select" aria-label="选择盒子">'+boxOptions+'</select><button class="box-rename-button" type="button" data-action="box-rename" aria-label="修改盒子名称"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20h4L19 9l-4-4L4 16v4Z"/><path d="m13.5 6.5 4 4"/></svg></button><button class="box-new-button" type="button" data-action="box-new" aria-label="新建盒子">＋</button><button class="box-switch" type="button" data-action="box-next" aria-label="下一个盒子">'+swshIcon("chevron",24)+'</button></header>';return '<div class="box-screen box-screen--landscape" data-panel="'+esc(S.boxPanel)+'"><button class="box-portrait-scrim" type="button" data-action="box-panel-close" aria-label="关闭面板"></button><aside class="box-team-pane"><div class="box-team-heading"><span>队伍</span></div><div class="box-team-list">'+boxPartyMarkup()+'</div></aside><section class="box-storage-pane">'+boxNav+'<div class="box-grid'+(isScrollable?' is-scrollable':'')+'" role="grid" aria-label="'+esc(box.name)+'，'+slotCount+'个储存位">'+slots+'</div></section><aside class="box-info-pane" aria-live="polite">'+boxDetailHTML(mon)+'</aside><nav class="box-party-strip" aria-label="队伍宝可梦">'+boxPartySlots().map(function(pokemonIndex){if(pokemonIndex===null)return '<span class="box-party-chip box-party-chip--empty" aria-hidden="true"></span>';const p=PARTY[pokemonIndex];return '<button class="box-party-chip" type="button" data-boxparty="'+pokemonIndex+'" aria-label="'+esc(p.name)+'" aria-pressed="'+String(S.boxSource==="party"&&S.boxMon===pokemonIndex)+'">'+monSprite(p,"box-party-chip-sprite")+'</button>';}).join('')+'</nav><section class="box-portrait-preview" aria-live="polite">'+boxPortraitPreviewHTML(mon)+'</section><section class="box-detail-overlay" '+(S.boxPanel==="detail"?"":"hidden")+' aria-label="宝可梦详细资料">'+(S.boxPanel==="detail"?boxDetailHTML(mon):"")+'</section><div class="box-info-scrollbar" aria-hidden="true"><span class="box-info-scrollbar-thumb"></span></div></div>';}
+function updateBoxSelection(index,source){S.boxSource=source;S.boxMon=index;S.boxDetail=true;const portraitLayout=document.querySelector('.demo[data-layout="portrait"]');if(S.view==="box"&&portraitLayout){S.boxPanelOrigin=S.boxPanel==="team"?"team":"none";S.boxPanel="detail";render();return;}const mon=boxCurrentPokemon();app.querySelectorAll(".box-slot[data-boxmon]").forEach(function(button){button.setAttribute("aria-pressed",String(source==="box"&&Number(button.dataset.boxmon)===index));});app.querySelectorAll("[data-boxparty]").forEach(function(button){button.setAttribute("aria-pressed",String(source==="party"&&Number(button.dataset.boxparty)===index));});const info=app.querySelector(".box-info-pane"),portrait=app.querySelector(".box-portrait-preview"),overlay=app.querySelector(".box-detail-overlay");if(info)info.innerHTML=boxDetailHTML(mon);if(portrait)portrait.innerHTML=boxPortraitPreviewHTML(mon);if(overlay){overlay.innerHTML=boxDetailHTML(mon);overlay.hidden=true;}updateBoxInfoScrollbar();}
+function setBoxDetail(open){S.boxDetail=!!open;if(S.view==="box"&&document.querySelector('.demo[data-layout="portrait"]')){if(open){if(S.boxPanel!=="detail")S.boxPanelOrigin=S.boxPanel==="team"?"team":"none";S.boxPanel="detail";}else{S.boxPanel=S.boxPanelOrigin||"none";S.boxPanelOrigin="none";}render();return;}const info=app.querySelector(".box-info-pane");if(info)info.innerHTML=boxDetailHTML(boxCurrentPokemon());updateBoxInfoScrollbar();}
+function transferBoxPokemon(){const mon=boxCurrentPokemon();if(!mon)return;const pokemonIndex=S.boxMon;if(S.boxSource==="box"){const emptySlot=BOX_TEAM.party.findIndex(function(value){return value===null||value===undefined;});if(emptySlot<0)return;const list=BOXES[S.box].pokemon;const at=list.indexOf(pokemonIndex);if(at>=0)list.splice(at,1);BOX_TEAM.party[emptySlot]=pokemonIndex;S.boxSource="party";S.boxMon=pokemonIndex;}else{const at=BOX_TEAM.party.indexOf(pokemonIndex);if(at>=0)BOX_TEAM.party[at]=null;if(BOXES[S.box].pokemon.indexOf(pokemonIndex)<0)BOXES[S.box].pokemon.push(pokemonIndex);S.boxSource="box";S.boxMon=pokemonIndex;}S.boxDetail=true;render();}
+function createNewBox(){BOXES.push({name:"新建盒子 "+String(BOXES.length+1),pokemon:[]});S.box=BOXES.length-1;S.boxMon=null;S.boxSource="box";S.boxDetail=false;render();}
+function stepBox(direction){S.box=(S.box+direction+BOXES.length)%BOXES.length;S.boxDetail=false;const first=BOXES[S.box].pokemon[0];S.boxSource="box";S.boxMon=first===undefined?null:first;render();}function scaffoldIcon(key){return swshIcon(key,32);}
+function scaffoldPage(key){
+  if(key==='box')return renderBoxPage();
+  const item=MENU.find(function(m){return m.key===key;});if(!item)return '<div class="empty-state"><div><h2>菜单</h2><p>尚无此页面。</p></div></div>';
+  const head='<header class="module-heading"><div><h2>'+esc(item.label)+'</h2><p>页面结构示意 · 当前为静态交互样稿</p></div><span class="module-kicker">'+esc(item.title)+'</span></header>';
+  let body='';
+  if(key==="badge")body='<div class="module-content scaffold-grid"><article class="scaffold-card"><div class="scaffold-icon"><img src="assets/menu/native/icon_license.png" alt=""></div><strong>训练家资料</strong><p>姓名、训练家编号与冒险记录。</p></article><article class="scaffold-card"><div class="scaffold-icon">'+scaffoldIcon("map")+'</div><strong>道馆挑战</strong><p>收集进度和联盟挑战状态。</p></article><article class="scaffold-card"><div class="scaffold-icon">'+scaffoldIcon("news")+'</div><strong>卡片外观</strong><p>展示卡背景与装饰的预览区域。</p></article><article class="scaffold-card"><strong>伯劳</strong><p>训练家编号　852516</p></article><article class="scaffold-card"><strong>冒险时间</strong><p>旅途记录将在此显示。</p></article><article class="scaffold-card"><strong>联盟资料</strong><p>徽章与挑战信息将在此汇总。</p></article></div>';
+  if(key==="relations")body='<div class="module-content scaffold-list"><div class="section-label"><span>旅途中遇见的人</span><span>关系资料</span></div>'+[['赫普','劲敌 · 木杆镇','rivals'],['丹帝','冠军 · 伽勒尔','badge'],['索妮亚','研究者 · 宝可梦博士的孙女','news'],['玛俐','训练家 · 尖钉镇','rel']].map(function(row){return '<div class="scaffold-row"><span class="scaffold-icon">'+scaffoldIcon(row[2])+'</span><strong>'+esc(row[0])+'</strong><span class="row-meta">'+esc(row[1])+'</span></div>';}).join('')+'</div>';
+  if(key==="world")body='<div class="module-content world-map"><div class="world-route"></div><span class="world-stop" style="left:8%;top:18%"><i></i>木杆镇</span><span class="world-stop" style="left:37%;top:38%"><i></i>机擎市</span><span class="world-stop" style="left:65%;top:17%"><i></i>拳关市</span><span class="world-stop" style="left:49%;top:68%"><i></i>旷野地带</span><span class="world-stop" style="right:6%;bottom:12%"><i></i>冠军杯</span></div>';
+  if(key==="battle")body='<div class="module-content battle-arenas"><article class="battle-arena"><small>WILD AREA</small><strong>旷野对战</strong><p>遭遇与战斗信息展示区域</p></article><article class="battle-arena"><small>STADIUM</small><strong>竞技场</strong><p>对战队伍与状态展示区域</p></article></div>';
+  return '<div class="module-scaffold">'+head+body+'</div>';
+}
+function actionKey(key){return '<img class="action-key" src="assets/menu/original/button_icon_'+key+'_00^t.png" alt="'+key+'">';}
+function actionMarkup(){if(S.view==="home")return '<span class="action">'+actionKey("A")+'确定</span>';if(S.view==="team")return '<span class="action">'+actionKey("A")+'确定</span><span class="action">'+actionKey("Y")+'替换宝可梦</span><button class="action action-back" type="button" data-action="back">'+actionKey("B")+'返回</button>';if(S.view==="party-detail")return '<span class="action">'+actionKey("A")+'持有物</span><span class="action">'+actionKey("X")+'标记</span><button class="action action-back" type="button" data-action="back">'+actionKey("B")+'返回</button>';if(S.view==="dex")return '<span class="action">'+actionKey("A")+'选择条目</span><button class="action action-back" type="button" data-action="back">'+actionKey("B")+'返回菜单</button>';if(S.view==="settings")return '<span class="action">'+actionKey("A")+'确定</span><button class="action action-back" type="button" data-action="settings-reset">'+actionKey("Y")+'初始化</button><button class="action action-back" type="button" data-action="back">'+actionKey("B")+'保存设置后退出</button>';return '<span class="action">'+actionKey("A")+'确认</span><button class="action action-back" type="button" data-action="back">'+actionKey("B")+'返回</button>';}
+function updateRelationDetail(i){
+  const stat=swshBridge.getStat(),rels=swshBridge.getRelations(stat);
+  if(!rels[i])return;
+  S.relation=i;
+  app.querySelectorAll('.relation-row').forEach(function(r){r.setAttribute('aria-pressed',String(Number(r.dataset.relation)===i));});
+  // Update portrait pane
+  const sel=rels[i];
+  const pct=Math.round(Math.min(100,Math.max(0,sel.好感度)));
+  const rc=sel.role==='劲敌'?'rival':sel.role==='通讯录'?'contact':'relations';
+  const portraitPane=app.querySelector('.relations-portrait-pane');
+  if(portraitPane)portraitPane.innerHTML=
+    '<div class="relations-avatar-placeholder">'+swshIcon(rc==='rival'?'rivals':rc==='contact'?'command':'rel',64)+'</div>'+
+    '<div class="relations-name-tag"><strong>'+esc(sel.name)+'</strong>'+
+    '<span>好感度 '+pct+'／100</span></div>';
+  updateSelectionArrow();
+}
+function renderRelations(){
+  const stat=swshBridge.getStat(),rels=swshBridge.getRelations(stat);
+  if(!rels.length)return '<div class="module-scaffold"><header class="module-heading"><div><h2>人际关系</h2><p>尚无关系记录。</p></div><span class="module-kicker">RELATIONSHIPS</span></header></div>';
+  const idx=Math.max(0,Math.min(S.relation,rels.length-1));
+  const sel=rels[idx];
+  const rc=sel.role==='劲敌'?'rival':sel.role==='通讯录'?'contact':'relations';
+  const selPct=Math.round(Math.min(100,Math.max(0,sel.好感度)));
+  const portraitHTML=
+    '<div class="relations-avatar-placeholder">'+swshIcon(rc==='rival'?'rivals':rc==='contact'?'command':'rel',64)+'</div>'+
+    '<div class="relations-name-tag"><strong>'+esc(sel.name)+'</strong>'+
+    '<span>好感度 '+selPct+'／100</span></div>';
+  const rows=rels.map(function(r,i){
+    const pct=Math.round(Math.min(100,Math.max(0,r.好感度)));
+    const rtag=r.role==='劲敌'?'rival':r.role==='通讯录'?'contact':'relations';
+    return '<button class="relation-row selection-target" type="button" data-relation="'+i+'" aria-pressed="'+String(i===idx)+'">'+
+      '<span class="relation-row-left">'+
+        '<span class="relation-name">'+esc(r.name)+'</span>'+
+        '<span class="relation-role-tag relation-role-tag--'+rtag+'">'+esc(r.role)+'</span>'+
+      '</span>'+
+      '<span class="relation-affinity-mini">'+
+        '<span class="affinity-num">'+pct+'</span>'+
+        '<span class="affinity-bar-mini"><i class="affinity-fill" style="width:'+pct+'%"></i></span>'+
+      '</span>'+
+    '</button>';
+  }).join('');
+  return '<div class="relations-screen">'+
+    '<div class="relations-portrait-pane">'+portraitHTML+'</div>'+
+    '<div class="relations-list-pane"><div class="section-label"><span>旅途中遇见的人</span><span>'+rels.length+' 人</span></div>'+rows+'</div>'+
+  '</div>';
+}
+function renderMapPage(){
+  const stat=swshBridge.getStat(),env=stat.环境||{},events=stat.世界事件||{};
+  const cur=env.当前地点||'未知地点';
+  const nodes=[
+    {n:'木杆镇',x:'12%',y:'25%'},{n:'机擎市',x:'40%',y:'50%'},
+    {n:'尖钉镇',x:'24%',y:'72%'},{n:'拳关市',x:'64%',y:'24%'},
+    {n:'旷野地带',x:'50%',y:'64%'},{n:'独剑镇',x:'78%',y:'50%'},
+    {n:'锤锤市',x:'64%',y:'80%'}
+  ];
+  const mapNodes=nodes.map(function(nd){
+    const isCur=nd.n===cur||cur.indexOf(nd.n)>=0||nd.n.indexOf(cur)>=0;
+    return '<span class="map-node'+(isCur?' is-current':'')+'" style="left:'+nd.x+';top:'+nd.y+'"><b></b><span>'+esc(nd.n)+'</span></span>';
+  }).join('');
+  const routes=[
+    {x:'12%',y:'40%',w:'30%',r:'-10deg'},{x:'40%',y:'50%',w:'26%',r:'-22deg'},
+    {x:'40%',y:'56%',w:'22%',r:'18deg'},{x:'62%',y:'60%',w:'18%',r:'28deg'}
+  ].map(function(rt){
+    return '<span class="map-route-line" style="left:'+rt.x+';top:'+rt.y+';width:'+rt.w+';transform:rotate('+rt.r+')"></span>';
+  }).join('');
+  return '<div class="map-screen">'+
+    '<div class="map-info-card">'+
+      '<div class="map-location-label">CURRENT LOCATION</div>'+
+      '<div class="map-current-location">'+esc(cur)+'</div>'+
+      (env.日期?'<div class="map-meta-row"><b>日期</b><span>'+esc(env.日期)+'</span></div>':'')+
+      (env.时间?'<div class="map-meta-row"><b>时间</b><span>'+esc(env.时间)+'</span></div>':'')+
+      (env.赛程?'<div class="map-meta-row"><b>赛程</b><span>'+esc(env.赛程)+'</span></div>':'')+
+      (events.区域动态?'<div class="map-nearby-card"><div class="map-nearby-title">区域动态</div>'+esc(events.区域动态)+'</div>':'')+
+    '</div>'+
+    '<div class="map-canvas">'+routes+mapNodes+'</div>'+
+  '</div>';
+}
+function renderWorld(){
+  const stat=swshBridge.getStat(),tasks=stat.任务||{},events=stat.世界事件||{},env=stat.环境||{};
+  const chips=[['地点',env.当前地点],['日期',env.日期],['时间',env.时间],['赛程',env.赛程]]
+    .filter(function(c){return !!c[1];})
+    .map(function(c){return '<span class="world-env-chip"><span>'+esc(c[0])+'</span><b>'+esc(c[1])+'</b></span>';}).join('');
+  const tDefs=[{k:'主线',l:'MAIN QUEST',c:'#e33241'},{k:'支线',l:'SIDE QUEST',c:'#5482b7'},{k:'传说',l:'LEGEND',c:'#8f70aa'}];
+  const taskHTML=tDefs.map(function(t){
+    const txt=tasks[t.k];
+    return '<div class="world-task-card">'+
+      '<div class="world-task-type" style="color:'+t.c+'">'+t.l+'</div>'+
+      '<div class="world-task-text'+(txt?'':' world-task-empty')+'">'+esc(txt||'暂无任务')+'</div>'+
+    '</div>';
+  }).join('');
+  const evDefs=[['附近遭遇',events.附近遭遇],['地区新闻',events.地区新闻],['区域动态',events.区域动态]].filter(function(e){return !!e[1];});
+  const evHTML=evDefs.map(function(e){
+    return '<div class="world-event-card">'+
+      '<div class="world-event-type">'+esc(e[0])+'</div>'+
+      '<div class="world-event-text">'+esc(e[1])+'</div>'+
+    '</div>';
+  }).join('');
+  return '<div class="world-screen">'+
+    '<div class="world-env-strip">'+chips+'</div>'+
+    '<div class="world-tasks"><div class="world-section-title">任务 · QUESTS</div>'+taskHTML+'</div>'+
+    '<div class="world-events"><div class="world-section-title">世界事件 · EVENTS</div>'+evHTML+'</div>'+
+  '</div>';
+}
+function render(){
+  const view=S.view,module=activeModule();
+  app.dataset.view=view;app.dataset.module=module;app.dataset.theme=S.theme;
+  // 注入地图/世界水印：把对应菜单图标SVG写入backdrop::after的CSS变量
+  (function injectWatermark(){
+    const wm={map:'map',world:'globe',relations:'rel'};
+    const key=wm[module];
+    if(key){
+      const svgRaw=swshIcon(key,180);
+      // Extract viewBox and paths, encode as data:image/svg+xml
+      const colored=svgRaw.replace('stroke="currentColor"','stroke="#888"');
+      const encoded='url("data:image/svg+xml,'+encodeURIComponent(colored)+'")';
+      // Set as CSS variable on the app element
+      app.style.setProperty('--module-watermark-url',encoded);
+    } else {
+      app.style.setProperty('--module-watermark-url','none');
+    }
+  })();
+  let content="";
+  if(view==="home")content=renderHome();
+  else if(view==="team")content=renderParty();
+  else if(view==="party-detail")content=renderDetail();
+  else if(view==="dex"){content=renderDex();loadDexCatalog();}
+  else if(view==="bag")content=renderBag();
+  else if(view==="settings")content=renderSettings();
+  else if(view==="map")content=renderMapPage();
+  else if(view==="relations")content=renderRelations();
+  else if(view==="world")content=renderWorld();
+  else content=scaffoldPage(view);
+  $("#screenContent").innerHTML=content;$("#actionbar").innerHTML=actionMarkup();
+  if(view==="settings"){const list=app.querySelector(".settings-rows"),track=app.querySelector(".settings-scrollbar");if(list){list.id="settingsRows";list.addEventListener("scroll",updateSettingsScrollbar,{passive:true});}if(track){track.removeAttribute("aria-hidden");track.setAttribute("role","scrollbar");track.setAttribute("aria-label","设置列表滚动条");track.setAttribute("aria-controls","settingsRows");track.setAttribute("aria-orientation","vertical");track.setAttribute("aria-valuemin","0");track.setAttribute("aria-valuemax","100");track.tabIndex=0;}requestAnimationFrame(updateSettingsScrollbar);}if(view==="dex"){const list=app.querySelector(".dex-list"),track=app.querySelector(".dex-scrollbar");if(list)list.id="dexRows";if(track){track.removeAttribute("aria-hidden");track.setAttribute("role","scrollbar");track.setAttribute("aria-label","图鉴列表滚动条");track.setAttribute("aria-controls","dexRows");track.setAttribute("aria-orientation","vertical");track.setAttribute("aria-valuemin","0");track.setAttribute("aria-valuemax","100");track.tabIndex=0;}requestAnimationFrame(updateDexScrollbar);}if(view==="box")requestAnimationFrame(updateBoxInfoScrollbar);
+  if(hoveredSelection&&!app.contains(hoveredSelection))hoveredSelection=null;
+  if(focusedSelection&&!app.contains(focusedSelection))focusedSelection=null;
+  updateSelectionArrow();
+}
+function selectParty(i){if(!PARTY[i])return;S.party=i;render();}
+function stepParty(direction){const available=PARTY.map(function(p,i){return p.sprite?i:-1;}).filter(function(i){return i>=0;});if(!available.length)return;let at=available.indexOf(S.party);at=(at+direction+available.length)%available.length;selectParty(available[at]);}
+function selectDex(i){updateDexSelection(i);}
+function openDetails(){if(!PARTY[S.party].sprite){feedback("空位没有宝可梦资料");return;}S.tab=0;pushView("party-detail");}
+document.addEventListener("pointerdown",function(event){
+  const track=event.target.closest&&event.target.closest(".settings-scrollbar");
+  if(!track||S.view!=="settings"||track.classList.contains("is-disabled"))return;
+  settingsScrollbarDrag={track:track,pointerId:event.pointerId};
+  if(track.setPointerCapture)track.setPointerCapture(event.pointerId);
+  setSettingsScrollPosition(event.clientY,track);event.preventDefault();
+});
+document.addEventListener("pointermove",function(event){
+  if(!settingsScrollbarDrag||settingsScrollbarDrag.pointerId!==event.pointerId)return;
+  setSettingsScrollPosition(event.clientY,settingsScrollbarDrag.track);
+});
+function stopSettingsScrollbarDrag(event){if(settingsScrollbarDrag&&settingsScrollbarDrag.pointerId===event.pointerId){const track=settingsScrollbarDrag.track;settingsScrollbarDrag=null;if(track.hasPointerCapture&&track.hasPointerCapture(event.pointerId))track.releasePointerCapture(event.pointerId);}}
+document.addEventListener("pointerup",stopSettingsScrollbarDrag);
+document.addEventListener("pointercancel",stopSettingsScrollbarDrag);
+let dexScrollbarDrag=null;
+document.addEventListener("pointerdown",function(event){
+  const track=event.target.closest&&event.target.closest(".dex-scrollbar");
+  if(!track||S.view!=="dex"||track.classList.contains("is-disabled"))return;
+  dexScrollbarDrag={track:track,pointerId:event.pointerId};
+  if(track.setPointerCapture)track.setPointerCapture(event.pointerId);
+  setDexScrollPosition(event.clientY,track);event.preventDefault();
+});
+document.addEventListener("pointermove",function(event){if(!dexScrollbarDrag||dexScrollbarDrag.pointerId!==event.pointerId)return;setDexScrollPosition(event.clientY,dexScrollbarDrag.track)});
+function stopDexScrollbarDrag(event){if(dexScrollbarDrag&&dexScrollbarDrag.pointerId===event.pointerId){const track=dexScrollbarDrag.track;dexScrollbarDrag=null;if(track.hasPointerCapture&&track.hasPointerCapture(event.pointerId))track.releasePointerCapture(event.pointerId)}}
+document.addEventListener("pointerup",stopDexScrollbarDrag);document.addEventListener("pointercancel",stopDexScrollbarDrag);
+document.addEventListener("pointerdown",function(event){const track=event.target.closest&&event.target.closest(".box-info-scrollbar");if(!track||track.classList.contains("is-disabled")||!app.querySelector(".box-info-pane .box-detail-content"))return;boxInfoScrollbarDrag={track:track,pointerId:event.pointerId};if(track.setPointerCapture)track.setPointerCapture(event.pointerId);setBoxInfoScrollPosition(event.clientY,track);event.preventDefault()});
+document.addEventListener("pointermove",function(event){if(!boxInfoScrollbarDrag||boxInfoScrollbarDrag.pointerId!==event.pointerId)return;setBoxInfoScrollPosition(event.clientY,boxInfoScrollbarDrag.track)});
+function stopBoxInfoScrollbarDrag(event){if(boxInfoScrollbarDrag&&boxInfoScrollbarDrag.pointerId===event.pointerId){const track=boxInfoScrollbarDrag.track;boxInfoScrollbarDrag=null;if(track.hasPointerCapture&&track.hasPointerCapture(event.pointerId))track.releasePointerCapture(event.pointerId)}}
+document.addEventListener("pointerup",stopBoxInfoScrollbarDrag);document.addEventListener("pointercancel",stopBoxInfoScrollbarDrag);
+const boxWheelTimers=new WeakMap(),boxWheelDirections=new WeakMap();
+document.addEventListener("wheel",function(event){
+  const grid=event.target.closest&&event.target.closest(".box-grid");
+  if(!grid||Math.abs(event.deltaY)<1||grid.scrollHeight<=grid.clientHeight)return;
+  event.preventDefault();
+  boxWheelDirections.set(grid,event.deltaY>0?1:-1);
+  clearTimeout(boxWheelTimers.get(grid));
+  boxWheelTimers.set(grid,setTimeout(function(){
+    const firstRow=grid.querySelector(".box-slot");
+    if(!firstRow)return;
+    const styles=getComputedStyle(grid),gap=parseFloat(styles.rowGap)||0,step=firstRow.getBoundingClientRect().height+gap;
+    const direction=boxWheelDirections.get(grid)||1,current=Math.round(grid.scrollTop/step),max=Math.max(0,Math.ceil((grid.scrollHeight-grid.clientHeight)/step));
+    grid.scrollTo({top:Math.max(0,Math.min(max,current+direction))*step,behavior:"smooth"});
+    boxWheelTimers.delete(grid);
+  },180));
+},{passive:false});
+document.addEventListener("pointerover",function(event){
+
+  const settingRow=event.target.closest(".setting-row[data-setting]");if(settingRow&&S.view==="settings")selectSetting(Number(settingRow.dataset.setting),false);
+  const target=selectionTarget(event.target);if(!target||target===selectionTarget(event.relatedTarget))return;
+  setHoveredSelection(target);
+  if(target.dataset.menu!==undefined&&S.view==="home"){
+    const i=Number(target.dataset.menu);S.menu=i;
+    app.querySelectorAll(".menu-entry").forEach(function(button){button.setAttribute("aria-pressed",String(Number(button.dataset.menu)===i));});
+    return;
+  }
+  if(target.dataset.party!==undefined&&S.view==="team")previewParty(Number(target.dataset.party));
+  if(target.dataset.relation!==undefined&&S.view==="relations")updateRelationDetail(Number(target.dataset.relation));
+  if(target.dataset.dex!==undefined&&S.view==="dex")updateDexSelection(Number(target.dataset.dex));
+  if(target.dataset.bag!==undefined&&S.view==="bag")updateBagCategory(Number(target.dataset.bag));
+  if(target.dataset.item!==undefined&&S.view==="bag")updateBagSelection(Number(target.dataset.item));
+});
+document.addEventListener("pointerout",function(event){
+  const from=selectionTarget(event.target),to=selectionTarget(event.relatedTarget);
+  if(from&&from!==to&&from===hoveredSelection)setHoveredSelection(to);
+});
+document.addEventListener("focusin",function(event){const settingRow=event.target.closest(".setting-row[data-setting]");if(settingRow&&S.view==="settings")selectSetting(Number(settingRow.dataset.setting),false);const target=selectionTarget(event.target);if(target)setFocusedSelection(target);});
+document.addEventListener("focusout",function(event){
+  const from=selectionTarget(event.target),to=selectionTarget(event.relatedTarget);
+  if(from&&from!==to&&from===focusedSelection)setFocusedSelection(to);
+});
+document.addEventListener("change",function(event){const dexSelect=event.target.closest&&event.target.closest(".dex-category-select");if(dexSelect&&S.view==="dex"){dexCategory=dexSelect.value;S.dex=0;render();return;}const select=event.target.closest&&event.target.closest(".box-title-select");if(!select)return;const next=Number(select.value);if(!Number.isInteger(next)||!BOXES[next])return;S.box=next;S.boxDetail=false;S.boxSource="box";const first=BOXES[next].pokemon[0];S.boxMon=first===undefined?null:first;render();});
+document.addEventListener("click",function(event){
+  if(S.view==="dex"&&dexCategoryOpen&&!event.target.closest(".dex-category-picker")){dexCategoryOpen=false;render();return;}
+  const settingRow=event.target.closest(".setting-row[data-setting]");if(settingRow&&S.view==="settings")selectSetting(Number(settingRow.dataset.setting),false);
+  const target=event.target.closest("button");if(!target)return;
+  if(target.dataset.layoutChoice){setLayout(target.dataset.layoutChoice,true);return;}
+  if(target.id==="themeToggle"||target.dataset.action==="theme"){setTheme(S.theme==="day"?"night":"day");render();return;}
+  if(target.dataset.action==="settings-reset"){resetSettings();return;}
+  if(target.dataset.settingOption!==undefined&&S.view==="settings"){const row=target.closest(".setting-row[data-setting]");if(row)setSettingValue(Number(row.dataset.setting),Number(target.dataset.settingOption));updateSelectionArrow();return;}
+  if(target.dataset.action==="back"){goBack();return;}
+  if(target.dataset.action==="detail"){openDetails();return;}
+  if(target.dataset.action==="box-modal-close"||target.dataset.action==="box-modal-cancel"){closeBoxModal();return;}
+  if(target.dataset.action==="box-modal-confirm"){if(boxModalConfirm)boxModalConfirm();return;}
+  if(target.dataset.action==="box-rename"){openBoxRenameModal();return;}
+  if(target.dataset.action==="box-transfer-open"){openBoxTransferModal();return;}
+  if(target.dataset.action==="box-team-open"){S.boxPanel="team";S.boxPanelOrigin="none";S.boxDetail=false;render();return;}
+  if(target.dataset.action==="box-panel-close"){S.boxPanel="none";S.boxPanelOrigin="none";S.boxDetail=false;render();return;}
+  if(target.dataset.modalSlot!==undefined){document.querySelectorAll(".box-modal-slot").forEach(function(button){button.setAttribute("aria-pressed",String(button===target));});return;}
+  if(target.dataset.action==="box-prev"){stepBox(-1);return;}
+  if(target.dataset.action==="box-next"){stepBox(1);return;}
+  if(target.dataset.action==="box-detail"){setBoxDetail(true);return;}
+  if(target.dataset.action==="box-preview"){setBoxDetail(false);return;}
+  if(target.dataset.action==="box-new"){createNewBox();return;}if(target.dataset.action==="box-transfer"){transferBoxPokemon();return;}if(target.dataset.action==="party-prev"){stepParty(-1);return;}
+  if(target.dataset.action==="party-next"){stepParty(1);return;}
+  if(target.dataset.action==="bag-prev"){updateBagCategory((S.bag+BAGS.length-1)%BAGS.length);return;}
+  if(target.dataset.action==="bag-next"){updateBagCategory((S.bag+1)%BAGS.length);return;}
+  if(target.dataset.action==="prev-tab"){S.tab=(S.tab+TABS.length-1)%TABS.length;render();return;}
+  if(target.dataset.action==="next-tab"){S.tab=(S.tab+1)%TABS.length;render();return;}
+  if(target.dataset.action==="dex-category-toggle"){dexCategoryOpen=!dexCategoryOpen;render();return;}
+  if(target.dataset.dexCategory!==undefined&&S.view==="dex"){dexCategory=target.dataset.dexCategory;S.dex=0;dexCategoryOpen=false;render();return;}
+  if(target.dataset.action==="dex-mode"){dexCategoryMode=dexCategoryMode==='region'?'generation':'region';dexCategory='all';dexCategoryOpen=false;S.dex=0;render();return;}
+  if(target.dataset.menu!==undefined){S.menu=Number(target.dataset.menu);if(S.view==="home")render();openMenuItem(MENU[S.menu]);return;}
+  if(target.dataset.party!==undefined){const i=Number(target.dataset.party);if(S.view==="bag"){S.party=i;app.querySelectorAll(".bag-party-list .party-member").forEach(function(row){row.setAttribute("aria-pressed",String(Number(row.dataset.party)===i));});return;}if(i===S.party)openDetails();else selectParty(i);return;}
+  if(target.dataset.tab!==undefined){S.tab=Number(target.dataset.tab);render();return;}
+  if(target.dataset.relation!==undefined&&S.view==="relations"){updateRelationDetail(Number(target.dataset.relation));return;}
+  if(target.dataset.dex!==undefined){selectDex(Number(target.dataset.dex));return;}
+  if(target.dataset.bag!==undefined){updateBagCategory(Number(target.dataset.bag));return;}
+  if(target.dataset.item!==undefined){updateBagSelection(Number(target.dataset.item));return;}
+  if(target.dataset.boxmon!==undefined){updateBoxSelection(Number(target.dataset.boxmon),"box");return;}
+  if(target.dataset.boxparty!==undefined){updateBoxSelection(Number(target.dataset.boxparty),"party");return;}
+});
+document.addEventListener("keydown",function(event){
+  if(event.altKey||event.ctrlKey||event.metaKey)return;
+  const k=event.key;
+  const modal=$("#boxModal");
+  if(modal&&!modal.hidden){if(k==="Escape"){closeBoxModal();event.preventDefault();return;}if(k==="Enter"&&boxModalConfirm){boxModalConfirm();event.preventDefault();return;}return;}
+  if(S.view==="dex"&&dexCategoryOpen&&(k==="Escape"||k==="Backspace"||k.toLowerCase()==="b")){dexCategoryOpen=false;render();event.preventDefault();return;}
+  if(k==="Escape"||k==="Backspace"||k.toLowerCase()==="b"){event.preventDefault();goBack();return;}
+  if(S.view==="settings"){
+    if(event.target.closest&&event.target.closest(".settings-scrollbar")){const list=app.querySelector(".settings-rows"),step=Math.max(36,list.clientHeight*.14);if(k==="ArrowDown")list.scrollTop+=step;else if(k==="ArrowUp")list.scrollTop-=step;else if(k==="PageDown")list.scrollTop+=list.clientHeight*.85;else if(k==="PageUp")list.scrollTop-=list.clientHeight*.85;else if(k==="Home")list.scrollTop=0;else if(k==="End")list.scrollTop=list.scrollHeight;else return;event.preventDefault();return;}
+    const rows=app.querySelectorAll(".setting-row[data-setting]");
+    if(k==="ArrowDown"){selectSetting((S.setting+1)%rows.length,true);event.preventDefault();}
+    else if(k==="ArrowUp"){selectSetting((S.setting+rows.length-1)%rows.length,true);event.preventDefault();}
+    else if(k==="ArrowRight"){setSettingValue(S.setting,S.settingValues[S.setting]+1);event.preventDefault();}
+    else if(k==="ArrowLeft"){setSettingValue(S.setting,S.settingValues[S.setting]-1);event.preventDefault();}
+    else if(k.toLowerCase()==="y"){resetSettings();event.preventDefault();}
+    else if(k==="Enter"||k.toLowerCase()==="z"){event.preventDefault();}
+  }else if(S.view==="home"){
+    if(k==="ArrowRight"||k.toLowerCase()==="d"){S.menu=(S.menu+1)%MENU.length;render();event.preventDefault();}
+    else if(k==="ArrowLeft"||k.toLowerCase()==="a"){S.menu=(S.menu+MENU.length-1)%MENU.length;render();event.preventDefault();}
+    else if(k==="ArrowDown"){S.menu=Math.min(MENU.length-1,S.menu+(demo.dataset.layout==="portrait"?2:4));render();event.preventDefault();}
+    else if(k==="ArrowUp"){S.menu=Math.max(0,S.menu-(demo.dataset.layout==="portrait"?2:4));render();event.preventDefault();}
+    else if(k==="Enter"||k.toLowerCase()==="z"){openMenuItem(selectedMenu());event.preventDefault();}
+  }else if(S.view==="team"){
+    if(k==="ArrowDown"){S.party=Math.min(PARTY.length-1,S.party+1);render();event.preventDefault();}
+    else if(k==="ArrowUp"){S.party=Math.max(0,S.party-1);render();event.preventDefault();}
+    else if(k==="Enter"||k.toLowerCase()==="z"||k.toLowerCase()==="a"){openDetails();event.preventDefault();}
+  }else if(S.view==="party-detail"){
+    if(k==="ArrowRight"){S.tab=(S.tab+1)%TABS.length;render();event.preventDefault();}
+    else if(k==="ArrowLeft"){S.tab=(S.tab+TABS.length-1)%TABS.length;render();event.preventDefault();}
+  }else if(S.view==="dex"){
+    if(event.target.closest&&event.target.closest(".dex-scrollbar")){const list=app.querySelector(".dex-list"),step=Math.max(36,list.clientHeight*.14);if(k==="ArrowDown")list.scrollTop+=step;else if(k==="ArrowUp")list.scrollTop-=step;else if(k==="PageDown")list.scrollTop+=list.clientHeight*.85;else if(k==="PageUp")list.scrollTop-=list.clientHeight*.85;else if(k==="Home")list.scrollTop=0;else if(k==="End")list.scrollTop=list.scrollHeight;else return;updateDexScrollbar();event.preventDefault();return;}
+    const dexEntries=dexCategoryEntries();
+    if(k==="ArrowDown"){S.dex=Math.min(dexEntries.length-1,S.dex+1);render();event.preventDefault();}
+    else if(k==="ArrowUp"){S.dex=Math.max(0,S.dex-1);render();event.preventDefault();}
+  }else if(S.view==="bag"){
+    if(k==="ArrowDown"){S.item=Math.min(BAGS[S.bag].items.length-1,S.item+1);render();event.preventDefault();}
+    else if(k==="ArrowUp"){S.item=Math.max(0,S.item-1);render();event.preventDefault();}
+    else if(k==="ArrowRight"){updateBagCategory((S.bag+1)%BAGS.length);event.preventDefault();}
+    else if(k==="ArrowLeft"){updateBagCategory((S.bag+BAGS.length-1)%BAGS.length);event.preventDefault();}
+  }else if(S.view==="box"){
+    if(k==="ArrowRight"){stepBox(1);event.preventDefault();}
+    else if(k==="ArrowLeft"){stepBox(-1);event.preventDefault();}
+    else if((k==="Enter"||k.toLowerCase()==="z"||k.toLowerCase()==="a")&&S.boxMon!==null){setBoxDetail(true);event.preventDefault();}
+  }
+});
+setLayout(window.innerWidth<700?"portrait":"landscape",false);setTheme("day");render();
+window.addEventListener("resize",function(){if(!manualLayout)setLayout(window.innerWidth<700?"portrait":"landscape",false);});
+const previewDevice=document.querySelector(".device");if(previewDevice)previewDevice.addEventListener("transitionend",function(event){if(event.propertyName==="width"||event.propertyName==="aspect-ratio")updateSelectionArrow();});
+</script>
