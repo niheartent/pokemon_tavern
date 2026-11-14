@@ -251,7 +251,7 @@ const MENU = [
   {key:"battle",label:"战场",nativeIcon:"icon_bs.png",title:"BATTLE"},
   {key:"settings",label:"设置",icon:"xmenu_button_icon_config_00^s-render.png",title:"OPTIONS"}
 ];
-// PARTY_MOCK 已废弃，由 parseStat() 从 MOCK_STAT 生成
+// PARTY_MOCK 已删除，由 parseStat() 从 MOCK_STAT 生成
 // ============================================
 // swshBridge：数据桥接层（对齐弦九 v6.0.23 接口）
 // 优先级: window.__pkmHudApi > WIN.Mvu > localStorage备份 > MOCK_STAT
@@ -360,6 +360,14 @@ function xianjuPortraitUrl(name) {
   return PKM_PORTRAIT_CDN + encodeURIComponent(name) + '/' + encodeURIComponent(name) + '.png';
 }
 
+// 人际关系头像 HTML（弦九立绘，onerror 回退图标）
+function relRoleClass(role){return role==='劲敌'?'rival':role==='通讯录'?'contact':'relations';}
+function relPortraitHTML(person){
+  var rc=relRoleClass(person.role);
+  var fallbackIcon=swshIcon(rc==='rival'?'rivals':rc==='contact'?'command':'rel',64).replace(/'/g,"\\'");
+  return '<div class="relations-avatar-placeholder"><img src="'+xianjuPortraitUrl(person.name)+'" alt="'+esc(person.name)+'" style="width:100%;height:100%;object-fit:cover;border-radius:50%" onerror="this.style.display=\'none\';this.parentNode.innerHTML=\''+fallbackIcon+'\'"></div>';
+}
+
 function resolveSprite(mon) {
   if (!mon || !mon.名字 || mon.名字 === '空') return '';
   // 1. 自定义图标（弦九 DIY，直接用 URL）
@@ -399,7 +407,7 @@ ensureDexNameMap(function(){
   try { render(); } catch(e) {}
 });
 
-// 背包分类配置（颜色/图标与 BAGS_MOCK 保持一致）
+// 背包分类配置（颜色/图标）
 var BAG_CATEGORY_CONFIG = {
   '药品':      {icon:'回复.png',      color:'#ffa6c4'},
   '精灵球':    {icon:'精灵球.png',    color:'#ff9494'},
@@ -533,6 +541,7 @@ function parseStat(stat) {
 // ── 初始化：加载数据，生成 PARTY/BAGS/BOXES ──
 var _parsedStat = parseStat(swshBridge.getStat());
 
+let dexCatalog=null;
 let dexRegionalCatalog=null;
 let dexCatalogPromise=null;
 let dexCategory="all";
@@ -544,8 +553,8 @@ function loadDexCatalog(){if(dexCatalogPromise)return dexCatalogPromise;const lo
 function dexCategoryEntries(){if(!dexCatalog||!dexCatalog.length)return DEX;const m=String(dexCategory||'all');if(m==='all')return dexCatalog;if(m.indexOf('gen-')===0){const g=Number(m.slice(4));return dexCatalog.filter(function(d){return d.generation===g;});}if(m.indexOf('region-')===0&&dexRegionalCatalog){const region=m.slice(7),ids={};(dexRegionalCatalog[region]||[]).forEach(function(item){ids[String(item.ndex||item.id||'').padStart(3,'0')]=true;});return dexCatalog.filter(function(d){return !!ids[d.no];});}return dexCatalog;}
 function dexCategoryLabel(value){const v=String(value||'all');if(v==='all')return '全国图鉴';if(v.indexOf('gen-')===0)return '第'+v.slice(4)+'世代';if(v.indexOf('region-')===0)return v.slice(7);return '全国图鉴';}
 function dexCategoryOptionsHTML(){const sel=function(value){return String(dexCategory)===String(value)?' aria-selected="true"':'';};const labels=[];labels.push(['all','全国图鉴']);if(dexCategoryMode==='generation'){for(let g=1;g<=10;g++)labels.push(['gen-'+g,'第'+g+'世代']);}else{const regions=dexRegionalCatalog?Object.keys(dexRegionalCatalog):['关都','城都','丰缘','神奥','合众','卡洛斯','阿罗拉','伽勒尔','铠岛','王冠雪原','帕底亚','北上乡','蓝莓学院'];regions.forEach(function(region){labels.push(['region-'+region,region]);});}return labels.map(function(item,index){const tone=Math.round(34+(index/Math.max(1,labels.length-1))*154);const text=tone>72?'#252629':'#f5f7fa';const row=Math.floor(index/3);return '<button class="dex-category-option" type="button" role="option" data-dex-category="'+esc(item[0])+'"'+sel(item[0])+' style="--dex-option-index:'+index+';--dex-option-row-index:'+row+';--dex-tone:'+tone+'%;--dex-label:'+text+';color:'+text+'">'+esc(item[1])+'</button>';}).join('');}
-const BAGS_MOCK = null;   // 已废弃，由 parseStat() 从 MOCK_STAT 生成
-const BOXES_MOCK = null;  // 已废弃，由 parseStat() 从 MOCK_STAT 生成
+const BAGS_MOCK = null;
+const BOXES_MOCK = null;
 
 // ============================================
 // 数据源（从 parseStat 生成，弦九接入只需替换 swshBridge.getStat() 返回值）
@@ -565,7 +574,6 @@ const TAB_SVGS = [
   '<svg viewBox="0 0 36 36" aria-hidden="true"><circle cx="18" cy="13" r="9"/><path d="m12 21-3 12 9-5 9 5-3-12M18 8v10m-5-5h10"/></svg>'
 ];
 const STAT_NAMES = ["HP","攻击","防御","特攻","特防","速度"];
-const TYPE_COLORS = {"草":"#61a94a","水":"#408bd1","一般":"#8c929c"};
 const SETTINGS = [
   {name:"语速",values:["慢","普通","快"],description:"可以选择 3 种\n不同的信息显示速度。"},
   {name:"对战动画",values:["看","不看"],description:"选择对战时是否播放招式动画。"},
@@ -573,16 +581,11 @@ const SETTINGS = [
   {name:"同行／盒子",values:["自己选择","自动发送"],description:"选择新获得的宝可梦由你决定去向，或自动发送到盒子。"},
   {name:"给宝可梦取昵称",values:["取昵称","不取昵称"],description:"设置获得宝可梦时是否为它取昵称。"},
   {name:"陀螺仪感应器",values:["使用","不使用"],description:"设置是否使用陀螺仪感应器。"},
-  {name:"镜头　上／下",values:["默认","反转"],description:"选择镜头上下方向的操作设置。"},
-  {name:"滚动测试 08",values:["关闭","开启"],description:"临时测试项：验证设置列表向下滚动。"},
-  {name:"滚动测试 09",values:["关闭","标准","开启"],description:"临时测试项：验证滚动时选中行与选项对齐。"},
-  {name:"滚动测试 10",values:["选项 A","选项 B"],description:"临时测试项：验证滚动条位置随内容移动。"},
-  {name:"滚动测试 11",values:["默认","反转"],description:"临时测试项：验证滚动条拖动与滚轮同步。"},
-  {name:"滚动测试 12",values:["关闭","开启"],description:"临时测试项：验证列表末尾可滚动到位。"}
+  {name:"镜头　上／下",values:["默认","反转"],description:"选择镜头上下方向的操作设置。"}
 ];
-const SETTING_DEFAULTS = [2,1,1,0,0,0,0,0,1,0,1,0];
+const SETTING_DEFAULTS = [2,1,1,0,0,0,0];
 const BOX_TEAM = {party:[0,1,2,3,4,5]};
-const S = {view:"home",stack:[],menu:0,party:0,tab:0,dex:0,bag:0,item:0,box:0,boxMon:0,boxSource:"box",boxDetail:false,boxPanel:"none",boxPanelOrigin:"none",setting:0,relation:0,settingValues:SETTING_DEFAULTS.slice(),theme:"day"};
+const S = {view:"home",stack:[],menu:0,party:0,tab:0,dex:0,dexDetailName:'',dexDetailNdex:0,bag:0,item:0,box:0,boxMon:0,boxSource:"box",boxDetail:false,boxPanel:"none",boxPanelOrigin:"none",setting:0,relation:0,settingValues:SETTING_DEFAULTS.slice(),theme:"day"};
 let manualLayout=false;
 let boxModalConfirm=null;
 const $ = function(sel,root){return (root||document).querySelector(sel);};
@@ -683,7 +686,7 @@ function feedback(message){const box=$("#feedback");box.textContent=message;box.
 function pushView(view){S.stack.push(S.view);S.view=view;render();}
 function goBack(){if(S.view==="box"&&document.querySelector('.demo[data-layout="portrait"]')){if(S.boxPanel==="detail"){S.boxPanel=S.boxPanelOrigin||"none";S.boxPanelOrigin="none";S.boxDetail=false;render();return;}if(S.boxPanel!=="none"){S.boxPanel="none";S.boxDetail=false;render();return;}}if(S.stack.length){S.view=S.stack.pop();render();}else if(S.view!=="home"){S.view="home";render();}}
 function openMenuItem(item){if(!item)return;pushView(item.key);}
-function activeModule(){return S.view==="party-detail"?"team":S.view;}
+function activeModule(){return S.view==="party-detail"?"team":S.view==="dex-detail"?"dex":S.view;}
 function renderHome(){
   const buttons=MENU.map(function(m,i){const icon=m.nativeIcon?'<img class="menu-icon-native" src="assets/menu/native/'+esc(m.nativeIcon)+'" alt="">':m.iconKey?swshIcon(m.iconKey,48).replace('class="swsh-icon ','class="menu-icon-svg swsh-icon '):'<img class="menu-icon-source" src="assets/menu/original/'+esc(m.icon)+'" alt="">';return '<button class="menu-entry selection-target" type="button" data-menu="'+i+'" aria-pressed="'+String(i===S.menu)+'" aria-label="'+esc(m.label)+'"><span class="disc">'+icon+'</span><span class="menu-label">'+esc(m.label)+'</span></button>';}).join("");
   return '<div class="home-screen"><div class="menu-grid" role="group" aria-label="主菜单">'+buttons+'</div></div>';
@@ -726,6 +729,75 @@ function renderDetail(){
   if(S.tab===4){pane='<div class="profile-medals">没有奖章</div>';}
   return '<div class="detail-screen"><nav class="detail-tabs" role="tablist" aria-label="宝可梦详情分页"><button class="detail-tab-icon" type="button" data-action="prev-tab" aria-label="上一页">‹</button>'+tabs+'<button class="detail-tab-icon" type="button" data-action="next-tab" aria-label="下一页">›</button></nav>'+pokemonBanner(mon,"detail-banner")+'<section class="detail-pane">'+pane+'</section><section class="detail-art"><div class="model-rings" aria-hidden="true"></div>'+monSprite(mon,"profile-sprite")+'</section></div>';
 }
+// ── 图鉴详情页：数据获取 + 渲染 ──
+var _pkmDetailCache={};
+function genFileOfNo(no){var n=parseInt(no,10);if(n>=1&&n<=151)return'gen-01.json';if(n>=152&&n<=251)return'gen-02.json';if(n>=252&&n<=386)return'gen-03.json';if(n>=387&&n<=493)return'gen-04.json';if(n>=494&&n<=649)return'gen-05.json';if(n>=650&&n<=721)return'gen-06.json';if(n>=722&&n<=809)return'gen-07.json';if(n>=810&&n<=905)return'gen-08.json';if(n>=906&&n<=1025)return'gen-09.json';return'gen-10.json';}
+function fetchPkmDetail(name,ndex,cb){
+  var cacheKey=name||String(ndex);
+  if(_pkmDetailCache[cacheKey]){cb(_pkmDetailCache[cacheKey]);return;}
+  var en=(_dexNameMap[name]||'').toLowerCase();
+  var no=parseInt(ndex,10)||0;
+  if(!no&&dexCatalog){var hit=dexCatalog.filter(function(d){return d.name===name||d.catalogName===name;})[0];if(hit)no=parseInt(hit.no,10)||0;}
+  if(!no){cb(null);return;}
+  var url='https://raw.githubusercontent.com/xianjiu0926/Pokemon/main/pokemon/'+genFileOfNo(no);
+  fetch(url)
+    .then(function(r){return r.ok?r.json():null;})
+    .then(function(data){
+      var entries=(data&&data.data)?data.data:(Array.isArray(data)?data:[]);
+      var entry=null;
+      for(var i=0;i<entries.length;i++){var e=entries[i];if(!e)continue;if(e.no===no){if(!en||(e.en||'').toLowerCase()===en){entry=e;break;}if(!entry)entry=e;}}
+      if(entry)_pkmDetailCache[cacheKey]=entry;
+      cb(entry||null);
+    })
+    .catch(function(){cb(null);});
+}
+function renderDexDetail(){
+  var name=S.dexDetailName||'';
+  var ndex=S.dexDetailNdex||0;
+  var enSlug=_dexNameMap[name]||'';
+  var noStr=String(ndex).padStart(3,'0');
+  var catalogEntry=dexCatalog?dexCatalog.filter(function(d){return d.name===name||d.catalogName===name;})[0]:null;
+  if(catalogEntry&&!ndex){ndex=parseInt(catalogEntry.no,10)||0;noStr=String(ndex).padStart(3,'0');}
+  var spriteUrl=enSlug?xianjuSpriteUrl(enSlug,false):'';
+  var homeSpriteUrl=enSlug?('https://raw.githubusercontent.com/xianjiu0926/Pokemon/main/pokemon-sprites/static/pokeos/normal/'+enSlug+'.png'):'';
+  var types=(catalogEntry&&catalogEntry.types)?catalogEntry.types.filter(function(t){return!!t;}):[];
+  var html='<div class="dex-detail-screen">'+
+    '<div class="dex-detail-left">'+
+      (homeSpriteUrl?'<img class="dex-detail-sprite" src="'+esc(homeSpriteUrl)+'" alt="'+esc(name)+'" onerror="if(this.src!==\''+esc(spriteUrl)+'\')this.src=\''+esc(spriteUrl)+'\';else this.style.display=\'none\'">':'<div class="dex-detail-loading">图片加载中…</div>')+
+    '</div>'+
+    '<div class="dex-detail-right">'+
+      '<div class="dex-detail-header">'+
+        '<span class="dex-detail-no">No.'+esc(noStr)+'</span>'+
+        (spriteUrl?'<img class="dex-detail-header-icon" src="'+esc(spriteUrl)+'" alt="">':'')+
+        '<span class="dex-detail-name-text">'+esc(name)+'</span>'+
+        '<span class="dex-detail-gender-icons"><span class="dex-detail-gender-m">♂</span><span class="dex-detail-gender-f">♀</span></span>'+
+      '</div>'+
+      '<div id="dexDetailTable" class="dex-detail-table"><div class="dex-detail-loading">加载详情中…</div></div>'+
+    '</div>'+
+  '</div>';
+  // 异步加载详情填充表格
+  fetchPkmDetail(name,ndex,function(d){
+    var table=app.querySelector('#dexDetailTable');
+    if(!table)return;
+    if(!d){table.innerHTML='<div class="dex-detail-loading">暂无详细数据</div>';return;}
+    var t1=(d.types&&d.types[0])||(types[0]||'');
+    var t2=(d.types&&d.types[1])||(types[1]||'');
+    var typeHTML=t1?typeIconTags([t1].concat(t2?[t2]:[])):(types.length?typeIconTags(types):'—');
+    var rows=[['属性',typeHTML],['身高',d.height!=null?d.height+' m':'—'],['体重',d.weight!=null?d.weight+' kg':'—'],['对战次数','0']];
+    var rowsHTML=rows.map(function(r){return '<div class="dex-detail-row"><span class="dex-detail-row-label">'+esc(r[0])+'</span><span class="dex-detail-row-value">'+r[1]+'</span></div>';}).join('');
+    table.innerHTML=(d.species?'<div class="dex-detail-species-row">'+esc(d.species)+'</div>':'')+rowsHTML;
+    // 种族值
+    if(d.stats&&(d.stats.hp||d.stats.atk)){
+      var sv=d.stats;var statRows=[['HP',sv.hp||0],['物攻',sv.atk||0],['物防',sv.def||0],['特攻',sv.spa||0],['特防',sv.spd||0],['速度',sv.spe||0]];
+      var statsEl=document.createElement('div');statsEl.className='dex-detail-stats-grid';
+      statsEl.innerHTML=statRows.map(function(r){return '<div class="dex-detail-stat"><span class="dex-detail-stat-label">'+esc(r[0])+'</span><span class="dex-detail-stat-value">'+r[1]+'</span></div>';}).join('');
+      var right=app.querySelector('.dex-detail-right');if(right)right.appendChild(statsEl);
+    }
+    // 介绍
+    if(d.desc){var descEl=document.createElement('div');descEl.className='dex-detail-desc';descEl.textContent=d.desc;var right2=app.querySelector('.dex-detail-right');if(right2)right2.appendChild(descEl);}
+  });
+  return html;
+}
 function updateDexScrollbar(){const list=app.querySelector(".dex-list"),track=app.querySelector(".dex-scrollbar"),thumb=track&&track.querySelector(".dex-scrollbar-thumb");if(!list||!track||!thumb)return;list.onscroll=updateDexScrollbar;const viewport=list.clientHeight,total=list.scrollHeight,trackHeight=track.clientHeight;if(!trackHeight)return;const maxScroll=Math.max(0,total-viewport),thumbHeight=maxScroll?Math.min(trackHeight,Math.max(28,trackHeight*viewport/total)):trackHeight,maxThumbTop=Math.max(0,trackHeight-thumbHeight);thumb.style.height=thumbHeight+"px";thumb.style.top=(maxScroll?maxThumbTop*list.scrollTop/maxScroll:0)+"px";track.classList.toggle("is-disabled",maxScroll<=1);track.setAttribute("aria-valuenow",String(maxScroll?Math.round(list.scrollTop/maxScroll*100):0))}
 function setDexScrollPosition(clientY,track){const list=app.querySelector(".dex-list"),thumb=track&&track.querySelector(".dex-scrollbar-thumb");if(!list||!track||!thumb)return;const r=track.getBoundingClientRect(),travel=r.height-thumb.offsetHeight,max=list.scrollHeight-list.clientHeight;if(travel<=0||max<=0)return;list.scrollTop=Math.max(0,Math.min(1,(clientY-r.top-thumb.offsetHeight/2)/travel))*max;updateDexScrollbar()}
 function renderDex(){
@@ -753,11 +825,18 @@ function renderBag(){
   const selected=items[S.item];
   const bagLayout=demo.dataset.layout==="portrait"?"portrait":"landscape";
   const nav='<div class="bag-category-nav" style="--bag-cat-color:'+bag.color+'"><button type="button" data-action="bag-prev" aria-label="上一类"></button><div class="bag-cats" role="tablist" aria-label="背包分类">'+cats+'</div><button type="button" data-action="bag-next" aria-label="下一类"></button></div>';
-  return '<div class="bag-layout bag-layout--'+bagLayout+'" data-bag-layout="'+bagLayout+'"><header class="bag-heading"><img src="assets/bag/bag-title-black.png" alt="BAG"></header><section class="bag-content"><div class="bag-content-head"><span class="bag-content-title">'+esc(bag.name)+'</span><span class="bag-money">₽ 31,400</span></div>'+nav+bagRibbonMarkup('landscape',bag)+bagRibbonMarkup('portrait',bag)+'<div class="item-list">'+bagRowsMarkup(items)+'</div></section><section class="item-description">'+bagDescriptionMarkup(selected)+'</section></div>';
+  return '<div class="bag-layout bag-layout--'+bagLayout+'" data-bag-layout="'+bagLayout+'"><header class="bag-heading"><img src="assets/bag/bag-title-black.png" alt="BAG"></header><section class="bag-content"><div class="bag-content-head"><span class="bag-content-title">'+esc(bag.name)+'</span><span class="bag-money">₽ '+(swshBridge.getStat().训练家&&swshBridge.getStat().训练家.金钱!=null?Number(swshBridge.getStat().训练家.金钱).toLocaleString():'0')+'</span></div>'+nav+bagRibbonMarkup('landscape',bag)+bagRibbonMarkup('portrait',bag)+'<div class="item-list">'+bagRowsMarkup(items)+'</div></section><section class="item-description">'+bagDescriptionMarkup(selected)+'</section></div>';
 }
 function bagRowsMarkup(items){return items.map(function(it,i){return '<button class="item-row selection-target" type="button" data-item="'+i+'" aria-pressed="'+String(i===S.item)+'"><img class="item-icon" src="assets/bag/items/item_'+esc(it[3]||"0017")+'.png" alt=""><span class="row-name">'+esc(it[0])+'</span><span class="row-meta"><span>×</span><b>'+it[2]+'</b></span></button>';}).join("");}
 function bagDescriptionMarkup(item){return '<h3>'+esc(item[0])+'</h3><p>'+esc(item[1])+'</p><p style="margin-top:9px">持有数量：×'+item[2]+'</p>';}
-function updateDexSelection(i){const entries=dexCategoryEntries();if(!entries[i]||S.dex===i)return;S.dex=i;app.querySelectorAll(".data-row").forEach(function(row){row.setAttribute("aria-pressed",String(Number(row.dataset.dex)===i));});const focus=app.querySelector(".dex-focus");if(focus)focus.innerHTML=dexFocusHTML(entries[i]);updateSelectionArrow();}
+function updateDexSelection(i){
+  const entries=dexCategoryEntries();
+  if(!entries[i])return;
+  S.dex=i;
+  S.dexDetailName=entries[i].catalogName||entries[i].name||'';
+  S.dexDetailNdex=parseInt(entries[i].no,10)||0;
+  pushView('dex-detail');
+}
 function updateBagRibbon(){
   const bag=BAGS[S.bag];if(!bag)return;
   const width=48,left=26;
@@ -774,7 +853,7 @@ function updateBagRibbon(){
 function updateBagCategory(i){if(!BAGS[i])return;S.bag=i;S.item=0;app.querySelectorAll(".bag-cats button").forEach(function(button){button.setAttribute("aria-pressed",String(Number(button.dataset.bag)===i));});updateBagRibbon();const list=app.querySelector(".item-list");if(list)list.innerHTML=bagRowsMarkup(BAGS[i].items);updateBagSelection(0);}
 function updateBagSelection(i){const bag=BAGS[S.bag];if(!bag||!bag.items[i])return;S.item=i;app.querySelectorAll(".item-row").forEach(function(row){row.setAttribute("aria-pressed",String(Number(row.dataset.item)===i));});const box=app.querySelector(".item-description");if(box)box.innerHTML=bagDescriptionMarkup(bag.items[i]);updateSelectionArrow();}
 function renderSettings(){const rows=SETTINGS.map(function(setting,i){const values=setting.values.map(function(value,j){return '<button class="setting-option" type="button" data-setting-option="'+j+'" aria-pressed="'+String(S.settingValues[i]===j)+'" aria-label="'+esc(setting.name)+'：'+esc(value)+'">'+esc(value)+'</button>';}).join('');return '<div class="setting-row setting-row--'+(setting.values.length===3?'three':'two')+(S.setting===i?' is-selected':'')+'" data-setting="'+i+'" tabindex="-1" aria-selected="'+String(S.setting===i)+'"><span class="setting-focus-base" aria-hidden="true"></span><span class="setting-label">'+esc(setting.name)+'</span>'+values+'</div>';}).join('');return '<section class="settings-screen" aria-label="设置"><img class="settings-title" src="assets/settings/scene-title-option-mask.png" alt="OPTION"><div class="settings-rows" role="list" aria-label="选项">'+rows+'</div><div class="settings-scrollbar" aria-hidden="true"><span class="settings-scrollbar-thumb"></span></div></section>';}
-function renderMap(){return '<div class="map-area" aria-label="示意地图"><div class="map-path"></div><span class="map-point" style="left:16%;top:27%"><b></b>木杆镇</span><span class="map-point" style="left:46%;top:53%"><b></b>机擎市</span><span class="map-point" style="left:76%;top:29%"><b></b>拳关市</span><span class="map-point" style="left:69%;top:72%"><b></b>旷野地带</span></div>';}
+// renderMap() 已移除（孤立函数，路由实际调用 renderMapPage()）
 function boxCurrentPokemon(){return S.boxMon===null||S.boxMon===undefined?null:PARTY[S.boxMon]||null;}
 function boxPartySlots(){return Array.from({length:6},function(_,slot){const pokemonIndex=BOX_TEAM.party[slot];return pokemonIndex===null||pokemonIndex===undefined?null:pokemonIndex;});}function boxPartyCount(){return boxPartySlots().filter(function(pokemonIndex){return pokemonIndex!==null;}).length;}function boxTransferLabel(){return S.boxSource==="party"?"放入当前盒子":"取出到队伍中";}
 function boxDetailActionHTML(mon){if(!mon)return "";return '<div class="box-info-actions"><button class="box-transfer-action" type="button" data-action="box-transfer-open">'+esc(boxTransferLabel())+'</button></div>';}
@@ -804,7 +883,7 @@ function scaffoldPage(key){
   return '<div class="module-scaffold">'+head+body+'</div>';
 }
 function actionKey(key){return '<img class="action-key" src="assets/menu/original/button_icon_'+key+'_00^t.png" alt="'+key+'">';}
-function actionMarkup(){if(S.view==="home")return '<span class="action">'+actionKey("A")+'确定</span>';if(S.view==="team")return '<span class="action">'+actionKey("A")+'确定</span><span class="action">'+actionKey("Y")+'替换宝可梦</span><button class="action action-back" type="button" data-action="back">'+actionKey("B")+'返回</button>';if(S.view==="party-detail")return '<span class="action">'+actionKey("A")+'持有物</span><span class="action">'+actionKey("X")+'标记</span><button class="action action-back" type="button" data-action="back">'+actionKey("B")+'返回</button>';if(S.view==="dex")return '<span class="action">'+actionKey("A")+'选择条目</span><button class="action action-back" type="button" data-action="back">'+actionKey("B")+'返回菜单</button>';if(S.view==="settings")return '<span class="action">'+actionKey("A")+'确定</span><button class="action action-back" type="button" data-action="settings-reset">'+actionKey("Y")+'初始化</button><button class="action action-back" type="button" data-action="back">'+actionKey("B")+'保存设置后退出</button>';return '<span class="action">'+actionKey("A")+'确认</span><button class="action action-back" type="button" data-action="back">'+actionKey("B")+'返回</button>';}
+function actionMarkup(){if(S.view==="home")return '<span class="action">'+actionKey("A")+'确定</span>';if(S.view==="team")return '<span class="action">'+actionKey("A")+'确定</span><span class="action">'+actionKey("Y")+'替换宝可梦</span><button class="action action-back" type="button" data-action="back">'+actionKey("B")+'返回</button>';if(S.view==="party-detail")return '<span class="action">'+actionKey("A")+'持有物</span><span class="action">'+actionKey("X")+'标记</span><button class="action action-back" type="button" data-action="back">'+actionKey("B")+'返回</button>';if(S.view==="dex")return '<span class="action">'+actionKey("A")+'查看详情</span><button class="action action-back" type="button" data-action="back">'+actionKey("B")+'返回菜单</button>';if(S.view==="dex-detail")return '<button class="action action-back" type="button" data-action="back">'+actionKey("B")+'返回图鉴</button>';if(S.view==="settings")return '<span class="action">'+actionKey("A")+'确定</span><button class="action action-back" type="button" data-action="settings-reset">'+actionKey("Y")+'初始化</button><button class="action action-back" type="button" data-action="back">'+actionKey("B")+'保存设置后退出</button>';return '<span class="action">'+actionKey("A")+'确认</span><button class="action action-back" type="button" data-action="back">'+actionKey("B")+'返回</button>';}
 function updateRelationDetail(i){
   const stat=swshBridge.getStat(),rels=swshBridge.getRelations(stat);
   if(!rels[i])return;
@@ -813,10 +892,10 @@ function updateRelationDetail(i){
   // Update portrait pane
   const sel=rels[i];
   const pct=Math.round(Math.min(100,Math.max(0,sel.好感度)));
-  const rc=sel.role==='劲敌'?'rival':sel.role==='通讯录'?'contact':'relations';
+  const rc=relRoleClass(sel.role);
   const portraitPane=app.querySelector('.relations-portrait-pane');
   if(portraitPane)portraitPane.innerHTML=
-    '<div class="relations-avatar-placeholder"><img src="'+xianjuPortraitUrl(sel.name)+'" alt="'+esc(sel.name)+'" style="width:100%;height:100%;object-fit:cover;border-radius:50%" onerror="this.style.display=\'none\';this.parentNode.innerHTML=\''+swshIcon(rc==='rival'?'rivals':rc==='contact'?'command':'rel',64).replace(/'/g,"\\'")+'\'"></div>'+
+    relPortraitHTML(sel)+
     '<div class="relations-name-tag"><strong>'+esc(sel.name)+'</strong>'+
     '<span>好感度 '+pct+'／100</span></div>';
   updateSelectionArrow();
@@ -826,10 +905,10 @@ function renderRelations(){
   if(!rels.length)return '<div class="module-scaffold"><header class="module-heading"><div><h2>人际关系</h2><p>尚无关系记录。</p></div><span class="module-kicker">RELATIONSHIPS</span></header></div>';
   const idx=Math.max(0,Math.min(S.relation,rels.length-1));
   const sel=rels[idx];
-  const rc=sel.role==='劲敌'?'rival':sel.role==='通讯录'?'contact':'relations';
+  const rc=relRoleClass(sel.role);
   const selPct=Math.round(Math.min(100,Math.max(0,sel.好感度)));
   const portraitHTML=
-    '<div class="relations-avatar-placeholder"><img src="'+xianjuPortraitUrl(sel.name)+'" alt="'+esc(sel.name)+'" style="width:100%;height:100%;object-fit:cover;border-radius:50%" onerror="this.style.display=\'none\';this.parentNode.innerHTML=\''+swshIcon(rc==='rival'?'rivals':rc==='contact'?'command':'rel',64).replace(/'/g,"\\'")+'\'"></div>'+
+    relPortraitHTML(sel)+
     '<div class="relations-name-tag"><strong>'+esc(sel.name)+'</strong>'+
     '<span>好感度 '+selPct+'／100</span></div>';
   const rows=rels.map(function(r,i){
@@ -931,6 +1010,7 @@ function render(){
   else if(view==="team")content=renderParty();
   else if(view==="party-detail")content=renderDetail();
   else if(view==="dex"){content=renderDex();loadDexCatalog();}
+  else if(view==="dex-detail")content=renderDexDetail();
   else if(view==="bag")content=renderBag();
   else if(view==="settings")content=renderSettings();
   else if(view==="map")content=renderMapPage();
