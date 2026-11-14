@@ -161,6 +161,42 @@ button:focus-visible{outline:3px solid #3579bd;outline-offset:2px}
 .app[data-view="dex"] .data-row[aria-pressed="true"]{border-radius:999px;background:#08090b;color:#fff;box-shadow:0 5px 13px rgba(58,28,24,.24)}
 .app[data-view="dex"] .data-row:not([aria-pressed="true"]):has(.empty-mon){background:transparent;color:rgba(119,48,37,.65)}
 
+/* 图鉴条目按原版三段式绘制：左侧橙色斜切编号段，右侧黑色名称段，状态球固定在最右。 */
+.app[data-view="dex"] .data-row{
+  min-height:44px;
+  grid-template-columns:minmax(168px,1.08fr) minmax(150px,1fr) 34px;
+  gap:0;
+  padding:0;
+  overflow:visible;
+  border-radius:0;
+  background:transparent;
+  color:#8e3e2f;
+  font-size:clamp(13px,1.55cqw,18px);
+  font-weight:750;
+}
+.app[data-view="dex"] .data-row::before{content:none}
+.app[data-view="dex"] .data-row .dex-monid{
+  position:relative;z-index:1;min-width:0;height:100%;display:flex;align-items:center;gap:8px;padding:0 18px 0 10px;
+  border-radius:999px 0 0 999px;background:transparent;color:#8e3e2f;box-sizing:border-box;
+}
+.app[data-view="dex"] .data-row .dex-monid .sprite-mini,
+.app[data-view="dex"] .data-row .dex-monid .dex-question{width:30px;height:30px;object-fit:contain;flex:0 0 30px;image-rendering:pixelated}
+.app[data-view="dex"] .data-row .dex-number{font-size:clamp(13px,1.65cqw,19px);font-weight:800;color:#8e3e2f;white-space:nowrap}
+.app[data-view="dex"] .data-row .row-name{
+  min-width:0;height:100%;display:flex;align-items:center;padding:0 14px 0 4px;box-sizing:border-box;
+  overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:#171313;font-size:clamp(14px,1.7cqw,20px);font-weight:800;
+}
+.app[data-view="dex"] .data-row .row-meta{height:100%;display:flex;align-items:center;justify-content:center;margin:0;padding:0 5px;color:#8e3e2f;opacity:1}
+.app[data-view="dex"] .data-row .dex-pokeball{width:27px;height:27px;object-fit:contain;display:block}
+.app[data-view="dex"] .data-row[aria-pressed="true"]{background:#08090b;border-radius:999px;box-shadow:0 5px 13px rgba(58,28,24,.24);color:#fff}
+.app[data-view="dex"] .data-row[aria-pressed="true"] .dex-monid{background:linear-gradient(112deg,#f45135 0%,#f45135 82%,transparent 82.5%);color:#fff}
+.app[data-view="dex"] .data-row[aria-pressed="true"] .dex-number{color:#fff}
+.app[data-view="dex"] .data-row[aria-pressed="true"] .row-name{color:#fff}
+.app[data-view="dex"] .data-row[aria-pressed="true"] .row-meta{color:#fff}
+.app[data-view="dex"] .data-row:not([aria-pressed="true"]) .dex-monid{background:transparent}
+.app[data-theme="night"][data-view="dex"] .data-row .dex-number{color:#fff}
+.app[data-theme="night"][data-view="dex"] .data-row[aria-pressed="true"] .row-name{color:#fff}
+
 .app[data-theme="night"][data-view="dex"] .data-row{background:transparent;color:#f0ddd8}
 
 .app[data-theme="night"][data-view="dex"] .data-row .dex-number{color:#ff795d}
@@ -527,13 +563,12 @@ button:focus-visible{outline:3px solid #3579bd;outline-offset:2px}
 .demo[data-layout="portrait"] .app[data-view="dex"] .dex-focus .dex-number{top:2%;left:4%;font-size:18px}
 .demo[data-layout="portrait"] .app[data-view="dex"] .dex-list{padding:40px 2% 6px;min-height:0}
 .demo[data-layout="portrait"] .app[data-view="dex"] .dex-list::before{top:-34px;min-height:32px;margin:-34px -2% 6px;font-size:15px}
-.demo[data-layout="portrait"] .app[data-view="dex"] .data-row{min-height:42px;grid-template-columns:minmax(126px,.98fr) minmax(74px,1fr) 22px;gap:0;padding:3px 8px 3px 6px;font-size:12px}
-.demo[data-layout="portrait"] .app[data-view="dex"] .data-row .dex-monid{gap:5px;padding:0 7px 0 11px}
-.demo[data-layout="portrait"] .app[data-view="dex"] .data-row .dex-monid .sprite-mini{width:28px;height:28px}
-.demo[data-layout="portrait"] .app[data-view="dex"] .data-row[aria-pressed="true"] .dex-monid{margin:-3px 0 -3px -6px;padding-left:14px}
-.demo[data-layout="portrait"] .app[data-view="dex"] .data-row[aria-pressed="true"] .dex-monid .sprite-mini{width:30px;height:30px}
-.demo[data-layout="portrait"] .app[data-view="dex"] .data-row[aria-pressed="true"] .row-name{margin-left:0;padding-left:12px}
-.demo[data-layout="portrait"] .app[data-view="dex"] .data-row .sprite-mini{width:28px;height:28px}
+.demo[data-layout="portrait"] .app[data-view="dex"] .data-row{min-height:38px;grid-template-columns:minmax(126px,.98fr) minmax(74px,1fr) 24px;gap:0;padding:0;font-size:12px}
+.demo[data-layout="portrait"] .app[data-view="dex"] .data-row .dex-monid{gap:4px;padding:0 8px 0 7px}
+.demo[data-layout="portrait"] .app[data-view="dex"] .data-row .dex-monid .sprite-mini,.demo[data-layout="portrait"] .app[data-view="dex"] .data-row .dex-monid .dex-question{width:25px;height:25px;flex-basis:25px}
+.demo[data-layout="portrait"] .app[data-view="dex"] .data-row .dex-number{font-size:12px}
+.demo[data-layout="portrait"] .app[data-view="dex"] .data-row .row-name{padding-left:0;font-size:13px}
+.demo[data-layout="portrait"] .app[data-view="dex"] .data-row .dex-pokeball{width:22px;height:22px}
 .demo[data-layout=portrait] .bag-ribbon-track--landscape{display:none}
 .demo[data-layout="portrait"] .menu-grid{grid-template-rows:repeat(5,minmax(0,1fr))}
 .demo[data-layout="portrait"] .menu-entry:nth-child(5),.demo[data-layout="portrait"] .menu-entry:nth-child(6){grid-column:auto;grid-row:auto}
