@@ -140,9 +140,9 @@ button:focus-visible{outline:3px solid #3579bd;outline-offset:2px}
 .app[data-view="dex"] .selection-arrow{z-index:8}
 .dex-list{grid-area:list;position:relative;z-index:2;display:flex;flex-direction:column;gap:5px;overflow:auto;padding:clamp(48px,5.5cqw,64px) 3% 12px 5%;background:transparent;scrollbar-width:none;-ms-overflow-style:none;overscroll-behavior:contain}
 .dex-list::-webkit-scrollbar{display:none!important;width:0!important;height:0!important}
-.dex-scrollbar{position:absolute;z-index:6;top:17.3%;right:.9%;bottom:7.5%;width:max(7px,.55cqw);border-radius:999px;background:rgba(255,255,255,.24);touch-action:none;user-select:none;cursor:pointer}
-.dex-scrollbar-thumb{position:absolute;top:0;left:0;display:block;width:100%;height:100%;border-radius:inherit;background:#a83222;pointer-events:none}
-.dex-scrollbar.is-disabled{opacity:.25;cursor:default}
+.dex-scrollbar{position:absolute;z-index:6;top:17.3%;right:.9%;bottom:7.5%;width:max(9px,.68cqw);border-radius:999px;background:rgba(94,43,32,.22);overflow:hidden;touch-action:none;user-select:none;cursor:pointer}
+.dex-scrollbar-thumb{position:absolute;top:0;left:0;display:block;width:100%;height:100%;border-radius:999px;background:#8e382a;pointer-events:none}
+.dex-scrollbar.is-disabled{opacity:.28;cursor:default}
 
 .dex-list::after{content:"";position:absolute;z-index:-1;inset:12% 4% 0 8%;background:url("assets/pokelist/pokelist-watermark-full.png") center/contain no-repeat;opacity:.13;pointer-events:none}
 .dex-list::before{display:none}
@@ -194,6 +194,10 @@ button:focus-visible{outline:3px solid #3579bd;outline-offset:2px}
 .app[data-view="dex"] .data-row[aria-pressed="true"] .row-name{color:#fff}
 .app[data-view="dex"] .data-row[aria-pressed="true"] .row-meta{color:#fff}
 .app[data-view="dex"] .data-row:not([aria-pressed="true"]) .dex-monid{background:transparent}
+/* 图鉴滚动区域只使用右侧自绘胶囊，禁止浏览器滚动条和上下按钮。 */
+.app[data-view="dex"] .screen-content,.app[data-view="dex"] .dex-list{scrollbar-width:none;-ms-overflow-style:none}
+.app[data-view="dex"] .screen-content::-webkit-scrollbar,.app[data-view="dex"] .dex-list::-webkit-scrollbar{display:none;width:0;height:0}
+.app[data-view="dex"] .dex-scrollbar::-webkit-scrollbar-button,.app[data-view="dex"] .dex-scrollbar::-webkit-scrollbar-button:single-button{display:none;width:0;height:0}
 .app[data-theme="night"][data-view="dex"] .data-row .dex-number{color:#fff}
 .app[data-theme="night"][data-view="dex"] .data-row[aria-pressed="true"] .row-name{color:#fff}
 
@@ -569,6 +573,9 @@ button:focus-visible{outline:3px solid #3579bd;outline-offset:2px}
 .demo[data-layout="portrait"] .app[data-view="dex"] .data-row .dex-number{font-size:12px}
 .demo[data-layout="portrait"] .app[data-view="dex"] .data-row .row-name{padding-left:0;font-size:13px}
 .demo[data-layout="portrait"] .app[data-view="dex"] .data-row .dex-pokeball{width:22px;height:22px}
+.app[data-view="dex"] .dex-focus .detail-stage .stage-name{display:none}
+.demo[data-layout="landscape"] .app[data-view="dex"] .dex-focus .detail-stage .big-sprite{width:min(86%,560px);height:min(86%,620px);max-height:86%}
+.demo[data-layout="portrait"] .app[data-view="dex"] .dex-focus .detail-stage .big-sprite{width:min(90%,300px)!important;height:min(90%,300px)!important;max-height:90%!important}
 .demo[data-layout=portrait] .bag-ribbon-track--landscape{display:none}
 .demo[data-layout="portrait"] .menu-grid{grid-template-rows:repeat(5,minmax(0,1fr))}
 .demo[data-layout="portrait"] .menu-entry:nth-child(5),.demo[data-layout="portrait"] .menu-entry:nth-child(6){grid-column:auto;grid-row:auto}
@@ -1832,11 +1839,11 @@ function renderDetail(){
   if(S.tab===4){pane='<div class="profile-medals">没有奖章</div>';}
   return '<div class="detail-screen"><nav class="detail-tabs" role="tablist" aria-label="宝可梦详情分页"><button class="detail-tab-icon" type="button" data-action="prev-tab" aria-label="上一页">‹</button>'+tabs+'<button class="detail-tab-icon" type="button" data-action="next-tab" aria-label="下一页">›</button></nav>'+pokemonBanner(mon,"detail-banner")+'<section class="detail-pane">'+pane+'</section><section class="detail-art"><div class="model-rings" aria-hidden="true"></div>'+monSprite(mon,"profile-sprite")+'</section></div>';
 }
-function updateDexScrollbar(){const list=app.querySelector(".dex-list"),track=app.querySelector(".dex-scrollbar"),thumb=track&&track.querySelector(".dex-scrollbar-thumb");if(!list||!track||!thumb)return;list.onscroll=updateDexScrollbar;const viewport=list.clientHeight,total=list.scrollHeight,trackHeight=track.clientHeight;if(!trackHeight)return;const maxScroll=Math.max(0,total-viewport),thumbHeight=maxScroll?Math.min(trackHeight,Math.max(28,trackHeight*viewport/total)):trackHeight,maxThumbTop=Math.max(0,trackHeight-thumbHeight);thumb.style.height=thumbHeight+"px";thumb.style.top=(maxScroll?maxThumbTop*list.scrollTop/maxScroll:0)+"px";track.classList.toggle("is-disabled",maxScroll<=1)}
+function updateDexScrollbar(){const list=app.querySelector(".dex-list"),track=app.querySelector(".dex-scrollbar"),thumb=track&&track.querySelector(".dex-scrollbar-thumb");if(!list||!track||!thumb)return;list.onscroll=updateDexScrollbar;const viewport=list.clientHeight,total=list.scrollHeight,trackHeight=track.clientHeight;if(!trackHeight)return;const maxScroll=Math.max(0,total-viewport),thumbHeight=maxScroll?Math.min(trackHeight,Math.max(28,trackHeight*viewport/total)):trackHeight,maxThumbTop=Math.max(0,trackHeight-thumbHeight);thumb.style.height=thumbHeight+"px";thumb.style.top=(maxScroll?maxThumbTop*list.scrollTop/maxScroll:0)+"px";track.classList.toggle("is-disabled",maxScroll<=1);track.setAttribute("aria-valuenow",String(maxScroll?Math.round(list.scrollTop/maxScroll*100):0))}
 function setDexScrollPosition(clientY,track){const list=app.querySelector(".dex-list"),thumb=track&&track.querySelector(".dex-scrollbar-thumb");if(!list||!track||!thumb)return;const r=track.getBoundingClientRect(),travel=r.height-thumb.offsetHeight,max=list.scrollHeight-list.clientHeight;if(travel<=0||max<=0)return;list.scrollTop=Math.max(0,Math.min(1,(clientY-r.top-thumb.offsetHeight/2)/travel))*max;updateDexScrollbar()}
 function renderDex(){
   const rows=DEX.map(function(d,i){const p=PARTY[d.index],known=d.caught||d.seen,name=known?d.name:"??????",statusIcon=d.caught?"pokedex_icon_get^s.png":(d.seen?"pokedex_icon_none^s.png":"");const thumb=d.caught?monSprite(p,"sprite-mini"):'<img class="sprite-mini dex-question" src="assets/pokelist/pokedex_icon_not_found^s.png" alt="">';const status=statusIcon?'<img class="dex-pokeball" src="assets/pokelist/'+statusIcon+'" alt="">':'';return '<button class="data-row selection-target" type="button" data-dex="'+i+'" aria-pressed="'+String(i===S.dex)+'"><span class="dex-monid">'+thumb+'<span class="dex-number">No.'+String(d.no).padStart(3,"0")+'</span></span><span class="row-name">'+esc(name)+'</span><span class="row-meta">'+status+'</span></button>';}).join("");
-  return '<div class="dex-layout"><div class="dex-focus">'+dexFocusHTML(DEX[S.dex])+'</div><div class="dex-list" aria-label="图鉴编号列表">'+rows+'</div><div class="dex-scrollbar" aria-hidden="true"><span class="dex-scrollbar-thumb"></span></div></div>';
+  return '<div class="dex-layout"><div class="dex-focus">'+dexFocusHTML(DEX[S.dex])+'</div><div class="dex-list" aria-label="图鉴编号列表">'+rows+'</div><div class="dex-scrollbar" aria-label="图鉴列表滚动条" role="scrollbar" aria-controls="dexRows" aria-orientation="vertical" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" tabindex="0"><span class="dex-scrollbar-thumb"></span></div></div>';
 }
 function dexFocusHTML(d){const p=PARTY[d.index],known=d.caught||d.seen,name=known?d.name:"未知宝可梦",heroSprite=p&&p.sprite?p.sprite:"";return '<div class="detail-stage">'+(d.caught&&heroSprite?'<img class="big-sprite" src="'+esc(heroSprite)+'" alt="">':'<span class="big-sprite empty-mon">?</span>')+'<span class="stage-name">'+esc(name)+'</span><div class="dex-data"><div class="dex-number">No.'+String(d.no).padStart(3,"0")+'</div><h2>'+esc(known?d.name:"??????")+'</h2><div class="count-pair"><span class="count-chip">遇见 '+(d.seen?"✓":"—")+'</span><span class="count-chip">捕获 '+(d.caught?"✓":"—")+'</span></div><p class="stage-sub">'+(known?'已记录的伽勒尔地区宝可梦。':'尚未发现此宝可梦。')+'</p></div></div>';}
 function bagIconMarkup(bag){return '<img class="bag-cat-icon" src="assets/bag-categories/'+esc(bag.icon)+'" alt="">';}
@@ -2041,7 +2048,7 @@ function render(){
   else if(view==="world")content=renderWorld();
   else content=scaffoldPage(view);
   $("#screenContent").innerHTML=content;$("#actionbar").innerHTML=actionMarkup();
-  if(view==="settings"){const list=app.querySelector(".settings-rows"),track=app.querySelector(".settings-scrollbar");if(list){list.id="settingsRows";list.addEventListener("scroll",updateSettingsScrollbar,{passive:true});}if(track){track.removeAttribute("aria-hidden");track.setAttribute("role","scrollbar");track.setAttribute("aria-label","设置列表滚动条");track.setAttribute("aria-controls","settingsRows");track.setAttribute("aria-orientation","vertical");track.setAttribute("aria-valuemin","0");track.setAttribute("aria-valuemax","100");track.tabIndex=0;}requestAnimationFrame(updateSettingsScrollbar);}if(view==="box")requestAnimationFrame(updateBoxInfoScrollbar);
+  if(view==="settings"){const list=app.querySelector(".settings-rows"),track=app.querySelector(".settings-scrollbar");if(list){list.id="settingsRows";list.addEventListener("scroll",updateSettingsScrollbar,{passive:true});}if(track){track.removeAttribute("aria-hidden");track.setAttribute("role","scrollbar");track.setAttribute("aria-label","设置列表滚动条");track.setAttribute("aria-controls","settingsRows");track.setAttribute("aria-orientation","vertical");track.setAttribute("aria-valuemin","0");track.setAttribute("aria-valuemax","100");track.tabIndex=0;}requestAnimationFrame(updateSettingsScrollbar);}if(view==="dex"){const list=app.querySelector(".dex-list"),track=app.querySelector(".dex-scrollbar");if(list)list.id="dexRows";if(track){track.removeAttribute("aria-hidden");track.setAttribute("role","scrollbar");track.setAttribute("aria-label","图鉴列表滚动条");track.setAttribute("aria-controls","dexRows");track.setAttribute("aria-orientation","vertical");track.setAttribute("aria-valuemin","0");track.setAttribute("aria-valuemax","100");track.tabIndex=0;}requestAnimationFrame(updateDexScrollbar);}if(view==="box")requestAnimationFrame(updateBoxInfoScrollbar);
   if(hoveredSelection&&!app.contains(hoveredSelection))hoveredSelection=null;
   if(focusedSelection&&!app.contains(focusedSelection))focusedSelection=null;
   updateSelectionArrow();
@@ -2064,6 +2071,17 @@ document.addEventListener("pointermove",function(event){
 function stopSettingsScrollbarDrag(event){if(settingsScrollbarDrag&&settingsScrollbarDrag.pointerId===event.pointerId){const track=settingsScrollbarDrag.track;settingsScrollbarDrag=null;if(track.hasPointerCapture&&track.hasPointerCapture(event.pointerId))track.releasePointerCapture(event.pointerId);}}
 document.addEventListener("pointerup",stopSettingsScrollbarDrag);
 document.addEventListener("pointercancel",stopSettingsScrollbarDrag);
+let dexScrollbarDrag=null;
+document.addEventListener("pointerdown",function(event){
+  const track=event.target.closest&&event.target.closest(".dex-scrollbar");
+  if(!track||S.view!=="dex"||track.classList.contains("is-disabled"))return;
+  dexScrollbarDrag={track:track,pointerId:event.pointerId};
+  if(track.setPointerCapture)track.setPointerCapture(event.pointerId);
+  setDexScrollPosition(event.clientY,track);event.preventDefault();
+});
+document.addEventListener("pointermove",function(event){if(!dexScrollbarDrag||dexScrollbarDrag.pointerId!==event.pointerId)return;setDexScrollPosition(event.clientY,dexScrollbarDrag.track)});
+function stopDexScrollbarDrag(event){if(dexScrollbarDrag&&dexScrollbarDrag.pointerId===event.pointerId){const track=dexScrollbarDrag.track;dexScrollbarDrag=null;if(track.hasPointerCapture&&track.hasPointerCapture(event.pointerId))track.releasePointerCapture(event.pointerId)}}
+document.addEventListener("pointerup",stopDexScrollbarDrag);document.addEventListener("pointercancel",stopDexScrollbarDrag);
 document.addEventListener("pointerdown",function(event){const track=event.target.closest&&event.target.closest(".box-info-scrollbar");if(!track||track.classList.contains("is-disabled")||!app.querySelector(".box-info-pane .box-detail-content"))return;boxInfoScrollbarDrag={track:track,pointerId:event.pointerId};if(track.setPointerCapture)track.setPointerCapture(event.pointerId);setBoxInfoScrollPosition(event.clientY,track);event.preventDefault()});
 document.addEventListener("pointermove",function(event){if(!boxInfoScrollbarDrag||boxInfoScrollbarDrag.pointerId!==event.pointerId)return;setBoxInfoScrollPosition(event.clientY,boxInfoScrollbarDrag.track)});
 function stopBoxInfoScrollbarDrag(event){if(boxInfoScrollbarDrag&&boxInfoScrollbarDrag.pointerId===event.pointerId){const track=boxInfoScrollbarDrag.track;boxInfoScrollbarDrag=null;if(track.hasPointerCapture&&track.hasPointerCapture(event.pointerId))track.releasePointerCapture(event.pointerId)}}
@@ -2175,6 +2193,7 @@ document.addEventListener("keydown",function(event){
     if(k==="ArrowRight"){S.tab=(S.tab+1)%TABS.length;render();event.preventDefault();}
     else if(k==="ArrowLeft"){S.tab=(S.tab+TABS.length-1)%TABS.length;render();event.preventDefault();}
   }else if(S.view==="dex"){
+    if(event.target.closest&&event.target.closest(".dex-scrollbar")){const list=app.querySelector(".dex-list"),step=Math.max(36,list.clientHeight*.14);if(k==="ArrowDown")list.scrollTop+=step;else if(k==="ArrowUp")list.scrollTop-=step;else if(k==="PageDown")list.scrollTop+=list.clientHeight*.85;else if(k==="PageUp")list.scrollTop-=list.clientHeight*.85;else if(k==="Home")list.scrollTop=0;else if(k==="End")list.scrollTop=list.scrollHeight;else return;updateDexScrollbar();event.preventDefault();return;}
     if(k==="ArrowDown"){S.dex=Math.min(DEX.length-1,S.dex+1);render();event.preventDefault();}
     else if(k==="ArrowUp"){S.dex=Math.max(0,S.dex-1);render();event.preventDefault();}
   }else if(S.view==="bag"){
