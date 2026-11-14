@@ -14,8 +14,8 @@
 <link rel="stylesheet" href="styles-optimized/06-box.css">
 <link rel="stylesheet" href="styles-optimized/07-relations.css">
 
-<!-- 弦九数据桥接层 -->
-<script src="scripts/bridge/swsh-bridge.js"></script>
+<!-- 弦九数据桥接层（已内置在原版JS中，不需要额外引入） -->
+<!-- swshBridge 在原版JS里已定义，提供 getLiveStatData() 方法 -->
 
 
 
@@ -108,45 +108,6 @@ function swshIcon(key,size){
   return '<svg class="swsh-icon swsh-icon-'+key+'" width="'+px+'" height="'+px+'" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2.25" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">'+(art[key]||art.pokedex)+'</svg>';
 }
 // ============================================
-// 弦九数据加载（使用 swshBridge）
-// ============================================
-
-// 尝试从弦九插件加载数据
-let xianjiunData = null;
-let PARTY_DATA = null;
-let BAG_DATA = null;
-let DEX_DATA = null;
-let TRAINER_DATA = null;
-
-try {
-  if (typeof swshBridge !== 'undefined') {
-    console.log('[SWSH HUD] 尝试从弦九加载数据...');
-    xianjiunData = swshBridge.loadData();
-
-    if (xianjiunData && xianjiunData.训练家) {
-      // 转换为SWSH格式
-      PARTY_DATA = swshBridge.convertParty(xianjiunData);
-      BAG_DATA = swshBridge.convertBag(xianjiunData);
-      DEX_DATA = swshBridge.convertDex(xianjiunData);
-      TRAINER_DATA = swshBridge.convertTrainer(xianjiunData);
-
-      console.log('[SWSH HUD] 弦九数据加载成功');
-      console.log('  队伍:', PARTY_DATA.length, '只宝可梦');
-      console.log('  背包:', BAG_DATA.length, '种物品');
-      console.log('  图鉴:', DEX_DATA.length, '个条目');
-      console.log('  训练家:', TRAINER_DATA.name);
-    } else {
-      console.log('[SWSH HUD] 弦九数据无效，使用mock数据');
-    }
-  } else {
-    console.log('[SWSH HUD] swshBridge未加载，使用mock数据');
-  }
-} catch (e) {
-  console.error('[SWSH HUD] 弦九数据加载失败:', e);
-  console.log('[SWSH HUD] 降级使用mock数据');
-}
-
-// ============================================
 // Mock数据（兜底）
 // ============================================
 
@@ -221,49 +182,14 @@ const BOXES_MOCK = [
 ];
 
 // ============================================
-// 数据源选择（弦九数据 或 Mock数据）
+// ============================================
+// 数据源（使用Mock数据，弦九接入通过 swshBridge.getStat() 在渲染时动态读取）
 // ============================================
 
-// 优先使用弦九数据，如果没有则使用Mock数据
-const PARTY = PARTY_DATA && PARTY_DATA.length > 0 ? PARTY_DATA : PARTY_MOCK;
-const BAGS = BAG_DATA && BAG_DATA.length > 0 ? convertBagsFormat(BAG_DATA) : BAGS_MOCK;
-const DEX = DEX_DATA && DEX_DATA.length > 0 ? DEX_DATA : DEX_MOCK;
-const BOXES = BOXES_MOCK; // 暂时使用Mock数据
-
-// 转换背包格式（swshBridge格式 → 原版格式）
-function convertBagsFormat(bagData) {
-  // swshBridge返回: [{name, count, category, ...}]
-  // 原版需要: [{name, icon, color, items: [[name, desc, count, icon]]}]
-
-  // 按分类分组
-  const categories = {
-    '药品': { name: '药品', icon: '药品.png', color: '#ff8b9a', items: [] },
-    '精灵球': { name: '精灵球', icon: '精灵球.png', color: '#8bb3ff', items: [] },
-    '战斗道具': { name: '战斗道具', icon: '战斗道具.png', color: '#ffb98b', items: [] },
-    '树果': { name: '树果', icon: '树果.png', color: '#86c270', items: [] },
-    '道具': { name: '道具', icon: '道具.png', color: '#94c8ff', items: [] },
-    '招式学习器': { name: '招式学习器', icon: '招式学习器.png', color: '#c49dff', items: [] },
-    '重要物品': { name: '重要物品', icon: '重要物品.png', color: '#ffdf94', items: [] },
-    '食材': { name: '食材', icon: '食材.png', color: '#7fd4c0', items: [] }
-  };
-
-  bagData.forEach(item => {
-    const category = categories[item.category] || categories['道具'];
-    category.items.push([
-      item.name,
-      item.description || '无描述',
-      item.count,
-      item.icon || '0025'
-    ]);
-  });
-
-  return Object.values(categories).filter(cat => cat.items.length > 0);
-}
-
-console.log('[SWSH HUD] 使用数据源:');
-console.log('  PARTY:', PARTY === PARTY_DATA ? '弦九数据' : 'Mock数据', '(' + PARTY.length + '只)');
-console.log('  BAGS:', BAGS === BAGS_MOCK ? 'Mock数据' : '弦九数据转换', '(' + BAGS.length + '类)');
-console.log('  DEX:', DEX === DEX_DATA ? '弦九数据' : 'Mock数据', '(' + DEX.length + '个)');
+const PARTY = PARTY_MOCK;
+const BAGS  = BAGS_MOCK;
+const DEX   = DEX_MOCK;
+const BOXES = BOXES_MOCK;
 
 const TABS = ["概要","数值","招式","信息","奖章"];
 const TAB_SVGS = [
