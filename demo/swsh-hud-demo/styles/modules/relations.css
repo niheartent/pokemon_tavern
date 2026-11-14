@@ -1,0 +1,291 @@
+/* ============================================
+   Relations Module (人际关系)
+   横屏 + 竖屏
+   ============================================ */
+
+/* ===== 人际关系布局 ===== */
+
+.relations-layout {
+  display: grid;
+  grid-template-columns: minmax(280px, 38%) minmax(0, 1fr);
+  grid-template-rows: 100%;
+  grid-template-areas: "list detail";
+  gap: clamp(16px, 2.4cqw, 32px);
+  height: 100%;
+  padding: clamp(14px, 2cqw, 24px) clamp(16px, 2.3cqw, 28px);
+}
+
+/* ===== 左侧：关系列表 ===== */
+
+.relations-list-pane {
+  grid-area: list;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  gap: clamp(10px, 1.4cqw, 16px);
+  overflow-y: auto;
+}
+
+/* 关系行 */
+.relation-row {
+  position: relative;
+  width: 100%;
+  min-height: clamp(56px, 7.5cqw, 72px);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: clamp(10px, 1.5cqw, 14px);
+  padding: clamp(10px, 1.5cqw, 14px) clamp(14px, 2cqw, 18px);
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: var(--surface);
+  color: var(--text);
+  text-align: left;
+  transition: all 0.15s ease;
+  cursor: pointer;
+}
+
+.relation-row:hover,
+.relation-row:focus-visible {
+  border-color: transparent;
+  background: var(--selected);
+  color: var(--selected-text);
+}
+
+.relation-row[aria-pressed="true"] {
+  border-color: transparent;
+  background: var(--selected);
+  color: var(--selected-text);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.18);
+}
+
+/* 左侧信息 */
+.relation-row-left {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.relation-name {
+  font-size: clamp(14px, 1.7cqw, 19px);
+  font-weight: 900;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.relation-role-tag {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px 8px;
+  border-radius: 999px;
+  font-size: clamp(9px, 1.05cqw, 12px);
+  font-weight: 850;
+  width: fit-content;
+}
+
+.relation-role-tag--rival {
+  background: color-mix(in srgb, var(--swsh-red) 20%, transparent);
+  color: var(--swsh-red);
+}
+
+.relation-role-tag--contact {
+  background: color-mix(in srgb, var(--accent) 18%, transparent);
+  color: var(--accent);
+}
+
+.relation-role-tag--relations {
+  background: color-mix(in srgb, var(--accent) 15%, transparent);
+  color: var(--text);
+}
+
+/* 右侧好感度 */
+.relation-affinity-mini {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 4px;
+  min-width: 60px;
+}
+
+.affinity-num {
+  font-size: clamp(14px, 1.7cqw, 19px);
+  font-weight: 900;
+}
+
+.affinity-bar-mini {
+  width: 100%;
+  height: 6px;
+  border-radius: 999px;
+  background: rgba(0, 0, 0, 0.12);
+  overflow: hidden;
+}
+
+.app[data-theme="night"] .affinity-bar-mini {
+  background: rgba(255, 255, 255, 0.15);
+}
+
+.affinity-fill {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  background: var(--accent);
+  transition: width 0.3s ease;
+}
+
+/* ===== 右侧：关系详情 ===== */
+
+.relations-detail-pane {
+  grid-area: detail;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: clamp(20px, 3cqw, 36px);
+}
+
+.relations-card {
+  width: 100%;
+  max-width: 420px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: clamp(14px, 2cqw, 20px);
+}
+
+/* 头像/图标 */
+.relations-avatar {
+  width: min(38%, 118px);
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background: var(--surface);
+  border: 3px solid var(--line);
+  display: grid;
+  place-items: center;
+  font-size: 34px;
+}
+
+/* 名称标签 */
+.relations-name-tag {
+  text-align: center;
+}
+
+.relations-name-tag strong {
+  display: block;
+  font-size: clamp(20px, 2.6cqw, 28px);
+  font-weight: 900;
+  margin-bottom: 6px;
+}
+
+.relations-name-tag span {
+  font-size: clamp(12px, 1.4cqw, 16px);
+  font-weight: 750;
+  color: var(--muted);
+}
+
+/* 好感度大条 */
+.affinity-bar-large {
+  width: 100%;
+  height: clamp(20px, 2.8cqw, 32px);
+  border-radius: 999px;
+  background: rgba(0, 0, 0, 0.1);
+  border: 2px solid var(--line);
+  overflow: hidden;
+  position: relative;
+}
+
+.app[data-theme="night"] .affinity-bar-large {
+  background: rgba(255, 255, 255, 0.12);
+}
+
+.affinity-bar-large .affinity-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--accent), color-mix(in srgb, var(--accent) 70%, #fff));
+}
+
+.affinity-label {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  font-size: clamp(11px, 1.3cqw, 15px);
+  font-weight: 900;
+  color: var(--text);
+  mix-blend-mode: difference;
+}
+
+/* ===== 竖屏布局 ===== */
+
+.demo[data-layout="portrait"] .relations-layout {
+  grid-template-columns: 1fr;
+  grid-template-rows: auto 1fr;
+  grid-template-areas:
+    "detail"
+    "list";
+  gap: clamp(12px, 2cqw, 18px);
+}
+
+.demo[data-layout="portrait"] .relations-detail-pane {
+  padding: clamp(14px, 2.5cqw, 20px);
+}
+
+.demo[data-layout="portrait"] .relations-avatar {
+  width: min(38%, 118px);
+  font-size: 34px;
+}
+
+.demo[data-layout="portrait"] .relations-name-tag {
+  margin-top: 4px;
+}
+
+.demo[data-layout="portrait"] .relations-name-tag strong {
+  font-size: 18px;
+}
+
+.demo[data-layout="portrait"] .relations-name-tag span {
+  font-size: 10px;
+}
+
+.demo[data-layout="portrait"] .relations-list-pane {
+  grid-area: list;
+  min-height: 0;
+  padding: 8px 12px 8px;
+  gap: 6px;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+
+.demo[data-layout="portrait"] .relation-row {
+  min-height: 45px;
+  padding: 6px 10px;
+  border-radius: 999px;
+}
+
+.demo[data-layout="portrait"] .relation-name {
+  font-size: 13px;
+}
+
+.demo[data-layout="portrait"] .relation-role-tag {
+  font-size: 8px;
+  padding: 2px 6px;
+}
+
+.demo[data-layout="portrait"] .affinity-num {
+  font-size: 12px;
+}
+
+.demo[data-layout="portrait"] .affinity-bar-mini {
+  height: 5px;
+}
+
+/* ===== 响应式优化 ===== */
+
+@container app (max-width: 520px) {
+  .relations-layout {
+    grid-template-columns: 1fr;
+    grid-template-rows: auto 1fr;
+  }
+}

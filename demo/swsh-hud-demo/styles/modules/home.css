@@ -1,0 +1,234 @@
+/* ============================================
+   Home Module (主菜单)
+   横屏 + 竖屏
+   ============================================ */
+
+/* ===== 横屏布局 ===== */
+
+.app[data-view="home"] .screen-content {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: clamp(20px, 3cqw, 40px);
+  overflow: hidden;
+}
+
+/* 菜单容器 */
+.menu-container {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: clamp(18px, 2.6cqw, 32px);
+}
+
+/* 训练家信息条 */
+.trainer-bar {
+  width: min(92%, 620px);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: clamp(10px, 1.5cqw, 16px) clamp(14px, 2cqw, 20px);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.95);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+.app[data-theme="night"] .trainer-bar {
+  background: rgba(255, 255, 255, 0.12);
+  color: #fff;
+}
+
+.trainer-name {
+  font-size: clamp(15px, 1.9cqw, 22px);
+  font-weight: 900;
+}
+
+.trainer-stats {
+  display: flex;
+  align-items: center;
+  gap: clamp(14px, 2cqw, 24px);
+  font-size: clamp(12px, 1.4cqw, 16px);
+  font-weight: 750;
+}
+
+.trainer-stat {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.trainer-icon {
+  width: 20px;
+  height: 20px;
+}
+
+/* 10格宫格菜单 */
+.menu-grid {
+  /* 从 layout.css 继承 */
+}
+
+.menu-entry {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: clamp(6px, 1cqw, 10px);
+  padding: clamp(12px, 1.8cqw, 20px);
+  border: 0;
+  border-radius: 18px;
+  background: rgba(255, 255, 255, 0.88);
+  color: #17191d;
+  box-shadow: 0 3px 10px rgba(23, 31, 43, 0.12);
+  transition: all 0.15s ease;
+  cursor: pointer;
+}
+
+.app[data-theme="night"] .menu-entry {
+  background: rgba(255, 255, 255, 0.1);
+  color: #fff;
+}
+
+.menu-entry:hover,
+.menu-entry:focus-visible,
+.menu-entry[aria-pressed="true"],
+.menu-entry.is-pointer-active,
+.menu-entry.is-focus-active {
+  background: #08090b;
+  color: #fff;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.24);
+}
+
+.app[data-theme="night"] .menu-entry:hover,
+.app[data-theme="night"] .menu-entry:focus-visible,
+.app[data-theme="night"] .menu-entry[aria-pressed="true"],
+.app[data-theme="night"] .menu-entry.is-pointer-active,
+.app[data-theme="night"] .menu-entry.is-focus-active {
+  background: #08090b;
+  color: #fff;
+}
+
+.menu-icon {
+  width: clamp(36px, 5.2cqw, 56px);
+  height: clamp(36px, 5.2cqw, 56px);
+  object-fit: contain;
+}
+
+.menu-label {
+  font-size: clamp(11px, 1.35cqw, 16px);
+  font-weight: 850;
+  letter-spacing: 0.01em;
+}
+
+/* 环境信息条（底部） */
+.env-bar {
+  position: absolute;
+  bottom: 48px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: min(86%, 520px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: clamp(10px, 1.5cqw, 18px);
+  padding: clamp(6px, 1cqw, 10px) clamp(12px, 1.8cqw, 20px);
+  border-radius: 999px;
+  background: rgba(0, 0, 0, 0.65);
+  color: #fff;
+  font-size: clamp(10px, 1.15cqw, 13px);
+  font-weight: 700;
+  z-index: 2;
+}
+
+.app[data-theme="night"] .env-bar {
+  background: rgba(0, 0, 0, 0.8);
+}
+
+.env-item {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  white-space: nowrap;
+}
+
+.env-separator {
+  width: 1px;
+  height: 14px;
+  background: rgba(255, 255, 255, 0.3);
+}
+
+/* ===== 竖屏布局 ===== */
+
+.demo[data-layout="portrait"] .app[data-view="home"] .screen-content {
+  padding: clamp(16px, 3cqw, 28px) clamp(14px, 2.5cqw, 24px);
+}
+
+.demo[data-layout="portrait"] .menu-container {
+  gap: clamp(14px, 2.2cqw, 24px);
+}
+
+.demo[data-layout="portrait"] .trainer-bar {
+  width: 100%;
+  flex-direction: column;
+  gap: 8px;
+  padding: clamp(12px, 2cqw, 16px);
+}
+
+.demo[data-layout="portrait"] .trainer-stats {
+  width: 100%;
+  justify-content: space-around;
+}
+
+.demo[data-layout="portrait"] .menu-grid {
+  /* 2x5 布局，从 layout.css 继承 */
+  width: 100%;
+  max-width: 360px;
+}
+
+.demo[data-layout="portrait"] .menu-entry {
+  aspect-ratio: 1;
+  padding: clamp(10px, 1.5cqw, 14px);
+}
+
+.demo[data-layout="portrait"] .menu-icon {
+  width: clamp(32px, 8cqw, 48px);
+  height: clamp(32px, 8cqw, 48px);
+}
+
+.demo[data-layout="portrait"] .menu-label {
+  font-size: clamp(10px, 2.2cqw, 14px);
+}
+
+.demo[data-layout="portrait"] .env-bar {
+  position: static;
+  transform: none;
+  width: 100%;
+  max-width: 360px;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  margin-top: auto;
+}
+
+.demo[data-layout="portrait"] .env-separator {
+  display: none;
+}
+
+/* ===== 响应式优化 ===== */
+
+@container app (max-width: 420px) {
+  .trainer-stats {
+    flex-wrap: wrap;
+  }
+
+  .menu-icon {
+    width: clamp(28px, 8cqw, 42px);
+    height: clamp(28px, 8cqw, 42px);
+  }
+
+  .menu-label {
+    font-size: clamp(9px, 2.8cqw, 13px);
+  }
+}

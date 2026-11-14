@@ -1,0 +1,303 @@
+/* ============================================
+   Party Detail Module (精灵详情页)
+   横屏 + 竖屏
+
+   5个Tab: 信息/特性/招式/笔记/缎带
+   ============================================ */
+
+/* ===== 详情页整体布局 ===== */
+
+.app[data-view="party-detail"] .screen-content {
+  padding: 0;
+  overflow: hidden;
+}
+
+.detail-screen {
+  display: grid;
+  grid-template-columns: minmax(240px, 32%) minmax(0, 1fr);
+  grid-template-rows: 100%;
+  height: 100%;
+  overflow: hidden;
+}
+
+/* ===== 左侧：精灵信息 ===== */
+
+.detail-left {
+  display: flex;
+  flex-direction: column;
+  background: rgba(255, 255, 255, 0.92);
+  border-right: 1px solid var(--line);
+  overflow-y: auto;
+}
+
+.app[data-theme="night"] .detail-left {
+  background: rgba(37, 47, 61, 0.94);
+}
+
+/* 顶部图标条 */
+.detail-icon-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  padding: clamp(10px, 1.5cqw, 14px);
+  border-bottom: 1px solid var(--line);
+}
+
+.detail-icon {
+  width: clamp(24px, 3.2cqw, 36px);
+  height: clamp(24px, 3.2cqw, 36px);
+  object-fit: contain;
+  opacity: 0.7;
+}
+
+/* 精灵卡片 */
+.detail-card {
+  padding: clamp(14px, 2cqw, 20px);
+  text-align: center;
+}
+
+.detail-card .big-sprite {
+  width: clamp(80px, 14cqw, 140px);
+  height: clamp(80px, 14cqw, 140px);
+  margin: 0 auto;
+  filter: drop-shadow(0 8px 12px rgba(0, 0, 0, 0.12));
+}
+
+.detail-name {
+  margin: clamp(10px, 1.5cqw, 14px) 0 4px;
+  font-size: clamp(18px, 2.4cqw, 26px);
+  font-weight: 900;
+}
+
+.detail-types {
+  display: flex;
+  justify-content: center;
+  gap: 6px;
+  margin: 8px 0;
+}
+
+/* 数据行 */
+.detail-rows {
+  padding: 0 clamp(14px, 2cqw, 20px) clamp(14px, 2cqw, 20px);
+}
+
+.detail-data-row {
+  display: flex;
+  justify-content: space-between;
+  padding: clamp(8px, 1.2cqw, 12px) 0;
+  border-bottom: 1px solid var(--line);
+  font-size: clamp(11px, 1.3cqw, 15px);
+}
+
+.detail-data-row:last-child {
+  border-bottom: 0;
+}
+
+.detail-data-label {
+  font-weight: 750;
+  color: var(--muted);
+}
+
+.detail-data-value {
+  font-weight: 850;
+}
+
+/* ===== 右侧：Tab内容 ===== */
+
+.detail-right {
+  display: flex;
+  flex-direction: column;
+  background: rgba(0, 0, 0, 0.88);
+  color: #fff;
+  overflow: hidden;
+}
+
+.app[data-theme="night"] .detail-right {
+  background: rgba(0, 0, 0, 0.95);
+}
+
+/* Tab栏 */
+.detail-tabs {
+  display: flex;
+  border-bottom: 2px solid rgba(255, 255, 255, 0.15);
+}
+
+.detail-tab {
+  flex: 1;
+  min-width: 0;
+  padding: clamp(10px, 1.5cqw, 16px);
+  border: 0;
+  border-bottom: 3px solid transparent;
+  background: transparent;
+  color: rgba(255, 255, 255, 0.6);
+  font-size: clamp(11px, 1.3cqw, 15px);
+  font-weight: 850;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.detail-tab[aria-selected="true"] {
+  border-bottom-color: #fff;
+  color: #fff;
+}
+
+.detail-tab:hover,
+.detail-tab:focus-visible {
+  color: #fff;
+  background: rgba(255, 255, 255, 0.08);
+}
+
+/* Tab内容区 */
+.detail-tab-content {
+  flex: 1;
+  min-height: 0;
+  padding: clamp(16px, 2.4cqw, 24px);
+  overflow-y: auto;
+}
+
+/* Tab 0: 信息 - 雷达图等 */
+.detail-radar {
+  width: min(90%, 280px);
+  height: auto;
+  margin: 0 auto clamp(16px, 2.4cqw, 24px);
+}
+
+/* Tab 1: 特性 */
+.ability-box {
+  padding: clamp(12px, 1.8cqw, 18px);
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.08);
+  margin-bottom: clamp(12px, 1.8cqw, 18px);
+}
+
+.ability-name {
+  font-size: clamp(15px, 1.9cqw, 20px);
+  font-weight: 900;
+  margin-bottom: 8px;
+}
+
+.ability-desc {
+  font-size: clamp(12px, 1.4cqw, 16px);
+  line-height: 1.6;
+  color: rgba(255, 255, 255, 0.85);
+}
+
+/* Tab 2: 招式 */
+.moves-list {
+  display: flex;
+  flex-direction: column;
+  gap: clamp(10px, 1.5cqw, 14px);
+}
+
+.move-card {
+  padding: clamp(12px, 1.8cqw, 18px);
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.move-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 6px;
+}
+
+.move-name {
+  font-size: clamp(14px, 1.7cqw, 18px);
+  font-weight: 900;
+}
+
+.move-type {
+  height: clamp(18px, 2.2cqw, 24px);
+  object-fit: contain;
+}
+
+.move-stats {
+  display: flex;
+  gap: clamp(10px, 1.5cqw, 16px);
+  font-size: clamp(11px, 1.3cqw, 14px);
+  color: rgba(255, 255, 255, 0.75);
+}
+
+/* Tab 3: 笔记 */
+.note-area {
+  width: 100%;
+  min-height: 200px;
+  padding: clamp(12px, 1.8cqw, 18px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.05);
+  color: #fff;
+  font-size: clamp(12px, 1.4cqw, 16px);
+  line-height: 1.6;
+  resize: vertical;
+}
+
+/* Tab 4: 缎带 */
+.ribbons-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
+  gap: clamp(10px, 1.5cqw, 14px);
+}
+
+.ribbon-item {
+  aspect-ratio: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: clamp(8px, 1.2cqw, 12px);
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.ribbon-icon {
+  width: clamp(32px, 4.5cqw, 48px);
+  height: clamp(32px, 4.5cqw, 48px);
+  object-fit: contain;
+}
+
+.ribbon-label {
+  font-size: clamp(9px, 1.1cqw, 12px);
+  text-align: center;
+}
+
+/* ===== 竖屏布局 ===== */
+
+.demo[data-layout="portrait"] .detail-screen {
+  grid-template-columns: 1fr;
+  grid-template-rows: auto 1fr;
+}
+
+.demo[data-layout="portrait"] .detail-left {
+  border-right: 0;
+  border-bottom: 1px solid var(--line);
+  max-height: 40%;
+  overflow-y: auto;
+}
+
+.demo[data-layout="portrait"] .detail-icon-bar {
+  padding: clamp(8px, 1.5cqw, 12px);
+}
+
+.demo[data-layout="portrait"] .detail-icon {
+  width: clamp(20px, 5cqw, 32px);
+  height: clamp(20px, 5cqw, 32px);
+}
+
+.demo[data-layout="portrait"] .detail-card .big-sprite {
+  width: clamp(70px, 18cqw, 120px);
+  height: clamp(70px, 18cqw, 120px);
+}
+
+.demo[data-layout="portrait"] .detail-name {
+  font-size: clamp(16px, 4cqw, 22px);
+}
+
+.demo[data-layout="portrait"] .detail-tab {
+  font-size: clamp(10px, 2.5cqw, 14px);
+}

@@ -1,0 +1,321 @@
+/* ============================================
+   Layout System
+   布局骨架 - Grid/Flex 系统
+   ============================================ */
+
+/* ===== 通用布局模式 ===== */
+
+/* 左右分栏布局（用于队伍/图鉴/背包/盒子） */
+.split-layout {
+  display: grid;
+  grid-template-columns: minmax(280px, 38%) minmax(0, 1fr);
+  gap: clamp(16px, 2.4cqw, 32px);
+  height: 100%;
+  padding: clamp(14px, 2cqw, 24px) clamp(16px, 2.3cqw, 28px);
+}
+
+.split-left {
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  gap: clamp(10px, 1.4cqw, 16px);
+}
+
+.split-right {
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  gap: clamp(10px, 1.4cqw, 16px);
+}
+
+/* 中心呈现布局（用于主菜单/设置） */
+.center-layout {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+  padding: clamp(20px, 3cqw, 40px);
+}
+
+/* 列表容器 */
+.list-container {
+  min-height: 0;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: clamp(6px, 0.9cqw, 11px);
+  overflow-y: auto;
+  overflow-x: hidden;
+  overscroll-behavior: contain;
+  padding-right: 4px;
+}
+
+/* 滚动容器（带自定义滚动条） */
+.scroll-container {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(96, 112, 134, 0.45) transparent;
+}
+
+.scroll-container::-webkit-scrollbar {
+  width: 6px;
+}
+
+.scroll-container::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.scroll-container::-webkit-scrollbar-thumb {
+  background: rgba(96, 112, 134, 0.45);
+  border-radius: 3px;
+}
+
+.scroll-container::-webkit-scrollbar-thumb:hover {
+  background: rgba(96, 112, 134, 0.65);
+}
+
+/* ===== 网格布局模式 ===== */
+
+/* 主菜单 10 格宫格 */
+.menu-grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  grid-template-rows: repeat(2, 1fr);
+  gap: clamp(14px, 2cqw, 24px);
+  width: min(92%, 620px);
+  aspect-ratio: 2.5;
+  margin: 0 auto;
+}
+
+/* 盒子格子布局 */
+.box-grid {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: clamp(8px, 1.2cqw, 14px);
+  padding: clamp(10px, 1.5cqw, 18px);
+}
+
+/* ===== Flexbox 工具类 ===== */
+
+.flex-row {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+
+.flex-col {
+  display: flex;
+  flex-direction: column;
+}
+
+.flex-center {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.flex-between {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.flex-wrap {
+  flex-wrap: wrap;
+}
+
+.flex-1 {
+  flex: 1;
+  min-width: 0;
+  min-height: 0;
+}
+
+/* ===== 间距工具 ===== */
+
+.gap-xs {
+  gap: clamp(4px, 0.6cqw, 8px);
+}
+
+.gap-sm {
+  gap: clamp(6px, 0.9cqw, 11px);
+}
+
+.gap-md {
+  gap: clamp(10px, 1.4cqw, 16px);
+}
+
+.gap-lg {
+  gap: clamp(14px, 2cqw, 24px);
+}
+
+/* ===== 响应式容器查询 ===== */
+
+.app {
+  container-type: inline-size;
+  container-name: app;
+}
+
+/* 小屏幕适配 */
+@container app (max-width: 520px) {
+  .split-layout {
+    grid-template-columns: 1fr;
+    grid-template-rows: auto 1fr;
+  }
+
+  .menu-grid {
+    grid-template-columns: repeat(2, 1fr);
+    grid-template-rows: repeat(5, 1fr);
+    aspect-ratio: 0.8;
+  }
+
+  .box-grid {
+    grid-template-columns: repeat(5, 1fr);
+  }
+}
+
+/* ===== 竖屏专用布局 ===== */
+
+.demo[data-layout="portrait"] .split-layout {
+  grid-template-columns: 1fr;
+  grid-template-rows: auto minmax(0, 1fr);
+  gap: clamp(12px, 2cqw, 18px);
+}
+
+.demo[data-layout="portrait"] .menu-grid {
+  grid-template-columns: repeat(2, 1fr);
+  grid-template-rows: repeat(5, 1fr);
+  width: min(86%, 360px);
+  aspect-ratio: 0.8;
+}
+
+/* ===== 面板系统 ===== */
+
+.panel {
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  border-radius: 18px;
+  background: var(--surface);
+  overflow: hidden;
+}
+
+.panel-header {
+  padding: clamp(10px, 1.5cqw, 16px) clamp(14px, 2cqw, 20px);
+  border-bottom: 1px solid var(--line);
+  font-size: clamp(13px, 1.5cqw, 17px);
+  font-weight: 900;
+}
+
+.panel-body {
+  flex: 1;
+  min-height: 0;
+  padding: clamp(12px, 1.8cqw, 20px);
+  overflow-y: auto;
+}
+
+.panel-footer {
+  padding: clamp(10px, 1.5cqw, 16px) clamp(14px, 2cqw, 20px);
+  border-top: 1px solid var(--line);
+}
+
+/* ===== Tab 系统 ===== */
+
+.tab-bar {
+  display: flex;
+  gap: 2px;
+  border-bottom: 2px solid var(--line);
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+
+.tab-bar::-webkit-scrollbar {
+  display: none;
+}
+
+.tab-button {
+  min-width: 80px;
+  padding: clamp(8px, 1.2cqw, 14px) clamp(12px, 1.8cqw, 20px);
+  border: 0;
+  border-bottom: 3px solid transparent;
+  background: transparent;
+  color: var(--muted);
+  font-size: clamp(11px, 1.3cqw, 15px);
+  font-weight: 850;
+  white-space: nowrap;
+  transition: all 0.15s ease;
+}
+
+.tab-button[aria-selected="true"] {
+  border-bottom-color: var(--accent);
+  color: var(--text);
+}
+
+.tab-button:hover,
+.tab-button:focus-visible {
+  color: var(--text);
+  background: color-mix(in srgb, var(--accent) 8%, transparent);
+}
+
+.tab-content {
+  flex: 1;
+  min-height: 0;
+}
+
+/* ===== 卡片系统 ===== */
+
+.card {
+  padding: clamp(12px, 1.8cqw, 20px);
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  background: var(--surface);
+}
+
+.card-compact {
+  padding: clamp(8px, 1.2cqw, 14px);
+  border-radius: 10px;
+}
+
+.card-title {
+  margin: 0 0 clamp(8px, 1.2cqw, 12px);
+  font-size: clamp(14px, 1.7cqw, 19px);
+  font-weight: 900;
+}
+
+.card-body {
+  font-size: clamp(11px, 1.3cqw, 15px);
+  line-height: 1.6;
+  color: var(--muted);
+}
+
+/* ===== 栅格系统（备用） ===== */
+
+.row {
+  display: flex;
+  flex-wrap: wrap;
+  margin: 0 calc(-1 * clamp(6px, 1cqw, 12px));
+}
+
+.col {
+  flex: 1;
+  padding: 0 clamp(6px, 1cqw, 12px);
+  min-width: 0;
+}
+
+.col-1 {
+  flex: 0 0 8.333%;
+}
+.col-2 {
+  flex: 0 0 16.666%;
+}
+.col-3 {
+  flex: 0 0 25%;
+}
+.col-4 {
+  flex: 0 0 33.333%;
+}
+.col-6 {
+  flex: 0 0 50%;
+}
+.col-12 {
+  flex: 0 0 100%;
+}

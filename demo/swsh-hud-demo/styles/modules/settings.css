@@ -1,0 +1,169 @@
+/* ============================================
+   Settings Module (设置)
+   横屏 + 竖屏
+   ============================================ */
+
+/* ===== 设置布局 ===== */
+
+.app[data-view="settings"] .screen-content {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: clamp(20px, 3cqw, 40px);
+  overflow: hidden;
+}
+
+.settings-container {
+  width: min(90%, 680px);
+  max-height: 86%;
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: clamp(16px, 2.4cqw, 28px);
+  border-radius: 20px;
+  background: rgba(255, 255, 255, 0.95);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+  overflow: hidden;
+}
+
+.app[data-theme="night"] .settings-container {
+  background: rgba(255, 255, 255, 0.08);
+}
+
+/* ===== 左侧：设置列表 ===== */
+
+.settings-rows {
+  flex: 1;
+  min-height: 0;
+  padding: clamp(16px, 2.4cqw, 24px);
+  overflow-y: auto;
+  overflow-x: hidden;
+  scroll-behavior: smooth;
+}
+
+/* 设置行 */
+.setting-row {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  min-height: clamp(48px, 6.5cqw, 64px);
+  padding: clamp(12px, 1.8cqw, 18px) clamp(14px, 2cqw, 20px);
+  margin-bottom: clamp(6px, 0.9cqw, 10px);
+  border-radius: 12px;
+  background: transparent;
+  border: 1px solid var(--line);
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.setting-row:hover,
+.setting-row:focus-visible {
+  background: var(--surface);
+  border-color: transparent;
+}
+
+.setting-row.is-selected,
+.setting-row[aria-pressed="true"] {
+  background: var(--selected);
+  color: var(--selected-text);
+  border-color: transparent;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.setting-label {
+  font-size: clamp(13px, 1.55cqw, 18px);
+  font-weight: 850;
+}
+
+.setting-value {
+  font-size: clamp(12px, 1.4cqw, 16px);
+  font-weight: 750;
+  opacity: 0.75;
+}
+
+.setting-row.is-selected .setting-value,
+.setting-row[aria-pressed="true"] .setting-value {
+  opacity: 1;
+}
+
+/* ===== 右侧：自定义滚动条 ===== */
+
+.settings-scrollbar {
+  width: clamp(12px, 1.8cqw, 18px);
+  height: 100%;
+  position: relative;
+  background: rgba(0, 0, 0, 0.08);
+  border-radius: 999px;
+  cursor: pointer;
+}
+
+.app[data-theme="night"] .settings-scrollbar {
+  background: rgba(255, 255, 255, 0.12);
+}
+
+.settings-scrollbar.is-disabled {
+  opacity: 0.3;
+  cursor: default;
+}
+
+.settings-scrollbar-thumb {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  height: 60px;
+  border-radius: 999px;
+  background: var(--accent);
+  transition: background 0.15s ease;
+}
+
+.settings-scrollbar:not(.is-disabled):hover .settings-scrollbar-thumb {
+  background: color-mix(in srgb, var(--accent) 85%, #000);
+}
+
+.app[data-theme="night"] .settings-scrollbar-thumb {
+  background: var(--accent);
+}
+
+/* ===== 竖屏布局 ===== */
+
+.demo[data-layout="portrait"] .settings-container {
+  width: min(92%, 420px);
+  max-height: 80%;
+  grid-template-columns: 1fr;
+  grid-template-rows: 1fr auto;
+}
+
+.demo[data-layout="portrait"] .settings-rows {
+  padding: clamp(14px, 2.5cqw, 20px);
+}
+
+.demo[data-layout="portrait"] .setting-row {
+  min-height: clamp(44px, 8cqw, 56px);
+  margin-bottom: clamp(5px, 1.2cqw, 8px);
+}
+
+.demo[data-layout="portrait"] .setting-label {
+  font-size: clamp(12px, 3cqw, 16px);
+}
+
+.demo[data-layout="portrait"] .setting-value {
+  font-size: clamp(11px, 2.8cqw, 15px);
+}
+
+.demo[data-layout="portrait"] .settings-scrollbar {
+  display: none;
+}
+
+/* ===== 响应式优化 ===== */
+
+@container app (max-width: 520px) {
+  .settings-container {
+    grid-template-columns: 1fr;
+  }
+
+  .settings-scrollbar {
+    display: none;
+  }
+}

@@ -1,0 +1,163 @@
+/* ============================================
+   Selection Arrow System
+   选择箭头系统
+   ============================================ */
+
+/* ===== 选择箭头 SVG ===== */
+
+.selection-arrow {
+  position: absolute;
+  width: 26px;
+  height: 26px;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.12s ease, left 0.16s ease, top 0.16s ease;
+  z-index: 3;
+  fill: var(--text);
+}
+
+.selection-arrow.is-visible {
+  opacity: 1;
+}
+
+/* 夜间模式 */
+.app[data-theme="night"] .selection-arrow {
+  fill: var(--text);
+}
+
+/* ===== 选择目标标记 ===== */
+
+/* 所有可选择的元素 */
+.selection-target {
+  position: relative;
+  cursor: pointer;
+}
+
+/* 激活状态（悬停/焦点） */
+.selection-target.is-pointer-active,
+.selection-target.is-focus-active {
+  /* 由各模块自定义样式 */
+}
+
+/* ===== 各模块的箭头定位 ===== */
+
+/* 主菜单 - 箭头在左上角 */
+.app[data-view="home"] .selection-arrow {
+  transform: translate(-8px, -8px);
+}
+
+/* 队伍列表 - 箭头在左侧 */
+.app[data-view="team"] .selection-arrow,
+.app[data-view="party-detail"] .selection-arrow {
+  transform: translate(-12px, 0);
+}
+
+/* 图鉴列表 - 箭头在左侧 */
+.app[data-view="dex"] .selection-arrow {
+  transform: translate(-10px, 0);
+}
+
+/* 背包列表 - 箭头在左侧 */
+.app[data-module="bag"] .selection-arrow {
+  transform: translate(-10px, 0);
+}
+
+/* 盒子 - 箭头在格子左上角 */
+.app[data-module="box"] .selection-arrow {
+  transform: translate(-8px, -8px);
+}
+
+/* 设置 - 箭头在左侧 */
+.app[data-module="settings"] .selection-arrow {
+  transform: translate(-12px, 0);
+}
+
+/* 人际关系 - 箭头在左侧 */
+.app[data-view="relations"] .selection-arrow {
+  transform: translate(-10px, 0);
+}
+
+/* ===== 竖屏模式隐藏箭头 ===== */
+
+/* 某些竖屏布局不显示选择箭头 */
+.demo[data-layout="portrait"] .app[data-view="home"] .selection-arrow,
+.demo[data-layout="portrait"] .app[data-view="settings"] .selection-arrow {
+  display: none;
+}
+
+/* ===== 箭头动画效果 ===== */
+
+@keyframes arrow-pulse {
+  0%,
+  100% {
+    transform: translate(-12px, 0) scale(1);
+  }
+  50% {
+    transform: translate(-12px, 0) scale(1.08);
+  }
+}
+
+.selection-arrow.pulse {
+  animation: arrow-pulse 0.6s ease-in-out;
+}
+
+/* ===== 滚动时隐藏箭头 ===== */
+
+/* 当选中的元素滚出视野时，箭头会被自动隐藏 */
+.selection-arrow.out-of-view {
+  opacity: 0 !important;
+}
+
+/* ===== 特殊场景的箭头样式 ===== */
+
+/* 图鉴分类选择器 - 使用不同颜色 */
+.app[data-view="dex"] .dex-category-selector .selection-arrow {
+  fill: #fff;
+}
+
+.app[data-theme="night"][data-view="dex"]
+  .dex-category-selector
+  .selection-arrow {
+  fill: var(--text);
+}
+
+/* 背包分类标签 - 箭头在顶部 */
+.app[data-module="bag"] .bag-cats .selection-arrow {
+  transform: translate(0, -6px);
+}
+
+/* ===== 无障碍增强 ===== */
+
+/* 键盘焦点时增强箭头可见性 */
+.selection-target:focus-visible ~ .selection-arrow,
+.selection-target.is-focus-active ~ .selection-arrow {
+  opacity: 1;
+  filter: drop-shadow(0 0 4px rgba(255, 255, 255, 0.8));
+}
+
+/* 减少动画运动（辅助功能） */
+@media (prefers-reduced-motion: reduce) {
+  .selection-arrow {
+    transition: opacity 0.12s ease;
+  }
+
+  .selection-arrow.pulse {
+    animation: none;
+  }
+}
+
+/* ===== 调试辅助 ===== */
+
+/* 开发时显示所有选择目标的边界 */
+.debug-selection .selection-target {
+  outline: 1px dashed rgba(255, 0, 0, 0.3);
+}
+
+.debug-selection .selection-target.is-pointer-active {
+  outline-color: rgba(0, 255, 0, 0.6);
+}
+
+.debug-selection .selection-arrow {
+  opacity: 1 !important;
+  fill: red;
+}

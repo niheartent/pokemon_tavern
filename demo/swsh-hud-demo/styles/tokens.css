@@ -1,0 +1,305 @@
+/* ============================================
+   CSS Variables & Design Tokens
+   宝可梦剑盾 HUD - 设计令牌系统
+   ============================================ */
+
+/* ===== 根变量 ===== */
+:root {
+  /* 字体 */
+  font-family: system-ui, -apple-system, "Segoe UI", "Microsoft YaHei", sans-serif;
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+
+  /* 基础颜色 */
+  color: #20242b;
+  background: #f2f3f6;
+}
+
+/* ===== 通用 Token（所有模块共享） ===== */
+.app {
+  /* 文字颜色 */
+  --text: #22262d;
+  --muted: #66707d;
+  --selected-text: #fff;
+
+  /* 表面颜色 */
+  --canvas: #fbf7f8;
+  --surface: rgba(255, 255, 255, 0.82);
+  --surface-2: rgba(255, 255, 255, 0.55);
+
+  /* 交互状态 */
+  --selected: #17191e;
+  --line: rgba(31, 39, 50, 0.14);
+
+  /* 品牌色 */
+  --swsh-red: #e33241;
+  --swsh-red-dark: #c32834;
+  --accent: var(--swsh-red);
+
+  /* 背景斜带（默认） */
+  --ribbon-left: var(--swsh-red-dark);
+  --ribbon-center: var(--swsh-red);
+  --ribbon-right: #d4ffff;
+  --ribbon-secondary: var(--swsh-red-dark);
+
+  /* 艺术展示区 */
+  --art-bg: #e8f7fa;
+  --ring-primary: rgba(255, 255, 255, 0.82);
+  --ring-secondary: rgba(255, 255, 255, 0.5);
+  --ring-outline: rgba(255, 255, 255, 0.55);
+}
+
+/* ===== 夜间模式 ===== */
+.app[data-theme="night"] {
+  --text: #edf2f8;
+  --muted: #aeb8c7;
+  --line: rgba(197, 210, 228, 0.2);
+  --surface: rgba(32, 42, 56, 0.9);
+  --surface-2: rgba(39, 50, 65, 0.74);
+  --selected: #35455c;
+  --accent: #72a8dc;
+  --canvas: #18212d;
+}
+
+/* ===== 模块配色（日间） ===== */
+
+/* 主菜单 */
+.app[data-module="home"] {
+  --canvas: var(--swsh-red);
+  --accent: var(--swsh-red);
+  --ribbon-left: var(--swsh-red-dark);
+  --ribbon-center: var(--swsh-red);
+  --ribbon-right: #d4ffff;
+  --home-edge-left: #faedf0;
+  --home-band: var(--swsh-red-dark);
+  --home-main: var(--swsh-red);
+  --home-edge-right: #d4ffff;
+}
+
+/* 队伍 */
+.app[data-module="team"] {
+  --canvas: #eaf8fb;
+  --accent: var(--swsh-red);
+  --ribbon-left: var(--swsh-red);
+  --ribbon-center: #eaf8fb;
+  --ribbon-right: #f8f5fb;
+  --ribbon-secondary: var(--swsh-red-dark);
+  --art-bg: #eaf9fb;
+  --ring-primary: rgba(255, 255, 255, 0.84);
+  --ring-secondary: rgba(255, 255, 255, 0.5);
+  --ring-outline: rgba(255, 255, 255, 0.6);
+}
+
+/* 图鉴 */
+.app[data-module="dex"] {
+  --canvas: #fff1f0;
+  --accent: var(--swsh-red);
+  --ribbon-left: var(--swsh-red-dark);
+  --ribbon-center: #fff1f0;
+  --ribbon-right: #f7d9d5;
+}
+
+/* 背包 */
+.app[data-module="bag"] {
+  --canvas: #fbf0e4;
+  --accent: #d99124;
+  --ribbon-left: #d99124;
+  --ribbon-center: #fbf0e4;
+  --ribbon-right: #f5dfc6;
+}
+
+/* 盒子 */
+.app[data-module="box"] {
+  --accent: #5482b7;
+  --canvas: #edf3f8;
+  --ribbon-left: #3b648f;
+  --ribbon-center: #edf3f8;
+  --ribbon-right: #d9e5ef;
+}
+
+/* 徽章/联盟卡 */
+.app[data-module="badge"] {
+  --accent: #d7a83d;
+  --canvas: #f5efdf;
+  --ribbon-left: #b89038;
+  --ribbon-center: #f5efdf;
+  --ribbon-right: #eee1bd;
+}
+
+/* 人际关系 */
+.app[data-module="relations"] {
+  --accent: #4f9694;
+  --canvas: #d3e7e6;
+  --ribbon-left: #4f9694;
+  --ribbon-center: #d3e7e6;
+  --ribbon-right: #dceceb;
+}
+
+/* 地图 */
+.app[data-module="map"] {
+  --accent: #38a5a0;
+  --canvas: #e8f4f3;
+  --ribbon-left: #318f8e;
+  --ribbon-center: #e8f4f3;
+  --ribbon-right: #d2e9e6;
+  --map-band-angle: 114deg;
+  --map-edge-left: #d6eeed;
+  --map-band: #a8d8d6;
+  --map-main: #e8f4f3;
+  --map-edge-right: #d2e9e6;
+}
+
+/* 世界 */
+.app[data-module="world"] {
+  --accent: #45a59a;
+  --canvas: #eaf5f1;
+  --ribbon-left: #35837d;
+  --ribbon-center: #eaf5f1;
+  --ribbon-right: #d4e9df;
+}
+
+/* 战场 */
+.app[data-module="battle"] {
+  --accent: #d45c45;
+  --canvas: #f7ece8;
+  --ribbon-left: #ad4537;
+  --ribbon-center: #f7ece8;
+  --ribbon-right: #ead2c8;
+}
+
+/* 记录 */
+.app[data-module="records"] {
+  --accent: #617ba8;
+  --canvas: #eef1f7;
+  --ribbon-left: #617ba8;
+  --ribbon-center: #eef1f7;
+  --ribbon-right: #d9e1ed;
+}
+
+/* 设置 */
+.app[data-module="settings"] {
+  --canvas: #b5a8ff;
+  --accent: #6450df;
+  --ribbon-left: #a495ff;
+  --ribbon-center: #b5a8ff;
+  --ribbon-right: #e1e3f5;
+  --home-edge-left: #f7f2f5;
+  --home-band: #a495ff;
+  --home-main: #b5a8ff;
+  --home-edge-right: #e1e3f5;
+  --settings-focus-accent: #6851fd;
+  --settings-band-angle: 114deg;
+}
+
+/* ===== 模块配色（夜间） ===== */
+
+.app[data-theme="night"][data-module="home"] {
+  --canvas: #182333;
+  --accent: #68b9ce;
+  --ribbon-left: #26354a;
+  --ribbon-center: #182333;
+  --ribbon-right: #2a414b;
+  --home-edge-left: #26354a;
+  --home-band: #2d4554;
+  --home-main: #182333;
+  --home-edge-right: #2a414b;
+}
+
+.app[data-theme="night"][data-module="team"] {
+  --canvas: #1b2633;
+  --accent: #79a9d2;
+  --ribbon-left: #304258;
+  --ribbon-center: #1b2633;
+  --ribbon-right: #273847;
+  --ribbon-secondary: #26374a;
+  --art-bg: #223240;
+  --ring-primary: rgba(176, 201, 220, 0.46);
+  --ring-secondary: rgba(145, 172, 194, 0.25);
+  --ring-outline: rgba(190, 210, 228, 0.3);
+}
+
+.app[data-theme="night"][data-module="dex"] {
+  --canvas: #202733;
+  --accent: #91a9d1;
+  --ribbon-left: #35475d;
+  --ribbon-center: #202733;
+  --ribbon-right: #303d50;
+}
+
+.app[data-theme="night"][data-module="bag"] {
+  --canvas: #282a31;
+  --accent: #d1a25a;
+  --ribbon-left: #4a3d2d;
+  --ribbon-center: #282a31;
+  --ribbon-right: #41382e;
+}
+
+.app[data-theme="night"][data-module="box"] {
+  --accent: #82a9cf;
+  --canvas: #202b38;
+  --ribbon-left: #34485d;
+  --ribbon-center: #202b38;
+  --ribbon-right: #2d3c4d;
+}
+
+.app[data-theme="night"][data-module="badge"] {
+  --accent: #d3b366;
+  --canvas: #292a2c;
+  --ribbon-left: #50462e;
+  --ribbon-center: #292a2c;
+  --ribbon-right: #40392c;
+}
+
+.app[data-theme="night"][data-module="relations"] {
+  --accent: #86b6b3;
+  --canvas: #26363a;
+  --ribbon-left: #456a6d;
+  --ribbon-center: #26363a;
+  --ribbon-right: #304246;
+}
+
+.app[data-theme="night"][data-module="map"] {
+  --accent: #66b7ad;
+  --canvas: #1a2c31;
+  --map-edge-left: #263f3e;
+  --map-band: #2d5050;
+  --map-main: #1a2c31;
+  --map-edge-right: #243a38;
+}
+
+.app[data-theme="night"][data-module="world"] {
+  --accent: #75b9a7;
+  --canvas: #1e302e;
+  --ribbon-left: #304b45;
+  --ribbon-center: #1e302e;
+  --ribbon-right: #293d38;
+}
+
+.app[data-theme="night"][data-module="battle"] {
+  --accent: #d68d78;
+  --canvas: #302725;
+  --ribbon-left: #5a3933;
+  --ribbon-center: #302725;
+  --ribbon-right: #47332d;
+}
+
+.app[data-theme="night"][data-module="records"] {
+  --accent: #91a9d1;
+  --canvas: #202b3a;
+  --ribbon-left: #35475d;
+  --ribbon-center: #202b3a;
+  --ribbon-right: #303d50;
+}
+
+.app[data-theme="night"][data-module="settings"] {
+  --canvas: #26243a;
+  --accent: #a39ae1;
+  --ribbon-left: #3e3960;
+  --ribbon-center: #26243a;
+  --ribbon-right: #383451;
+  --home-edge-left: #1d1c2c;
+  --home-band: #3e3960;
+  --home-main: #26243a;
+  --home-edge-right: #383451;
+  --settings-focus-accent: #4f358d;
+}

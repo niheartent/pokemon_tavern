@@ -1,0 +1,124 @@
+/* ============================================
+   Base Styles & Reset
+   基础样式和重置
+   ============================================ */
+
+/* ===== 全局重置 ===== */
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  min-width: 320px;
+  background: linear-gradient(135deg, #f7f7fa, #e9edf3);
+  color: #20242b;
+}
+
+button {
+  font: inherit;
+  cursor: pointer;
+}
+
+/* ===== App 容器 ===== */
+.app {
+  position: absolute;
+  inset: 0;
+  isolation: isolate;
+  overflow: hidden;
+  color: var(--text);
+  background: var(--canvas);
+}
+
+/* ===== 屏幕内容区 ===== */
+.screen-content {
+  position: relative;
+  height: calc(100% - 38px);
+  overflow: auto;
+  padding: 0 2.3cqw 10px;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(96, 112, 134, 0.45) transparent;
+}
+
+/* 禁用滚动条按钮（剑盾原版特征） */
+*::-webkit-scrollbar-button,
+*::-webkit-scrollbar-button:single-button,
+*::-webkit-scrollbar-button:vertical:decrement,
+*::-webkit-scrollbar-button:vertical:increment,
+*::-webkit-scrollbar-button:start:decrement,
+*::-webkit-scrollbar-button:end:increment {
+  display: none !important;
+  width: 0 !important;
+  height: 0 !important;
+  min-height: 0 !important;
+  background: transparent !important;
+  border: 0 !important;
+}
+
+/* ===== 底部操作栏 ===== */
+.actionbar {
+  height: 38px;
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: #101116;
+  color: #fff;
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: clamp(12px, 2.4cqw, 30px);
+  padding: 0 2.2cqw;
+  font-size: clamp(10px, 1.2cqw, 14px);
+  font-weight: 700;
+  z-index: 2;
+}
+
+.action {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  white-space: nowrap;
+}
+
+.action-back {
+  border: 0;
+  background: transparent;
+  color: inherit;
+  padding: 0;
+  font: inherit;
+}
+
+.key {
+  width: 21px;
+  height: 21px;
+  display: inline-grid;
+  place-items: center;
+  border: 1.5px solid #fff;
+  border-radius: 50%;
+  font-size: 11px;
+  font-weight: 900;
+}
+
+.action-key {
+  width: 22px;
+  height: 22px;
+  object-fit: contain;
+  display: block;
+}
+
+/* ===== 焦点样式 ===== */
+button:focus-visible {
+  outline: 3px solid #3579bd;
+  outline-offset: 2px;
+}
+
+/* ===== 减少动画（辅助功能） ===== */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    scroll-behavior: auto !important;
+    transition: none !important;
+  }
+}

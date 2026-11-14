@@ -1,0 +1,276 @@
+/* ============================================
+   Split Backdrop System (分割型背景)
+   用于: 队伍/图鉴/背包/盒子/人际关系
+
+   特征: 左右分栏，中间斜带分割
+   ============================================ */
+
+/* ===== 基础背景层 ===== */
+.backdrop {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: var(--canvas);
+  transition: background 0.2s ease;
+}
+
+.backdrop::before,
+.backdrop::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+/* 默认渐变（队伍等模块会覆盖） */
+.backdrop::before {
+  background: linear-gradient(
+    118deg,
+    var(--ribbon-left) 0 8%,
+    var(--ribbon-center) 8% 92%,
+    var(--ribbon-right) 92% 100%
+  );
+}
+
+.backdrop::after {
+  content: none;
+}
+
+/* ============================================
+   队伍页背景（横屏）
+   pokelist_top_00 BFLYT: 左侧红色斜带
+   ============================================ */
+
+/* 队伍横屏背景 - 冰蓝渐变 */
+.app[data-module="team"] .backdrop {
+  background: radial-gradient(
+      ellipse 72% 66% at 74% 48%,
+      rgba(194, 255, 255, 0.88) 0%,
+      rgba(194, 255, 255, 0) 74%
+    ),
+    linear-gradient(
+      138deg,
+      #c8dddd 0%,
+      #eaffff 24%,
+      #d4ffff 55%,
+      #fbffff 79%,
+      #dcebef 100%
+    );
+}
+
+/* 左侧红色底色（覆盖在斜带下 0.2% 以消除抗锯齿缝隙） */
+.app[data-view="team"] .backdrop::before {
+  background: var(--swsh-red);
+  clip-path: polygon(0 0, 61.5% 0, 36.7% 100%, 0 100%);
+}
+
+/* 左侧深红斜带 */
+.app[data-view="team"] .backdrop::after {
+  content: "";
+  background: var(--swsh-red-dark);
+  clip-path: polygon(61.3% 0, 71.4% 0, 47.1% 100%, 36.5% 100%);
+}
+
+/* 夜间模式 */
+.app[data-theme="night"][data-view="team"] .backdrop::before {
+  background: #304258;
+}
+
+.app[data-theme="night"][data-view="team"] .backdrop::after {
+  background: #26374a;
+}
+
+.app[data-theme="night"][data-module="team"] .backdrop {
+  background: linear-gradient(132deg, #1b2b3b 0%, #20313e 52%, #263441 100%);
+}
+
+/* ============================================
+   精灵详情背景（横屏）
+   status BFLYT: 左侧红色斜带
+   ============================================ */
+
+.app[data-view="party-detail"] .backdrop::before {
+  background: var(--ribbon-left);
+  clip-path: polygon(0 0, 39.2% 0, 14.4% 100%, 0 100%);
+}
+
+.app[data-view="party-detail"] .backdrop::after {
+  content: "";
+  background: var(--ribbon-secondary);
+  clip-path: polygon(39% 0, 49.1% 0, 24.8% 100%, 14.2% 100%);
+}
+
+.app[data-view="party-detail"] .backdrop {
+  background: linear-gradient(
+    128deg,
+    #dce4ec 0%,
+    #d8e5eb 24%,
+    #c6dedc 39%,
+    #b4d9d6 51%,
+    #c8e4e2 63%,
+    #e8eef4 84%,
+    #e3e9ef 100%
+  );
+}
+
+/* ============================================
+   图鉴背景（横屏）
+   pokedex_list_lyt BFLYT
+   ============================================ */
+
+.app[data-module="dex"] .backdrop {
+  background: #f27651;
+}
+
+.app[data-view="dex"] .backdrop::before {
+  background: linear-gradient(126deg, #fff3f6 0%, #fffafd 58%, #fff 100%);
+  clip-path: polygon(0 0, 56% 0, 32% 100%, 0 100%);
+}
+
+.app[data-view="dex"] .backdrop::after {
+  content: "";
+  background: #ef4b37;
+  clip-path: polygon(56% 0, 64% 0, 40% 100%, 32% 100%);
+}
+
+.app[data-view="dex"] .backdrop {
+  isolation: isolate;
+}
+
+.app[data-view="dex"] .backdrop::after {
+  z-index: 1;
+}
+
+/* 夜间模式 */
+.app[data-theme="night"][data-module="dex"] .backdrop {
+  background: #493333;
+}
+
+.app[data-theme="night"][data-view="dex"] .backdrop::before {
+  background: linear-gradient(126deg, #344352 0%, #293643 58%, #202a35 100%);
+}
+
+.app[data-theme="night"][data-view="dex"] .backdrop::after {
+  background: #633b3a;
+}
+
+/* ============================================
+   背包背景（横屏）
+   bag_top_00 BFLYT
+   ============================================ */
+
+.app[data-module="bag"] .backdrop {
+  background: #f5b719;
+}
+
+.app[data-module="bag"] .backdrop::before {
+  background: #e5a600;
+  clip-path: polygon(44.2% 0, 55.6% 0, 30.5% 100%, 19.1% 100%);
+}
+
+.app[data-module="bag"] .backdrop::after {
+  content: "";
+  background: linear-gradient(128deg, #fff8fa 0%, #f9e9f0 48%, #f6edf0 100%);
+  clip-path: polygon(0 0, 44.2% 0, 19.1% 100%, 0 100%);
+}
+
+/* 夜间模式 */
+.app[data-theme="night"][data-module="bag"] .backdrop {
+  background: #403a2e;
+}
+
+.app[data-theme="night"][data-module="bag"] .backdrop::before {
+  background: #65502c;
+}
+
+.app[data-theme="night"][data-module="bag"] .backdrop::after {
+  content: "";
+  background: linear-gradient(128deg, #34333a 0%, #3b353a 52%, #3e383d 100%);
+  clip-path: polygon(0 0, 44.2% 0, 19.1% 100%, 0 100%);
+}
+
+/* ============================================
+   竖屏背景（队伍/详情）
+   注意: 竖屏是完全独立的设计，不继承横屏规则
+   ============================================ */
+
+/* 竖屏队伍背景 - 红色斜带 */
+.demo[data-layout="portrait"] .app[data-module="team"] {
+  --portrait-team-bg: radial-gradient(
+      ellipse 72% 66% at 74% 48%,
+      rgba(194, 255, 255, 0.88) 0%,
+      rgba(194, 255, 255, 0) 74%
+    ),
+    linear-gradient(
+      138deg,
+      #c8dddd 0%,
+      #eaffff 24%,
+      #d4ffff 55%,
+      #fbffff 79%,
+      #dcebef 100%
+    );
+  --portrait-main-fill: var(--swsh-red);
+  --portrait-stripe-fill: var(--swsh-red-dark);
+  --portrait-main-shape: polygon(0 0, 81.2% 0, 3.2% 100%, 0 100%);
+  --portrait-stripe-shape: polygon(81% 0, 99% 0, 21% 100%, 3% 100%);
+}
+
+.demo[data-layout="portrait"] .app[data-theme="night"][data-module="team"] {
+  --portrait-team-bg: linear-gradient(
+    132deg,
+    #1b2b3b 0%,
+    #20313e 52%,
+    #263441 100%
+  );
+  --portrait-main-fill: #304258;
+  --portrait-stripe-fill: #26374a;
+}
+
+.demo[data-layout="portrait"] .app[data-module="team"] .backdrop {
+  background: var(--portrait-team-bg);
+}
+
+/* 竖屏取消横屏斜带 */
+.demo[data-layout="portrait"] .app[data-view="team"] .backdrop::before,
+.demo[data-layout="portrait"] .app[data-view="team"] .backdrop::after {
+  content: none;
+}
+
+/* 竖屏图鉴背景 - 渐变 */
+.demo[data-layout="portrait"] .app[data-module="dex"] .backdrop {
+  background: linear-gradient(154deg, #fff5f7 0%, #fffafd 48%, #ffd9c9 100%);
+}
+
+.demo[data-layout="portrait"] .app[data-view="dex"] .backdrop::before {
+  background: linear-gradient(154deg, #fff8fa 0%, #fffafd 60%, #ffe4d8 100%);
+  clip-path: none;
+}
+
+.demo[data-layout="portrait"] .app[data-view="dex"] .backdrop::after {
+  content: none;
+}
+
+.demo[data-layout="portrait"]
+  .app[data-theme="night"][data-module="dex"]
+  .backdrop {
+  background: linear-gradient(154deg, #283642 0%, #202b36 55%, #3d3438 100%);
+}
+
+.demo[data-layout="portrait"]
+  .app[data-theme="night"][data-view="dex"]
+  .backdrop::before {
+  background: linear-gradient(154deg, #283642 0%, #202b36 55%, #3d3438 100%);
+}
+
+/* 竖屏精灵详情 - 使用队伍相同的斜带 */
+.demo[data-layout="portrait"] .app[data-view="party-detail"] .backdrop::before {
+  content: "";
+  background: var(--portrait-main-fill);
+  clip-path: var(--portrait-main-shape);
+}
+
+.demo[data-layout="portrait"] .app[data-view="party-detail"] .backdrop::after {
+  content: "";
+  background: var(--portrait-stripe-fill);
+  clip-path: var(--portrait-stripe-shape);
+}

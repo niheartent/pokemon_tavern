@@ -1,0 +1,256 @@
+/* ============================================
+   Box Module (盒子)
+   横屏 + 竖屏
+
+   左侧: 盒子格子视图
+   右侧: 队伍面板 + 精灵详情
+   ============================================ */
+
+/* ===== 盒子布局 ===== */
+
+.box-layout {
+  display: grid;
+  grid-template-columns: minmax(320px, 1fr) minmax(240px, 32%);
+  gap: clamp(14px, 2cqw, 20px);
+  height: 100%;
+  padding: clamp(14px, 2cqw, 24px) clamp(16px, 2.3cqw, 28px);
+}
+
+/* ===== 左侧：盒子格子 ===== */
+
+.box-left {
+  display: flex;
+  flex-direction: column;
+  gap: clamp(10px, 1.5cqw, 14px);
+}
+
+/* 盒子头部（标题 + 切换按钮） */
+.box-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: clamp(12px, 1.8cqw, 18px);
+}
+
+.box-title {
+  font-size: clamp(16px, 2cqw, 22px);
+  font-weight: 900;
+}
+
+.box-controls {
+  display: flex;
+  gap: 6px;
+}
+
+.box-nav-button {
+  width: clamp(32px, 4.5cqw, 42px);
+  height: clamp(32px, 4.5cqw, 42px);
+  border: 0;
+  border-radius: 50%;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  cursor: pointer;
+  display: grid;
+  place-items: center;
+  transition: all 0.15s ease;
+}
+
+.box-nav-button:hover,
+.box-nav-button:focus-visible {
+  background: var(--selected);
+  color: var(--selected-text);
+  border-color: transparent;
+}
+
+/* 盒子格子容器 */
+.box-grid-container {
+  flex: 1;
+  min-height: 0;
+  padding: clamp(14px, 2cqw, 20px);
+  border-radius: 18px;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  overflow-y: auto;
+}
+
+/* 盒子格子 */
+.box-grid {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: clamp(8px, 1.2cqw, 14px);
+}
+
+.box-slot {
+  aspect-ratio: 1;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 0;
+  border-radius: 10px;
+  background: rgba(0, 0, 0, 0.04);
+  border: 2px solid transparent;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.app[data-theme="night"] .box-slot {
+  background: rgba(255, 255, 255, 0.06);
+}
+
+.box-slot:hover,
+.box-slot:focus-visible {
+  background: rgba(0, 0, 0, 0.08);
+  border-color: var(--accent);
+}
+
+.box-slot[aria-pressed="true"] {
+  background: var(--selected);
+  border-color: var(--accent);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+}
+
+.box-slot-sprite {
+  width: 80%;
+  height: 80%;
+  object-fit: contain;
+}
+
+.box-slot.empty {
+  opacity: 0.4;
+}
+
+/* ===== 右侧：队伍 + 详情 ===== */
+
+.box-right {
+  display: flex;
+  flex-direction: column;
+  gap: clamp(10px, 1.5cqw, 14px);
+}
+
+/* 队伍面板 */
+.box-party-panel {
+  padding: clamp(12px, 1.8cqw, 18px);
+  border-radius: 14px;
+  background: var(--surface);
+  border: 1px solid var(--line);
+}
+
+.box-party-title {
+  margin: 0 0 clamp(10px, 1.5cqw, 14px);
+  font-size: clamp(13px, 1.5cqw, 17px);
+  font-weight: 900;
+}
+
+.box-party-list {
+  display: flex;
+  flex-direction: column;
+  gap: clamp(6px, 0.9cqw, 10px);
+}
+
+.box-party-list .party-member {
+  min-height: 60px;
+  padding: 6px 10px;
+  grid-template-columns: 50px minmax(0, 1fr) 50px;
+}
+
+.box-party-list .member-sprite {
+  width: 40px;
+  height: 40px;
+}
+
+/* 精灵详情面板 */
+.box-detail-panel {
+  flex: 1;
+  min-height: 0;
+  padding: clamp(14px, 2cqw, 20px);
+  border-radius: 14px;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  overflow-y: auto;
+}
+
+.box-detail-sprite {
+  width: clamp(80px, 12cqw, 120px);
+  height: clamp(80px, 12cqw, 120px);
+  margin: 0 auto clamp(10px, 1.5cqw, 14px);
+  display: block;
+  object-fit: contain;
+}
+
+.box-detail-name {
+  text-align: center;
+  font-size: clamp(16px, 2cqw, 22px);
+  font-weight: 900;
+  margin-bottom: clamp(8px, 1.2cqw, 12px);
+}
+
+.box-detail-types {
+  display: flex;
+  justify-content: center;
+  gap: 6px;
+  margin-bottom: clamp(12px, 1.8cqw, 18px);
+}
+
+.box-detail-info {
+  display: flex;
+  flex-direction: column;
+  gap: clamp(8px, 1.2cqw, 12px);
+}
+
+.box-info-row {
+  display: flex;
+  justify-content: space-between;
+  padding: clamp(6px, 1cqw, 10px) 0;
+  border-bottom: 1px solid var(--line);
+  font-size: clamp(11px, 1.3cqw, 15px);
+}
+
+.box-info-label {
+  font-weight: 750;
+  color: var(--muted);
+}
+
+.box-info-value {
+  font-weight: 850;
+}
+
+/* ===== 竖屏布局 ===== */
+
+.demo[data-layout="portrait"] .box-layout {
+  grid-template-columns: 1fr;
+  grid-template-rows: 1fr auto;
+  gap: clamp(10px, 1.8cqw, 16px);
+}
+
+.demo[data-layout="portrait"] .box-grid {
+  grid-template-columns: repeat(5, 1fr);
+}
+
+.demo[data-layout="portrait"] .box-right {
+  max-height: 35%;
+  overflow-y: auto;
+}
+
+.demo[data-layout="portrait"] .box-detail-panel {
+  display: none;
+}
+
+/* ===== 响应式优化 ===== */
+
+@container app (max-width: 720px) {
+  .box-grid {
+    grid-template-columns: repeat(5, 1fr);
+  }
+}
+
+@container app (max-width: 520px) {
+  .box-layout {
+    grid-template-columns: 1fr;
+    grid-template-rows: 1fr auto;
+  }
+
+  .box-grid {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}

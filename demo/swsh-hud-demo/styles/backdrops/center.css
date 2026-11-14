@@ -1,0 +1,186 @@
+/* ============================================
+   Center Backdrop System (呈现型背景)
+   用于: 设置/世界/地图/联盟卡
+
+   特征: 中心呈现，双色带环绕
+   ============================================ */
+
+/* ============================================
+   主菜单背景
+   menu BFLYT: 双色带 + 主色区
+   ============================================ */
+
+.app[data-module="home"] .backdrop {
+  background: var(--home-main);
+}
+
+.app[data-module="home"] .backdrop::before {
+  background: linear-gradient(
+    114deg,
+    var(--home-edge-left) 0 11.3%,
+    var(--home-band) 11.3% 22%,
+    var(--home-main) 22% 79%,
+    var(--home-band) 79% 89.3%,
+    var(--home-edge-right) 89.3% 100%
+  );
+}
+
+/* ============================================
+   设置背景
+   option BFLYT: 双色带 + 水印
+   ============================================ */
+
+.app[data-module="settings"] .backdrop {
+  background: var(--home-main);
+}
+
+.app[data-module="settings"] .backdrop::before {
+  background: linear-gradient(
+    var(--settings-band-angle),
+    var(--home-edge-left) 0 11.3%,
+    var(--home-band) 11.3% 22%,
+    var(--home-main) 22% 79%,
+    var(--home-band) 79% 89.3%,
+    var(--home-edge-right) 89.3% 100%
+  );
+}
+
+/* 设置水印 */
+.app[data-module="settings"] .backdrop::after {
+  content: "";
+  inset: auto;
+  left: 62%;
+  top: 74%;
+  width: min(86%, 46cqw, 880px);
+  aspect-ratio: 1;
+  background: url("../assets/settings/option-watermark-full.png") center/contain
+    no-repeat;
+  opacity: 0.105;
+  transform: translate(-50%, -50%);
+}
+
+/* 竖屏设置背景 */
+.demo[data-layout="portrait"] .app[data-module="settings"] {
+  --portrait-settings-edge: var(--home-edge-left);
+  --portrait-settings-band: var(--home-band);
+  --portrait-settings-main: var(--home-main);
+  --portrait-settings-far: var(--home-edge-right);
+  --settings-band-angle: 118deg;
+}
+
+.demo[data-layout="portrait"] .app[data-module="settings"] .backdrop {
+  background: var(--portrait-settings-main);
+}
+
+.demo[data-layout="portrait"] .app[data-module="settings"] .backdrop::before {
+  background: linear-gradient(
+    var(--settings-band-angle),
+    var(--portrait-settings-edge) 0 14%,
+    var(--portrait-settings-band) 14% 28%,
+    var(--portrait-settings-main) 28% 72%,
+    var(--portrait-settings-band) 72% 86%,
+    var(--portrait-settings-far) 86% 100%
+  );
+}
+
+.demo[data-layout="portrait"] .app[data-module="settings"] .backdrop::after {
+  content: none;
+}
+
+/* ============================================
+   地图背景
+   map: 双色带 + 水印（预留）
+   ============================================ */
+
+.app[data-module="map"] .backdrop {
+  background: var(--map-main);
+}
+
+.app[data-module="map"] .backdrop::before {
+  background: linear-gradient(
+    var(--map-band-angle),
+    var(--map-edge-left) 0 11.3%,
+    var(--map-band) 11.3% 22%,
+    var(--map-main) 22% 79%,
+    var(--map-band) 79% 89.3%,
+    var(--map-edge-right) 89.3% 100%
+  );
+}
+
+.app[data-module="map"] .backdrop::after {
+  content: "";
+  inset: auto;
+  left: 62%;
+  top: 74%;
+  width: min(86%, 46cqw, 880px);
+  aspect-ratio: 1;
+  background: var(--module-watermark-url, none) center/contain no-repeat;
+  opacity: 0.09;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+}
+
+.app[data-theme="night"][data-module="map"] .backdrop {
+  background: var(--map-main);
+}
+
+/* ============================================
+   世界背景
+   world: 双色带
+   ============================================ */
+
+.app[data-module="world"] {
+  --world-band-angle: 118deg;
+  --world-edge-left: #dde3ef;
+  --world-band: #b4c2d8;
+  --world-main: #eef1f7;
+  --world-edge-right: #d9e1ed;
+}
+
+.app[data-module="world"] .backdrop {
+  background: var(--world-main);
+}
+
+.app[data-module="world"] .backdrop::before {
+  background: linear-gradient(
+    var(--world-band-angle),
+    var(--world-edge-left) 0 11.3%,
+    var(--world-band) 11.3% 22%,
+    var(--world-main) 22% 79%,
+    var(--world-band) 79% 89.3%,
+    var(--world-edge-right) 89.3% 100%
+  );
+}
+
+/* 夜间模式 */
+.app[data-theme="night"][data-module="world"] {
+  --world-edge-left: #253244;
+  --world-band: #2e3f56;
+  --world-main: #1e2a3a;
+  --world-edge-right: #263345;
+}
+
+.app[data-theme="night"][data-module="world"] .backdrop {
+  background: var(--world-main);
+}
+
+/* ============================================
+   地图/世界水印（可动态注入）
+   ============================================ */
+
+.app[data-module="map"] .backdrop::after,
+.app[data-module="world"] .backdrop::after {
+  content: "";
+  position: absolute;
+  left: 62%;
+  top: 74%;
+  width: min(86%, 46cqw, 840px);
+  aspect-ratio: 1;
+  pointer-events: none;
+  opacity: 0.08;
+  transform: translate(-50%, -50%);
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: contain;
+  background-image: var(--module-watermark-url, none);
+}

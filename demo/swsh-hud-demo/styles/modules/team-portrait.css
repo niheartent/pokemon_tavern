@@ -1,0 +1,255 @@
+/* ============================================
+   Team Module - Portrait (队伍主界面 - 竖屏)
+   完全独立的设计，不继承横屏规则
+
+   布局: 上方展示区 + 下方6成员列表
+   ============================================ */
+
+/* ===== 竖屏专用布局 ===== */
+
+.demo[data-layout="portrait"] .app[data-view="team"] .screen-content {
+  display: flex;
+  flex-direction: column;
+  gap: clamp(12px, 2cqw, 18px);
+  padding: clamp(12px, 2cqw, 18px);
+  overflow: hidden;
+}
+
+/* ===== 上方：精灵展示区 ===== */
+
+.demo[data-layout="portrait"] .party-hero {
+  flex: 0 0 auto;
+  min-height: 0;
+  max-height: 48%;
+  display: flex;
+  flex-direction: column;
+  gap: clamp(10px, 1.6cqw, 14px);
+}
+
+.demo[data-layout="portrait"] .team-stage {
+  flex: 1;
+  min-height: 200px;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: clamp(16px, 2.4cqw, 24px);
+  border-radius: 18px;
+  background: var(--art-bg);
+  overflow: hidden;
+}
+
+/* 装饰圆环（竖屏尺寸） */
+.demo[data-layout="portrait"] .team-stage::before {
+  content: "";
+  position: absolute;
+  width: 68%;
+  aspect-ratio: 1;
+  border: 1px solid var(--ring-outline);
+  border-radius: 50%;
+  box-shadow: 0 0 0 14px var(--ring-primary), 0 0 0 30px var(--ring-secondary);
+  opacity: 0.8;
+}
+
+/* 精灵图（竖屏尺寸） */
+.demo[data-layout="portrait"] .team-stage .big-sprite {
+  position: relative;
+  width: min(50%, 160px);
+  max-height: 54%;
+  object-fit: contain;
+  z-index: 1;
+  filter: drop-shadow(0 10px 10px rgba(25, 32, 44, 0.16));
+}
+
+.demo[data-layout="portrait"]
+  .app[data-theme="night"]
+  .team-stage
+  .big-sprite {
+  filter: drop-shadow(0 10px 10px rgba(0, 0, 0, 0.4));
+}
+
+/* 精灵名字（竖屏） */
+.demo[data-layout="portrait"] .team-stage .stage-name {
+  position: relative;
+  margin-top: 6px;
+  font-size: clamp(16px, 3.2cqw, 22px);
+  font-weight: 900;
+  z-index: 1;
+}
+
+/* 副标题（竖屏） */
+.demo[data-layout="portrait"] .team-stage .stage-sub {
+  position: relative;
+  margin-top: 4px;
+  color: var(--muted);
+  font-size: clamp(10px, 2cqw, 13px);
+  font-weight: 700;
+  z-index: 1;
+}
+
+/* 查看详情按钮（竖屏位置） */
+.demo[data-layout="portrait"] .detail-action {
+  position: absolute;
+  right: 5%;
+  bottom: 5%;
+  min-width: 80px;
+  min-height: 32px;
+  border: 0;
+  border-radius: 999px;
+  background: #fff;
+  color: #111;
+  padding: 0 14px;
+  font-size: clamp(10px, 2cqw, 13px);
+  font-weight: 850;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.12);
+  cursor: pointer;
+  z-index: 2;
+  transition: transform 0.1s ease;
+}
+
+.demo[data-layout="portrait"] .detail-action:hover,
+.demo[data-layout="portrait"] .detail-action:focus-visible {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 14px rgba(0, 0, 0, 0.18);
+}
+
+.demo[data-layout="portrait"]
+  .app[data-theme="night"]
+  .detail-action {
+  background: #f0f3f7;
+  color: #1b2028;
+}
+
+/* 轮换按钮（竖屏） */
+.demo[data-layout="portrait"] .swsh-preview-controls {
+  margin: 8px auto 0;
+  padding: 2px;
+  border: 1.5px solid #20242b;
+}
+
+.demo[data-layout="portrait"]
+  .app[data-theme="night"]
+  .swsh-preview-controls {
+  background: #1b2540;
+  border-color: #fff;
+}
+
+.demo[data-layout="portrait"] .swsh-preview-controls button {
+  width: 28px;
+  height: 28px;
+}
+
+.demo[data-layout="portrait"] .swsh-preview-controls button svg {
+  width: 16px;
+  height: 16px;
+}
+
+.demo[data-layout="portrait"] .swsh-preview-ball {
+  width: 20px;
+  height: 20px;
+}
+
+.demo[data-layout="portrait"] .swsh-preview-ball::after {
+  width: 5px;
+  height: 5px;
+}
+
+/* 队伍横幅（竖屏：隐藏） */
+.demo[data-layout="portrait"] .party-banner {
+  display: none;
+}
+
+/* ===== 下方：队伍列表 ===== */
+
+.demo[data-layout="portrait"] .party-list-pane {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  gap: clamp(8px, 1.3cqw, 12px);
+  overflow-y: auto;
+  overflow-x: hidden;
+  overscroll-behavior: contain;
+}
+
+/* 队伍成员卡片（竖屏尺寸） */
+.demo[data-layout="portrait"] .party-member {
+  min-height: 68px;
+  grid-template-columns: 56px minmax(0, 1fr) 54px;
+  gap: 8px;
+  padding: 6px 14px;
+}
+
+.demo[data-layout="portrait"] .member-sprite {
+  width: 44px;
+  height: 44px;
+}
+
+.demo[data-layout="portrait"] .member-top strong {
+  font-size: clamp(12px, 2.8cqw, 17px);
+}
+
+.demo[data-layout="portrait"] .member-gender {
+  width: 18px;
+  height: 18px;
+  font-size: 12px;
+}
+
+.demo[data-layout="portrait"] .member-hp {
+  height: 6px;
+}
+
+.demo[data-layout="portrait"] .member-bottom {
+  font-size: clamp(10px, 2.2cqw, 13px);
+}
+
+.demo[data-layout="portrait"] .member-bottom .box-type {
+  height: clamp(9px, 1.8cqw, 12px);
+}
+
+.demo[data-layout="portrait"] .member-level {
+  font-size: clamp(13px, 3cqw, 19px);
+}
+
+/* ===== 空队伍状态（竖屏） ===== */
+
+.demo[data-layout="portrait"] .party-empty {
+  padding: clamp(16px, 3cqw, 24px);
+}
+
+.demo[data-layout="portrait"] .party-empty h2 {
+  font-size: clamp(18px, 3.6cqw, 24px);
+}
+
+.demo[data-layout="portrait"] .party-empty p {
+  font-size: clamp(11px, 2.4cqw, 15px);
+}
+
+/* ===== 竖屏特殊优化 ===== */
+
+/* 非常小的竖屏（iPhone SE等） */
+@media (max-height: 600px) and (orientation: portrait) {
+  .demo[data-layout="portrait"] .party-hero {
+    max-height: 42%;
+  }
+
+  .demo[data-layout="portrait"] .team-stage {
+    min-height: 160px;
+  }
+
+  .demo[data-layout="portrait"] .party-member {
+    min-height: 60px;
+  }
+}
+
+/* 平板竖屏 */
+@media (min-width: 600px) and (orientation: portrait) {
+  .demo[data-layout="portrait"] .party-hero {
+    max-height: 52%;
+  }
+
+  .demo[data-layout="portrait"] .team-stage {
+    min-height: 280px;
+  }
+}

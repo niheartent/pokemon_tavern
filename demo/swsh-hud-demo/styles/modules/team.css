@@ -1,0 +1,321 @@
+/* ============================================
+   Team Module - Landscape (队伍主界面 - 横屏)
+   左侧: 6成员列表 + 操作按钮
+   右侧: 精灵展示区
+   ============================================ */
+
+/* ===== 队伍横屏布局 ===== */
+
+.app[data-view="team"][data-layout="landscape"] .screen-content {
+  /* 使用 split-layout，从 layout.css 继承 */
+}
+
+.party-screen {
+  display: grid;
+  grid-template-columns: minmax(280px, 38%) minmax(0, 1fr);
+  gap: clamp(16px, 2.4cqw, 32px);
+  height: 100%;
+  padding: clamp(14px, 2cqw, 24px) clamp(16px, 2.3cqw, 28px);
+}
+
+/* ===== 左侧：队伍列表 ===== */
+
+.party-list-pane {
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  gap: clamp(10px, 1.4cqw, 16px);
+}
+
+/* 队伍成员卡片 - 从 components.css 继承基础样式 */
+.party-list-pane .party-member {
+  /* 基础样式已在 components.css */
+}
+
+/* ===== 右侧：精灵展示区 ===== */
+
+.party-hero {
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  gap: clamp(12px, 1.8cqw, 20px);
+}
+
+/* 精灵展示舞台 */
+.team-stage {
+  flex: 1;
+  min-height: 0;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: clamp(18px, 2.6cqw, 32px);
+  border-radius: 22px;
+  background: var(--art-bg);
+  overflow: hidden;
+}
+
+/* 装饰圆环 */
+.team-stage::before {
+  content: "";
+  position: absolute;
+  width: 72%;
+  aspect-ratio: 1;
+  border: 1px solid var(--ring-outline);
+  border-radius: 50%;
+  box-shadow: 0 0 0 18px var(--ring-primary), 0 0 0 38px var(--ring-secondary);
+  opacity: 0.8;
+}
+
+/* 大号精灵图 */
+.team-stage .big-sprite {
+  position: relative;
+  width: min(56%, 210px);
+  max-height: 58%;
+  object-fit: contain;
+  z-index: 1;
+  filter: drop-shadow(0 12px 12px rgba(25, 32, 44, 0.16));
+}
+
+.app[data-theme="night"] .team-stage .big-sprite {
+  filter: drop-shadow(0 12px 12px rgba(0, 0, 0, 0.4));
+}
+
+/* 精灵名字 */
+.team-stage .stage-name {
+  position: relative;
+  margin-top: 8px;
+  font-size: clamp(17px, 2.2cqw, 25px);
+  font-weight: 900;
+  z-index: 1;
+}
+
+/* 副标题（昵称/编号） */
+.team-stage .stage-sub {
+  position: relative;
+  margin-top: 6px;
+  color: var(--muted);
+  font-size: clamp(11px, 1.2cqw, 14px);
+  font-weight: 700;
+  z-index: 1;
+}
+
+/* 查看详情按钮 */
+.detail-action {
+  position: absolute;
+  right: 5%;
+  bottom: 5%;
+  min-width: 90px;
+  min-height: 36px;
+  border: 0;
+  border-radius: 999px;
+  background: #fff;
+  color: #111;
+  padding: 0 16px;
+  font-size: clamp(11px, 1.2cqw, 14px);
+  font-weight: 850;
+  box-shadow: 0 5px 12px rgba(0, 0, 0, 0.12);
+  cursor: pointer;
+  z-index: 2;
+  transition: transform 0.1s ease;
+}
+
+.detail-action:hover,
+.detail-action:focus-visible {
+  transform: translateY(-1px);
+  box-shadow: 0 7px 16px rgba(0, 0, 0, 0.18);
+}
+
+.app[data-theme="night"] .detail-action {
+  background: #f0f3f7;
+  color: #1b2028;
+}
+
+/* 队伍横幅（右下角信息） */
+.party-banner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: clamp(12px, 1.8cqw, 20px);
+  padding: clamp(10px, 1.5cqw, 16px) clamp(14px, 2cqw, 20px);
+  border-radius: 16px;
+  background: var(--surface);
+  border: 1px solid var(--line);
+}
+
+.banner-left {
+  display: flex;
+  align-items: center;
+  gap: clamp(10px, 1.5cqw, 16px);
+}
+
+.banner-sprite {
+  width: 48px;
+  height: 48px;
+  object-fit: contain;
+}
+
+.banner-info {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.banner-name {
+  font-size: clamp(14px, 1.7cqw, 19px);
+  font-weight: 900;
+}
+
+.banner-meta {
+  font-size: clamp(11px, 1.25cqw, 14px);
+  font-weight: 750;
+  color: var(--muted);
+}
+
+.banner-right {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* 轮换按钮（左右箭头） */
+.swsh-preview-controls {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin: 10px auto 0;
+  padding: 2.25px;
+  border: 1.5px solid #20242b;
+  border-radius: 999px;
+  background: #f8f9fa;
+  box-shadow: 0 2.25px 0 rgba(37, 19, 25, 0.32);
+}
+
+.app[data-theme="night"] .swsh-preview-controls {
+  background: #1b2540;
+  border-color: #fff;
+  box-shadow: 0 2.25px 0 rgba(0, 0, 0, 0.28);
+}
+
+.swsh-preview-controls button {
+  display: grid;
+  place-items: center;
+  width: 30px;
+  height: 30px;
+  padding: 0;
+  border: 0;
+  border-radius: 999px;
+  background: transparent;
+  color: #1f2a34;
+  cursor: pointer;
+}
+
+.app[data-theme="night"] .swsh-preview-controls button {
+  color: #fff;
+}
+
+.swsh-preview-controls button svg {
+  width: 18px;
+  height: 18px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 4.5;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.swsh-preview-controls button:first-child svg {
+  transform: rotate(180deg);
+}
+
+.swsh-preview-controls button:hover,
+.swsh-preview-controls button:focus-visible {
+  background: #e3edf1;
+  color: var(--swsh-red);
+  outline: 0;
+}
+
+.app[data-theme="night"] .swsh-preview-controls button:hover,
+.app[data-theme="night"] .swsh-preview-controls button:focus-visible {
+  background: #303b61;
+  color: #fff;
+}
+
+.swsh-preview-controls button:active {
+  transform: translateY(1px);
+}
+
+/* 精灵球标记（中间） */
+.swsh-preview-ball {
+  position: relative;
+  display: block;
+  flex: none;
+  width: 22px;
+  height: 22px;
+  border: 2px solid #20242b;
+  border-radius: 50%;
+  background: linear-gradient(
+    to bottom,
+    var(--swsh-red) 0 46%,
+    #20242b 46% 55%,
+    #fff 55% 100%
+  );
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.4);
+}
+
+.swsh-preview-ball::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 6px;
+  height: 6px;
+  transform: translate(-50%, -50%);
+  border: 2px solid #20242b;
+  border-radius: 50%;
+  background: #fff;
+}
+
+/* ===== 空队伍状态 ===== */
+
+.party-empty {
+  height: 100%;
+  display: grid;
+  place-items: center;
+  text-align: center;
+  padding: 20px;
+}
+
+.party-empty h2 {
+  font-size: clamp(20px, 2.2cqw, 27px);
+  margin: 0 0 8px;
+}
+
+.party-empty p {
+  margin: 0;
+  color: var(--muted);
+  font-size: clamp(12px, 1.3cqw, 16px);
+  line-height: 1.7;
+}
+
+/* ===== 响应式优化 ===== */
+
+@container app (max-width: 720px) {
+  .party-screen {
+    grid-template-columns: minmax(240px, 1fr) minmax(0, 1.2fr);
+    gap: clamp(12px, 2cqw, 18px);
+  }
+
+  .party-banner {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}
+
+@container app (max-width: 520px) {
+  .party-screen {
+    grid-template-columns: 1fr;
+    grid-template-rows: auto 1fr;
+  }
+}
