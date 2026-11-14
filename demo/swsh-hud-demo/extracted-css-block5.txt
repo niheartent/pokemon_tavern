@@ -1,0 +1,22 @@
+<style>
+/* Six-member portrait team fit: reserve the action bar, then split the visible canvas between hero and all six rows. */
+.demo[data-layout="portrait"] .app[data-view="team"] .party-screen{
+  height:100%;
+  grid-template-rows:13% 32% 55%;
+}
+.demo[data-layout="portrait"] .app[data-view="team"] .party-hero{padding:4px 10px 6px}
+.demo[data-layout="portrait"] .app[data-view="team"] .party-hero .profile-sprite{width:150px;height:150px;max-width:52%;max-height:66%}
+.demo[data-layout="portrait"] .app[data-view="team"] .party-hero-info{margin:2px 0 0;gap:0}
+.demo[data-layout="portrait"] .app[data-view="team"] .party-hero-info strong{font-size:14px}
+.demo[data-layout="portrait"] .app[data-view="team"] .party-hero-info span{font-size:9px}
+.demo[data-layout="portrait"] .app[data-view="team"] .swsh-preview-controls{margin:3px auto 0}
+.demo[data-layout="portrait"] .app[data-view="team"] .party-list{gap:6px;padding:4px 0 6px;overflow:hidden}
+.demo[data-layout="portrait"] .app[data-view="team"] .party-member{min-height:48px;height:48px;grid-template-columns:34px minmax(0,1fr) 42px;padding:4px 8px;gap:5px}
+.demo[data-layout="portrait"] .app[data-view="team"] .member-sprite{width:30px;height:30px}
+.demo[data-layout="portrait"] .app[data-view="team"] .member-info{grid-template-rows:auto 4px auto;gap:1px}
+.demo[data-layout="portrait"] .app[data-view="team"] .member-top strong{font-size:12px}
+.demo[data-layout="portrait"] .app[data-view="team"] .member-gender{width:17px;height:17px;font-size:11px}
+.demo[data-layout="portrait"] .app[data-view="team"] .member-hp{height:4px}
+.demo[data-layout="portrait"] .app[data-view="team"] .member-bottom{font-size:9px}
+.demo[data-layout="portrait"] .app[data-view="team"] .member-level{font-size:13px}
+</style>

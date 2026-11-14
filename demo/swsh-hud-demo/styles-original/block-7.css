@@ -1,0 +1,3 @@
+/* Keep the larger portrait hero usable: reserve enough height for sprite, name and switch control. */
+.demo[data-layout="portrait"] .app[data-view="team"] .party-screen{grid-template-rows:12% 31% 57%}
+.demo[data-layout="portrait"] .app[data-view="team"] .party-hero .profile-sprite{width:200px;height:125px;max-width:72%;max-height:none;object-fit:contain}

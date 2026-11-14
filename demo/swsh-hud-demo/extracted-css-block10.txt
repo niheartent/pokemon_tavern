@@ -1,0 +1,185 @@
+<style>
+/* Keep the selected bag category in a wide, stationary slot. */
+.app[data-module="bag"] .bag-layout{grid-template-columns:40% 60%;grid-template-rows:13.2% minmax(0,1fr)}
+.app[data-module="bag"] .screen-content,.app[data-module="bag"] .bag-layout{overflow:visible}
+.app[data-module="bag"] .bag-category-nav{overflow:visible}
+.app[data-module="bag"] .bag-cats{overflow:visible}
+.app[data-module="bag"] .bag-cats button{position:relative;z-index:0;overflow:visible;transition:transform .16s ease}
+.app[data-module="bag"] .bag-cats button[aria-pressed="true"]{z-index:2;transform:none}
+.app[data-module="bag"] .bag-cats button .bag-cat-icon{transition:transform .16s ease,filter .16s ease;transform-origin:center}
+.app[data-module="bag"] .bag-cats button[aria-pressed="true"] .bag-cat-icon{transform:scale(1.18);filter:grayscale(1) brightness(0)}
+.app[data-module="bag"] .bag-cats button[aria-pressed="true"]::before{content:none}
+.app[data-module="bag"] .bag-slant{left:26%;width:48%}
+.app[data-module="bag"] .bag-layout::before{left:83%;right:auto;top:76.6%;bottom:auto;width:46.4%;height:77.4%;opacity:.4;background-color:transparent;background-image:url("assets/bag/bag-mark-full.png");background-repeat:no-repeat;background-position:center;background-size:contain;mask:none;-webkit-mask:none;transform:translate(-50%,-50%) rotate(-25deg);transform-origin:center}
+.app[data-module="bag"] .bag-heading{padding-right:0}
+.app[data-module="bag"] .bag-heading img{width:min(100%,520px);height:100%;max-height:100%;object-fit:contain;object-position:left center}
+.demo[data-layout="portrait"] .app[data-module="bag"] .bag-layout{grid-template-columns:minmax(0,1fr);grid-template-rows:9% minmax(0,1fr) minmax(0,38%);overflow:visible}
+.demo[data-layout="portrait"] .app[data-module="bag"] .bag-layout::before{display:none}
+.demo[data-layout="portrait"] .app[data-module="bag"] .bag-heading img{width:min(86%,350px);height:90%;max-height:56px}
+.demo[data-layout="portrait"] .app[data-module="bag"] .bag-cats button .bag-cat-icon{filter:grayscale(1) brightness(0) invert(1)}
+.demo[data-layout="portrait"] .app[data-module="bag"] .bag-cats button[aria-pressed="true"] .bag-cat-icon{filter:grayscale(1) brightness(0)}
+.demo[data-layout="portrait"] .app[data-theme="night"][data-module="bag"] .bag-cats button[aria-pressed="true"] .bag-cat-icon{filter:grayscale(1) brightness(0)}
+.demo[data-layout="portrait"] .app[data-module="bag"] .bag-slant{left:26%;width:48%}
+.app[data-theme="night"][data-module="bag"] .bag-cats button[aria-pressed="true"] .bag-cat-icon{filter:grayscale(1) brightness(0)}
+
+/* Bag composition pass: information takes the former party column; item rows stay compact. */
+.app[data-module="bag"] .bag-layout{
+  grid-template-columns:40% 60%;
+  grid-template-rows:13.2% minmax(0,1fr);
+  grid-template-areas:"heading content" "description content";
+}
+.app[data-module="bag"] .bag-content{
+  grid-template-rows:auto auto 30px minmax(0,1fr);
+  grid-template-areas:"head" "cats" "ribbon" "items";
+  padding:0 1.5% 0 2.5%;
+}
+.app[data-module="bag"] .bag-content-head{justify-content:flex-end}
+.app[data-module="bag"] .item-list{
+  grid-area:items;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  gap:4px;
+  min-height:0;
+  overflow:auto;
+  padding:4px 0 8px;
+}
+.app[data-module="bag"] .item-row{
+  flex:0 0 auto;
+  width:88%;
+  min-height:clamp(46px,5.4cqh,60px);
+  grid-template-columns:clamp(28px,3.2cqw,40px) minmax(0,1fr) clamp(54px,6.8cqw,78px);
+  gap:8px;
+  padding:0 0 0 3%;
+  border-radius:999px;
+  background:transparent;
+  color:#17130b;
+  text-align:left;
+  transition:background .16s ease,color .16s ease,transform .16s ease;
+}
+.app[data-module="bag"] .item-row .item-icon{
+  display:block;
+  width:clamp(25px,3cqw,36px);
+  height:clamp(25px,3cqw,36px);
+  object-fit:contain;
+  image-rendering:pixelated;
+}
+.app[data-module="bag"] .item-row .row-name{
+  min-width:0;
+  overflow:hidden;
+  font-size:clamp(14px,1.8cqw,21px);
+  font-weight:650;
+  white-space:nowrap;
+  text-overflow:ellipsis;
+}
+.app[data-module="bag"] .item-row .row-meta{
+  align-self:stretch;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:8px;
+  min-width:0;
+  margin-right:0;
+  padding:0 9px 0 12px;
+  clip-path:none;
+  background:transparent;
+  color:#17130b;
+  font-size:clamp(15px,1.8cqw,21px);
+  font-weight:600;
+}
+.app[data-module="bag"] .item-row .row-meta b{font-size:1.12em;font-weight:750}
+.app[data-module="bag"] .item-row[aria-pressed="true"],
+.app[data-module="bag"] .item-row.is-pointer-active,
+.app[data-module="bag"] .item-row.is-focus-active{overflow:hidden;background:linear-gradient(114deg,#161719 0%,#161719 82%,#e5760b 82.1%,#e5760b 100%);color:#fff}
+.app[data-module="bag"] .item-description{
+  grid-area:description;
+  grid-row:auto;
+  grid-column:auto;
+  align-self:stretch;
+  display:flex;
+  flex-direction:column;
+  justify-content:flex-start;
+  min-width:0;
+  min-height:0;
+  margin:3% 7% 5% 0;
+  padding:0 7% 6%;
+  overflow:hidden;
+  border:0;
+  border-radius:18px;
+  background:rgba(255,255,255,.46);
+  color:#17130b;
+}
+.app[data-module="bag"] .item-description::before{position:absolute;z-index:0;left:0;right:-4%;top:0;flex:0 0 auto;height:clamp(28px,5cqh,48px);margin:0;clip-path:polygon(0 0,100% 0,97% 100%,0 100%);background:#e8871d}
+.app[data-module="bag"] .item-description h3{position:relative;z-index:1;display:flex;align-items:center;flex:0 0 clamp(28px,5cqh,48px);margin:0 0 14px;color:#fff;font-size:clamp(16px,2cqw,24px)}
+.app[data-module="bag"] .item-description p{font-size:clamp(13px,1.45cqw,17px);line-height:1.65}
+.app[data-module="bag"] .item-description p:last-child{display:none}
+.app[data-theme="night"][data-module="bag"] .item-description{background:rgba(30,30,34,.68);color:#f3e8d1}
+.app[data-theme="night"][data-module="bag"] .item-description p{color:#f3e8d1}
+.app[data-theme="night"][data-module="bag"] .item-description::before{background:#89602d}
+.app[data-theme="night"][data-module="bag"] .item-row{color:#f3e8d1}
+.app[data-theme="night"][data-module="bag"] .item-row[aria-pressed="true"],
+.app[data-theme="night"][data-module="bag"] .item-row.is-pointer-active,
+.app[data-theme="night"][data-module="bag"] .item-row.is-focus-active{overflow:hidden;background:linear-gradient(114deg,#161719 0%,#161719 82%,#89602d 82.1%,#89602d 100%);color:#fff}
+.demo[data-layout="portrait"] .app[data-module="bag"] .bag-layout{
+  grid-template-columns:minmax(0,1fr);
+  grid-template-rows:9% minmax(0,1fr) 23%;
+  grid-template-areas:"heading" "content" "description";
+  gap:0;
+  padding:2% 3.8cqw 8px;
+}
+.demo[data-layout="portrait"] .app[data-module="bag"] .bag-content{
+  grid-template-rows:24px auto 24px minmax(0,1fr);
+  grid-template-areas:"head" "cats" "ribbon" "items";
+  padding:0 1%;
+}
+.demo[data-layout="portrait"] .app[data-module="bag"] .item-row{
+  width:91%;
+  min-height:38px;
+  grid-template-columns:27px minmax(0,1fr) 54px;
+  gap:6px;
+  padding-left:3%;
+}
+.demo[data-layout="portrait"] .app[data-module="bag"] .item-row .item-icon{width:25px;height:25px}
+.demo[data-layout="portrait"] .app[data-module="bag"] .item-row .row-name,
+.demo[data-layout="portrait"] .app[data-module="bag"] .item-row .row-meta{font-size:13px}
+.demo[data-layout="portrait"] .app[data-module="bag"] .item-description{
+  margin:5px 0 0;
+  padding:0 5% 8px;
+  border-radius:12px;
+  grid-row:auto;
+  grid-column:auto;
+}
+.demo[data-layout="portrait"] .app[data-module="bag"] .item-description::before{left:0;right:-3%;top:0;height:24px;margin:0}
+.demo[data-layout="portrait"] .app[data-module="bag"] .item-description h3{flex-basis:24px;font-size:14px;margin-bottom:5px}
+.demo[data-layout="portrait"] .app[data-module="bag"] .item-description p{font-size:11px;line-height:1.35}
+.demo[data-layout="portrait"] .app[data-module="bag"] .bag-content{position:static}
+.demo[data-layout="portrait"] .app[data-module="bag"] .bag-content-head{position:static}
+.demo[data-layout="portrait"] .app[data-module="bag"] .bag-category-nav>button{color:#17130b}
+.demo[data-layout="portrait"] .app[data-module="bag"] .bag-money{
+  position:absolute;
+  top:3.5%;
+  right:6%;
+  z-index:4;
+  padding:0;
+  color:#17130b;
+  font-size:clamp(13px,3.4cqw,17px);
+}
+.demo[data-layout="portrait"] .app[data-module="bag"] .bag-cats button,
+.demo[data-layout="portrait"] .app[data-module="bag"] .bag-cats button[aria-pressed="false"]{
+  background:transparent;
+}
+.demo[data-layout="portrait"] .app[data-module="bag"] .bag-cats button .bag-cat-icon{
+  filter:grayscale(1) brightness(0);
+}
+.demo[data-layout="portrait"] .app[data-module="bag"] .bag-cats button[aria-pressed="true"]{
+  background:transparent;
+  transform:none;
+}
+.demo[data-layout="portrait"] .app[data-module="bag"] .bag-cats button[aria-pressed="true"] .bag-cat-icon{
+  filter:grayscale(1) brightness(0) invert(1) drop-shadow(1px 0 0 #17130b) drop-shadow(-1px 0 0 #17130b) drop-shadow(0 1px 0 #17130b) drop-shadow(0 -1px 0 #17130b);
+}
+.demo[data-layout="portrait"] .app[data-theme="night"][data-module="bag"] .bag-cats button .bag-cat-icon{filter:grayscale(1) brightness(0) invert(1)}
+.demo[data-layout="portrait"] .app[data-theme="night"][data-module="bag"] .bag-cats button[aria-pressed="true"] .bag-cat-icon{
+  filter:grayscale(1) brightness(0) invert(1) drop-shadow(1px 0 0 #17130b) drop-shadow(-1px 0 0 #17130b) drop-shadow(0 1px 0 #17130b) drop-shadow(0 -1px 0 #17130b);
+}
+</style>

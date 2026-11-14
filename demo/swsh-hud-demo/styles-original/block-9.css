@@ -1,0 +1,17 @@
+/* Use the full portrait team-list height evenly, and shorten each row horizontally. */
+.demo[data-layout="portrait"] .app[data-view="team"] .party-list{
+  width:84%;
+  max-width:340px;
+  display:grid;
+  grid-template-columns:minmax(0,1fr);
+  grid-template-rows:repeat(6,minmax(0,1fr));
+  align-content:stretch;
+  justify-items:stretch;
+  gap:6px;
+  padding:6px 0 8px;
+}
+.demo[data-layout="portrait"] .app[data-view="team"] .party-member{
+  width:100%;
+  min-height:0;
+  height:100%;
+}

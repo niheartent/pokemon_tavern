@@ -1,0 +1,32 @@
+<style>
+/* Portrait bag reuses the team portrait template geometry exactly. Only the fills change to the bag palette. */
+.demo[data-layout="portrait"] .app[data-module="bag"]{
+  --portrait-bag-base:#f5b719;
+  --portrait-bag-main-fill:linear-gradient(128deg,#fff8fa 0%,#f9e9f0 48%,#f6edf0 100%);
+  --portrait-bag-stripe-fill:#e5a600;
+  --portrait-bag-main-shape:polygon(0 0,81.2% 0,3.2% 100%,0 100%);
+  --portrait-bag-stripe-shape:polygon(81% 0,99% 0,21% 100%,3% 100%);
+}
+.demo[data-layout="portrait"] .app[data-theme="night"][data-module="bag"]{
+  --portrait-bag-base:#403a2e;
+  --portrait-bag-main-fill:linear-gradient(128deg,#34333a 0%,#3b353a 52%,#3e383d 100%);
+  --portrait-bag-stripe-fill:#65502c;
+}
+.demo[data-layout="portrait"] .app[data-module="bag"] .backdrop{background:var(--portrait-bag-base)}
+.demo[data-layout="portrait"] .app[data-module="bag"] .backdrop::before{
+  content:"";
+  background:var(--portrait-bag-main-fill);
+  clip-path:var(--portrait-bag-main-shape);
+}
+.demo[data-layout="portrait"] .app[data-module="bag"] .backdrop::after{
+  content:"";
+  background:var(--portrait-bag-stripe-fill);
+  clip-path:var(--portrait-bag-stripe-shape);
+}
+/* Keep portrait layout geometry separate from the landscape grid. */
+.demo[data-layout="portrait"] .app[data-module="bag"] .bag-layout{
+  grid-template-columns:1fr;
+  grid-template-rows:9% minmax(0,1fr) minmax(0,38%);
+  grid-template-areas:"heading" "content" "party";
+}
+</style>

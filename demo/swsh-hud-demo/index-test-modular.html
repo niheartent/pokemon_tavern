@@ -1,0 +1,210 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="color-scheme" content="light dark">
+<title>剑盾 HUD · 模块化测试版</title>
+
+<!-- ============================================
+     外部CSS引入 - 按依赖顺序加载
+     ============================================ -->
+
+<!-- 1. 设计令牌 -->
+<link rel="stylesheet" href="styles/tokens.css">
+
+<!-- 2. 基础样式 -->
+<link rel="stylesheet" href="styles/base.css">
+
+<!-- 3. 布局系统 -->
+<link rel="stylesheet" href="styles/layout.css">
+
+<!-- 4. 背景系统 -->
+<link rel="stylesheet" href="styles/backdrops/split.css">
+<link rel="stylesheet" href="styles/backdrops/center.css">
+
+<!-- 5. 公共组件 -->
+<link rel="stylesheet" href="styles/components.css">
+<link rel="stylesheet" href="styles/selection-arrow.css">
+
+<!-- 6. 模块样式 -->
+<link rel="stylesheet" href="styles/modules/home.css">
+<link rel="stylesheet" href="styles/modules/team.css">
+<link rel="stylesheet" href="styles/modules/team-portrait.css">
+<link rel="stylesheet" href="styles/modules/party-detail.css">
+<link rel="stylesheet" href="styles/modules/bag.css">
+<link rel="stylesheet" href="styles/modules/dex.css">
+<link rel="stylesheet" href="styles/modules/box.css">
+<link rel="stylesheet" href="styles/modules/settings.css">
+<link rel="stylesheet" href="styles/modules/relations.css">
+
+<!-- 7. 响应式 -->
+<link rel="stylesheet" href="styles/responsive.css">
+
+<!-- Demo页面专用样式 (外层控制面板) -->
+<style>
+.demo{max-width:1280px;margin:0 auto;padding:24px 28px 28px}
+.demo-head{display:flex;align-items:flex-end;justify-content:space-between;gap:24px;margin-bottom:18px}
+.eyebrow{font-size:11px;letter-spacing:.16em;font-weight:800;color:#7a8391;text-transform:uppercase}
+h1{margin:5px 0 4px;font-size:clamp(22px,3vw,32px);line-height:1.1;letter-spacing:-.025em}
+.intro{margin:0;color:#697383;font-size:14px}
+.controls{display:flex;align-items:center;gap:10px;flex-wrap:wrap;justify-content:flex-end}
+.segmented{display:inline-flex;padding:4px;border:1px solid #d8dce4;border-radius:12px;background:#fff;gap:3px}
+.segmented button,.theme-toggle{min-height:40px;border:0;border-radius:9px;background:transparent;color:#535c69;padding:0 14px;font-size:13px;font-weight:700}
+.segmented button[aria-pressed="true"]{background:#20242b;color:#fff}
+.theme-toggle{border:1px solid #d8dce4;background:#fff;color:#343b46}
+.stage-wrap{display:flex;justify-content:center}
+.device{position:relative;width:min(100%,1120px);aspect-ratio:16/9;overflow:hidden;border:1px solid #d5d9e1;border-radius:18px;background:#101218;box-shadow:0 22px 56px rgba(31,43,62,.18);container-type:size;transition:width .25s ease,aspect-ratio .25s ease}
+.demo[data-layout="portrait"] .device{width:min(100%,390px);aspect-ratio:9/16;border-radius:28px}
+</style>
+
+</head>
+<body>
+
+<div class="demo" data-layout="landscape">
+  <header class="demo-head">
+    <div>
+      <p class="eyebrow">⚠️ 模块化测试版</p>
+      <h1>剑盾 HUD · CSS拆分验证</h1>
+      <p class="intro">测试外部CSS文件是否与原版视觉一致</p>
+    </div>
+    <div class="controls">
+      <div class="segmented" role="radiogroup" aria-label="布局切换">
+        <button type="button" data-layout="landscape" aria-pressed="true">横屏</button>
+        <button type="button" data-layout="portrait" aria-pressed="false">竖屏</button>
+      </div>
+      <button type="button" class="theme-toggle" data-theme="day">🌙 夜间</button>
+    </div>
+  </header>
+
+  <div class="stage-wrap">
+    <div class="device">
+      <div class="app" data-view="home" data-module="home" data-theme="day" data-layout="landscape">
+
+        <!-- 背景层 -->
+        <div class="backdrop"></div>
+
+        <!-- 屏幕内容 -->
+        <div class="screen-content">
+          <div class="menu-container">
+
+            <!-- 训练家信息条 -->
+            <div class="trainer-bar">
+              <div class="trainer-name">小智</div>
+              <div class="trainer-stats">
+                <div class="trainer-stat">
+                  <span>💰</span>
+                  <span>31400</span>
+                </div>
+                <div class="trainer-stat">
+                  <span>🏅</span>
+                  <span>8个</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- 10格菜单 -->
+            <div class="menu-grid">
+              <button class="menu-entry selection-target" data-menu="0" aria-pressed="false">
+                <span class="menu-icon">📦</span>
+                <span class="menu-label">宝可梦</span>
+              </button>
+              <button class="menu-entry selection-target" data-menu="1" aria-pressed="false">
+                <span class="menu-icon">📖</span>
+                <span class="menu-label">图鉴</span>
+              </button>
+              <button class="menu-entry selection-target" data-menu="2" aria-pressed="false">
+                <span class="menu-icon">🎒</span>
+                <span class="menu-label">背包</span>
+              </button>
+              <button class="menu-entry selection-target" data-menu="3" aria-pressed="false">
+                <span class="menu-icon">💳</span>
+                <span class="menu-label">联盟卡</span>
+              </button>
+              <button class="menu-entry selection-target" data-menu="4" aria-pressed="false">
+                <span class="menu-icon">🗺️</span>
+                <span class="menu-label">地图</span>
+              </button>
+              <button class="menu-entry selection-target" data-menu="5" aria-pressed="false">
+                <span class="menu-icon">👥</span>
+                <span class="menu-label">人际关系</span>
+              </button>
+              <button class="menu-entry selection-target" data-menu="6" aria-pressed="false">
+                <span class="menu-icon">🏆</span>
+                <span class="menu-label">记录</span>
+              </button>
+              <button class="menu-entry selection-target" data-menu="7" aria-pressed="false">
+                <span class="menu-icon">⚙️</span>
+                <span class="menu-label">设置</span>
+              </button>
+              <button class="menu-entry selection-target" data-menu="8" aria-pressed="false">
+                <span class="menu-icon">💾</span>
+                <span class="menu-label">存档</span>
+              </button>
+              <button class="menu-entry selection-target" data-menu="9" aria-pressed="false">
+                <span class="menu-icon">❌</span>
+                <span class="menu-label">关闭</span>
+              </button>
+            </div>
+
+            <!-- 环境信息条 -->
+            <div class="env-bar">
+              <div class="env-item">📍 真新镇</div>
+              <span class="env-separator"></span>
+              <div class="env-item">📅 2024-11-14</div>
+              <span class="env-separator"></span>
+              <div class="env-item">⏰ 下午3点</div>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- 底部操作栏 -->
+        <div class="actionbar">
+          <button class="action-back action" type="button">
+            <span class="key">B</span>
+            <span>返回</span>
+          </button>
+        </div>
+
+        <!-- 选择箭头 -->
+        <svg class="selection-arrow" viewBox="0 0 52 52" xmlns="http://www.w3.org/2000/svg">
+          <path class="arrow-glyph" d="M8 18 L26 8 L26 28 Z"/>
+        </svg>
+
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+// 简单的控制逻辑
+const demo = document.querySelector('.demo');
+const app = document.querySelector('.app');
+const layoutButtons = document.querySelectorAll('[data-layout]');
+const themeToggle = document.querySelector('.theme-toggle');
+
+// 布局切换
+layoutButtons.forEach(btn => {
+  btn.addEventListener('click', () => {
+    const layout = btn.dataset.layout;
+    demo.dataset.layout = layout;
+    app.dataset.layout = layout;
+    layoutButtons.forEach(b => b.setAttribute('aria-pressed', b === btn ? 'true' : 'false'));
+  });
+});
+
+// 主题切换
+themeToggle.addEventListener('click', () => {
+  const currentTheme = app.dataset.theme;
+  const newTheme = currentTheme === 'day' ? 'night' : 'day';
+  app.dataset.theme = newTheme;
+  themeToggle.textContent = newTheme === 'day' ? '🌙 夜间' : '☀️ 日间';
+});
+
+console.log('✅ CSS模块化测试版加载完成');
+console.log('📦 已加载17个外部CSS文件');
+</script>
+
+</body>
+</html>
