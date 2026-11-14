@@ -8,34 +8,36 @@
 
 ## ✅ 已完成
 
-### Phase 1: CSS 拆分 ✅ (已完成)
+### Phase 1A: CSS 提取 ✅ (100%视觉一致)
+- 原版 2262行 → 757行HTML + 12个CSS文件
+- 文件：`index-modular-v2.html` + `styles-original/`
+- 浏览器验证：视觉完全相同
 
-#### 已创建的文件
+### Phase 1B: CSS 优化 ✅ (去重+合并)
+- 12个CSS文件 → 7个文件（减少42%）
+- 1494行 → 1487行（去除7行重复）
+- 183KB → 180KB（减少3KB）
+- 文件：`index-optimized.html` + `styles-optimized/`
+
+### Phase 2: JavaScript 模块化 ⏸️ (决定跳过)
+- 原版JavaScript (678行) 结构已经清晰
+- 评估后决定跳过重构，专注核心目标
+- 已提取代码并创建目录结构备用
+
+### Phase 3: 弦九API对接 ✅ (已完成)
+- 创建 `swshBridge` 数据桥接层（370行）
+- 完整API文档和测试页面
+- 三级数据获取策略
+- 支持队伍/背包/图鉴/训练家数据转换
+
+#### swshBridge 文件结构
 
 ```
-styles/
-├── tokens.css          ✅ CSS 变量和设计令牌 (所有模块配色)
-├── base.css            ✅ 基础样式和重置
-├── layout.css          ✅ Grid/Flex 布局骨架
-├── components.css      ✅ 公共组件 (队伍卡片/属性徽章/列表行/精灵舞台)
-├── selection-arrow.css ✅ 选择箭头系统
-├── responsive.css      ✅ 响应式和容器查询
-├── backdrops/
-│   ├── split.css       ✅ 分割型背景 (队伍/图鉴/背包/盒子/人际关系)
-│   └── center.css      ✅ 呈现型背景 (主菜单/设置/地图/世界)
-└── modules/
-    ├── home.css        ✅ 主菜单 (横屏+竖屏)
-    ├── team.css        ✅ 队伍主界面 (横屏)
-    ├── team-portrait.css ✅ 队伍主界面 (竖屏独立)
-    ├── party-detail.css  ✅ 精灵详情 (横竖屏)
-    ├── bag.css         ✅ 背包 (横竖屏)
-    ├── dex.css         ✅ 图鉴 (横竖屏)
-    ├── box.css         ✅ 盒子 (横竖屏)
-    ├── settings.css    ✅ 设置 (横竖屏)
-    └── relations.css   ✅ 人际关系 (横竖屏)
+scripts/bridge/
+├── swsh-bridge.js  ✅ 核心桥接层（370行）
+├── README.md       ✅ 完整API文档
+└── test.html       ✅ 功能测试页面
 ```
-
-**完成度**: 100% (16/16 文件)
 
 ---
 
