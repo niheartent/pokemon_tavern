@@ -1,0 +1,445 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>SWSH Bridge 测试页面</title>
+<style>
+body {
+  font-family: system-ui, -apple-system, sans-serif;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
+  background: #f5f5f5;
+}
+h1 {
+  color: #e33241;
+}
+.test-section {
+  background: white;
+  padding: 20px;
+  margin: 20px 0;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+button {
+  padding: 10px 20px;
+  margin: 5px;
+  border: 0;
+  border-radius: 6px;
+  background: #e33241;
+  color: white;
+  font-weight: bold;
+  cursor: pointer;
+}
+button:hover {
+  background: #c42a36;
+}
+pre {
+  background: #f8f8f8;
+  padding: 15px;
+  border-radius: 4px;
+  overflow-x: auto;
+  font-size: 12px;
+}
+.status {
+  padding: 10px;
+  margin: 10px 0;
+  border-radius: 4px;
+}
+.status.success {
+  background: #d4edda;
+  color: #155724;
+}
+.status.error {
+  background: #f8d7da;
+  color: #721c24;
+}
+.status.info {
+  background: #d1ecf1;
+  color: #0c5460;
+}
+</style>
+</head>
+<body>
+
+<h1>🔗 SWSH Bridge 测试页面</h1>
+
+<div class="test-section">
+  <h2>1. 环境检查</h2>
+  <button onclick="checkEnvironment()">检查环境</button>
+  <div id="env-result"></div>
+</div>
+
+<div class="test-section">
+  <h2>2. 模拟弦九数据</h2>
+  <p>在没有弦九插件的情况下，模拟创建测试数据</p>
+  <button onclick="createMockData()">创建模拟数据</button>
+  <button onclick="clearMockData()">清除模拟数据</button>
+  <div id="mock-result"></div>
+</div>
+
+<div class="test-section">
+  <h2>3. 数据加载测试</h2>
+  <button onclick="testLoadData()">测试 loadData()</button>
+  <button onclick="testLoadDataLight()">测试 loadDataLight()</button>
+  <div id="load-result"></div>
+</div>
+
+<div class="test-section">
+  <h2>4. 数据转换测试</h2>
+  <button onclick="testConvertParty()">转换队伍</button>
+  <button onclick="testConvertBag()">转换背包</button>
+  <button onclick="testConvertDex()">转换图鉴</button>
+  <button onclick="testConvertTrainer()">转换训练家</button>
+  <div id="convert-result"></div>
+</div>
+
+<div class="test-section">
+  <h2>5. 完整流程测试</h2>
+  <button onclick="testFullWorkflow()">运行完整流程</button>
+  <div id="workflow-result"></div>
+</div>
+
+<script src="swsh-bridge.js"></script>
+<script>
+// ============================================
+// 测试工具函数
+// ============================================
+
+function showResult(elementId, html) {
+  document.getElementById(elementId).innerHTML = html;
+}
+
+function formatJSON(obj) {
+  return '<pre>' + JSON.stringify(obj, null, 2) + '</pre>';
+}
+
+// ============================================
+// 1. 环境检查
+// ============================================
+
+function checkEnvironment() {
+  let html = '';
+
+  // 检查swshBridge
+  if (typeof swshBridge !== 'undefined') {
+    html += '<div class="status success">✅ swshBridge 已加载</div>';
+    html += '<p>版本: ' + swshBridge.version + '</p>';
+  } else {
+    html += '<div class="status error">❌ swshBridge 未加载</div>';
+  }
+
+  // 检查Mvu插件
+  if (typeof window.Mvu !== 'undefined' && window.Mvu.getMvuData) {
+    html += '<div class="status success">✅ Mvu插件已加载</div>';
+  } else {
+    html += '<div class="status info">ℹ️ Mvu插件未加载（正常，本地测试不需要）</div>';
+  }
+
+  // 检查localStorage
+  try {
+    localStorage.setItem('test', '1');
+    localStorage.removeItem('test');
+    html += '<div class="status success">✅ localStorage 可用</div>';
+  } catch (e) {
+    html += '<div class="status error">❌ localStorage 不可用: ' + e.message + '</div>';
+  }
+
+  showResult('env-result', html);
+}
+
+// ============================================
+// 2. 模拟数据
+// ============================================
+
+function createMockData() {
+  const mockData = {
+    训练家: {
+      名字: "小智",
+      金钱: 31400,
+      徽章数: 8,
+      游戏时长: "125:30",
+      当前位置: "真新镇"
+    },
+    队伍: {
+      "1": {
+        名字: "皮卡丘",
+        ID: "0025",
+        等级: "45",
+        HP体力: "120/120",
+        性别: "雄",
+        属性: "电",
+        特性: "静电",
+        性格: "顽皮",
+        招式1: "十万伏特",
+        招式1PP: "15/15",
+        招式1属性: "电",
+        招式2: "电光一闪",
+        招式2PP: "30/30",
+        招式2属性: "一般",
+        HP: "120",
+        攻击: "90",
+        防御: "65",
+        特攻: "95",
+        特防: "75",
+        速度: "110",
+        亲密度: "220",
+        精灵球: "精灵球"
+      },
+      "2": {
+        名字: "喷火龙",
+        ID: "0006",
+        等级: "50",
+        HP体力: "186/186",
+        性别: "雄",
+        属性: "火/飞行",
+        特性: "猛火",
+        性格: "固执",
+        招式1: "喷射火焰",
+        招式1PP: "15/15",
+        招式1属性: "火",
+        HP: "186",
+        攻击: "130",
+        防御: "110",
+        特攻: "140",
+        特防: "115",
+        速度: "120",
+        亲密度: "255",
+        精灵球: "精灵球"
+      },
+      "3": { 名字: "空" },
+      "4": { 名字: "空" },
+      "5": { 名字: "空" },
+      "6": { 名字: "空" }
+    },
+    背包: {
+      "伤药": 5,
+      "好伤药": 3,
+      "全满药": 2,
+      "精灵球": 10,
+      "超级球": 5,
+      "招式学习器01": 1
+    },
+    图鉴: {
+      "0025": { 捕获: true, 名字: "皮卡丘" },
+      "0006": { 捕获: true, 名字: "喷火龙" },
+      "0001": { 捕获: false, 名字: "妙蛙种子" },
+      "0004": { 捕获: false, 名字: "小火龙" }
+    }
+  };
+
+  try {
+    const chatKey = swshBridge.getCurrentChatKey();
+    localStorage.setItem(`pk_mvu_backup_${chatKey}`, JSON.stringify(mockData));
+
+    showResult('mock-result',
+      '<div class="status success">✅ 模拟数据已创建并保存到localStorage</div>' +
+      formatJSON(mockData)
+    );
+  } catch (e) {
+    showResult('mock-result',
+      '<div class="status error">❌ 创建失败: ' + e.message + '</div>'
+    );
+  }
+}
+
+function clearMockData() {
+  try {
+    const chatKey = swshBridge.getCurrentChatKey();
+    localStorage.removeItem(`pk_mvu_backup_${chatKey}`);
+    showResult('mock-result',
+      '<div class="status success">✅ 模拟数据已清除</div>'
+    );
+  } catch (e) {
+    showResult('mock-result',
+      '<div class="status error">❌ 清除失败: ' + e.message + '</div>'
+    );
+  }
+}
+
+// ============================================
+// 3. 数据加载测试
+// ============================================
+
+function testLoadData() {
+  try {
+    const data = swshBridge.loadData();
+
+    if (data && data.训练家) {
+      showResult('load-result',
+        '<div class="status success">✅ 数据加载成功</div>' +
+        '<p>训练家: ' + data.训练家.名字 + '</p>' +
+        '<p>队伍成员数: ' + Object.keys(data.队伍).filter(k => data.队伍[k].名字 !== '空').length + '</p>' +
+        '<p>背包物品数: ' + Object.keys(data.背包).length + '</p>' +
+        '<p>图鉴条目数: ' + Object.keys(data.图鉴).length + '</p>' +
+        formatJSON(data)
+      );
+    } else {
+      showResult('load-result',
+        '<div class="status error">❌ 未获取到有效数据</div>' +
+        formatJSON(data)
+      );
+    }
+  } catch (e) {
+    showResult('load-result',
+      '<div class="status error">❌ 加载失败: ' + e.message + '</div>'
+    );
+  }
+}
+
+function testLoadDataLight() {
+  try {
+    const data = swshBridge.loadDataLight();
+
+    if (data && data.训练家) {
+      showResult('load-result',
+        '<div class="status success">✅ 降级加载成功（从备份）</div>' +
+        formatJSON(data)
+      );
+    } else {
+      showResult('load-result',
+        '<div class="status info">ℹ️ 使用默认数据</div>' +
+        formatJSON(data)
+      );
+    }
+  } catch (e) {
+    showResult('load-result',
+      '<div class="status error">❌ 加载失败: ' + e.message + '</div>'
+    );
+  }
+}
+
+// ============================================
+// 4. 数据转换测试
+// ============================================
+
+function testConvertParty() {
+  try {
+    const data = swshBridge.loadData();
+    const party = swshBridge.convertParty(data);
+
+    showResult('convert-result',
+      '<div class="status success">✅ 队伍转换成功</div>' +
+      '<p>队伍成员数: ' + party.length + '</p>' +
+      formatJSON(party)
+    );
+  } catch (e) {
+    showResult('convert-result',
+      '<div class="status error">❌ 转换失败: ' + e.message + '</div>'
+    );
+  }
+}
+
+function testConvertBag() {
+  try {
+    const data = swshBridge.loadData();
+    const bag = swshBridge.convertBag(data);
+
+    showResult('convert-result',
+      '<div class="status success">✅ 背包转换成功</div>' +
+      '<p>物品种类数: ' + bag.length + '</p>' +
+      formatJSON(bag)
+    );
+  } catch (e) {
+    showResult('convert-result',
+      '<div class="status error">❌ 转换失败: ' + e.message + '</div>'
+    );
+  }
+}
+
+function testConvertDex() {
+  try {
+    const data = swshBridge.loadData();
+    const dex = swshBridge.convertDex(data);
+
+    showResult('convert-result',
+      '<div class="status success">✅ 图鉴转换成功</div>' +
+      '<p>图鉴条目数: ' + dex.length + '</p>' +
+      '<p>已捕获: ' + dex.filter(e => e.caught).length + '</p>' +
+      formatJSON(dex)
+    );
+  } catch (e) {
+    showResult('convert-result',
+      '<div class="status error">❌ 转换失败: ' + e.message + '</div>'
+    );
+  }
+}
+
+function testConvertTrainer() {
+  try {
+    const data = swshBridge.loadData();
+    const trainer = swshBridge.convertTrainer(data);
+
+    showResult('convert-result',
+      '<div class="status success">✅ 训练家转换成功</div>' +
+      formatJSON(trainer)
+    );
+  } catch (e) {
+    showResult('convert-result',
+      '<div class="status error">❌ 转换失败: ' + e.message + '</div>'
+    );
+  }
+}
+
+// ============================================
+// 5. 完整流程测试
+// ============================================
+
+function testFullWorkflow() {
+  let html = '<h3>完整流程测试</h3>';
+
+  try {
+    // Step 1: 加载数据
+    html += '<h4>Step 1: 加载弦九数据</h4>';
+    const xianjiunData = swshBridge.loadData();
+
+    if (!xianjiunData || !xianjiunData.训练家) {
+      html += '<div class="status error">❌ 未获取到数据，请先创建模拟数据</div>';
+      showResult('workflow-result', html);
+      return;
+    }
+
+    html += '<div class="status success">✅ 数据加载成功</div>';
+
+    // Step 2: 转换所有数据
+    html += '<h4>Step 2: 转换为SWSH格式</h4>';
+    const party = swshBridge.convertParty(xianjiunData);
+    const bag = swshBridge.convertBag(xianjiunData);
+    const dex = swshBridge.convertDex(xianjiunData);
+    const trainer = swshBridge.convertTrainer(xianjiunData);
+
+    html += '<div class="status success">✅ 转换成功</div>';
+
+    // Step 3: 显示结果
+    html += '<h4>Step 3: 转换结果</h4>';
+    html += '<p><strong>训练家:</strong> ' + trainer.name + '</p>';
+    html += '<p><strong>金钱:</strong> ¥' + trainer.money + '</p>';
+    html += '<p><strong>徽章:</strong> ' + trainer.badges + '个</p>';
+    html += '<p><strong>队伍成员:</strong> ' + party.length + '只</p>';
+    html += '<p><strong>背包物品:</strong> ' + bag.length + '种</p>';
+    html += '<p><strong>图鉴条目:</strong> ' + dex.length + '个</p>';
+
+    html += '<h4>详细数据</h4>';
+    html += '<details><summary>队伍数据</summary>' + formatJSON(party) + '</details>';
+    html += '<details><summary>背包数据</summary>' + formatJSON(bag) + '</details>';
+    html += '<details><summary>图鉴数据</summary>' + formatJSON(dex) + '</details>';
+    html += '<details><summary>训练家数据</summary>' + formatJSON(trainer) + '</details>';
+
+  } catch (e) {
+    html += '<div class="status error">❌ 流程失败: ' + e.message + '</div>';
+    html += '<pre>' + e.stack + '</pre>';
+  }
+
+  showResult('workflow-result', html);
+}
+
+// 页面加载时自动检查环境
+window.addEventListener('load', function() {
+  console.log('[SWSH Bridge Test] 测试页面已加载');
+  console.log('swshBridge:', window.swshBridge);
+});
+</script>
+
+</body>
+</html>
