@@ -144,12 +144,12 @@ button:focus-visible{outline:3px solid #3579bd;outline-offset:2px}
 .dex-scrollbar-thumb{position:absolute;top:0;left:0;display:block;width:100%;height:100%;border-radius:999px;background:#8e382a;pointer-events:none}
 .dex-scrollbar.is-disabled{opacity:.28;cursor:default}
 
-.dex-list::after{content:"";position:absolute;z-index:-1;inset:12% 4% 0 8%;background:#fff;-webkit-mask:url("assets/menu/original/masks/xmenu_button_icon_pokedex_00^s-mask.png") center/contain no-repeat;mask:url("assets/menu/original/masks/xmenu_button_icon_pokedex_00^s-mask.png") center/contain no-repeat;opacity:.3;pointer-events:none}
+.dex-list::after{content:"";position:absolute;z-index:0;inset:12% 4% 0 8%;background:url("assets/pokedex/pokedex-bgicon-watermark.png") center/contain no-repeat;opacity:.22;pointer-events:none}
 .dex-list::before{display:none}
 .dex-focus{grid-area:focus;position:relative;z-index:2;display:grid;grid-template-columns:minmax(0,1fr);grid-template-rows:minmax(0,1fr);gap:0;align-items:center;padding:2% 10% 5% 4%}
 .dex-focus::before{display:none}
 .dex-focus .detail-stage{position:relative;height:100%;min-height:0;border:0;border-radius:0;background:transparent;overflow:visible}
-.dex-focus .detail-stage::before{width:min(72%,520px);border:0;border-radius:0;box-shadow:none;background:url("assets/pokelist/pokelist-watermark-full.png") center/contain no-repeat;opacity:.12;transform:rotate(-16deg)}
+.dex-focus .detail-stage::before{width:min(72%,520px);border:0;border-radius:0;box-shadow:none;background:url("assets/pokedex/pokedex-bgicon-watermark.png") center/contain no-repeat;opacity:.16;transform:rotate(-16deg)}
 .dex-focus .detail-stage .big-sprite{width:min(74%,440px);height:min(78%,520px);max-height:78%;filter:drop-shadow(0 14px 16px rgba(34,49,58,.18))}
 .dex-focus .detail-stage .stage-name{position:absolute;left:50%;bottom:6%;transform:translateX(-50%);padding:7px 28px;border-radius:999px;background:#111;color:#fff;white-space:nowrap}
 .dex-focus .dex-data{position:absolute;left:auto;right:2%;top:2%;z-index:3;display:flex;align-items:center;gap:8px;color:#222}
@@ -173,6 +173,7 @@ button:focus-visible{outline:3px solid #3579bd;outline-offset:2px}
   color:#8e3e2f;
   font-size:clamp(13px,1.55cqw,18px);
   font-weight:750;
+  z-index:1;
 }
 .app[data-view="dex"] .data-row::before{content:none}
 .app[data-view="dex"] .data-row .dex-monid{
