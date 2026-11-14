@@ -108,8 +108,136 @@ function swshIcon(key,size){
   return '<svg class="swsh-icon swsh-icon-'+key+'" width="'+px+'" height="'+px+'" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2.25" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">'+(art[key]||art.pokedex)+'</svg>';
 }
 // ============================================
-// Mock数据（兜底）
+// Mock数据（弦九 stat_data 格式，与真实接口对齐）
 // ============================================
+// 格式完全遵循弦九 v6.0.23 的 DEFAULT_STAT 结构
+// 真实环境下由 swshBridge.getStat() 返回相同结构的真实数据
+const MOCK_STAT = {
+  训练家: {名字:"伯劳", 活力:3, 活力上限:3, 金钱:31400,
+           徽章:"伽勒尔|木杆|石锁", 身份:"训练家", 声望:"12 新人",
+           气场:"无", 可命令等级:20},
+  队伍: {
+    "1": {名字:"敲音猴", 英文名:"Grookey", 昵称:"", 等级:8, 性别:"♂",
+          是否闪光:false, 图标:"",
+          HP:"19/26", 经验:"328/419",
+          属性1:"草", 属性2:"无",
+          技能:"抓/叫声/木枝突刺/挑衅",
+          性格:"胆小", 特性:"茂盛",
+          携带道具:"无", 携带道具英文:"",
+          亲密度:70, 个体值:"31/14/14/11/11/17",
+          精灵球:"精灵球", 精灵球英文:"Poke Ball", 孵化剩余:""},
+    "2": {名字:"泪眼蜥", 英文名:"Sobble", 昵称:"", 等级:7, 性别:"♀",
+          是否闪光:false, 图标:"",
+          HP:"18/23", 经验:"226/300",
+          属性1:"水", 属性2:"无",
+          技能:"拍击/水枪/瞪眼/水之波动",
+          性格:"认真", 特性:"激流",
+          携带道具:"无", 携带道具英文:"",
+          亲密度:60, 个体值:"26/16/15/27/18/24",
+          精灵球:"精灵球", 精灵球英文:"Poke Ball", 孵化剩余:""},
+    "3": {名字:"绿毛虫", 英文名:"Caterpie", 昵称:"", 等级:6, 性别:"♂",
+          是否闪光:false, 图标:"",
+          HP:"16/20", 经验:"142/190",
+          属性1:"虫", 属性2:"无",
+          技能:"撞击/吐丝",
+          性格:"温和", 特性:"鳞粉",
+          携带道具:"无", 携带道具英文:"",
+          亲密度:50, 个体值:"20/15/13/10/12/14",
+          精灵球:"精灵球", 精灵球英文:"Poke Ball", 孵化剩余:""},
+    "4": {名字:"妙蛙种子", 英文名:"Bulbasaur", 昵称:"", 等级:9, 性别:"♀",
+          是否闪光:false, 图标:"",
+          HP:"24/29", 经验:"401/517",
+          属性1:"草", 属性2:"毒",
+          技能:"撞击/藤鞭/生长",
+          性格:"内敛", 特性:"茂盛",
+          携带道具:"无", 携带道具英文:"",
+          亲密度:65, 个体值:"29/16/17/23/22/16",
+          精灵球:"精灵球", 精灵球英文:"Poke Ball", 孵化剩余:""},
+    "5": {名字:"小火龙", 英文名:"Charmander", 昵称:"", 等级:10, 性别:"♂",
+          是否闪光:false, 图标:"",
+          HP:"27/31", 经验:"526/669",
+          属性1:"火", 属性2:"无",
+          技能:"抓/叫声/火花",
+          性格:"急躁", 特性:"猛火",
+          携带道具:"无", 携带道具英文:"",
+          亲密度:75, 个体值:"31/20/16/24/17/25",
+          精灵球:"精灵球", 精灵球英文:"Poke Ball", 孵化剩余:""},
+    "6": {名字:"杰尼龟", 英文名:"Squirtle", 昵称:"", 等级:8, 性别:"♀",
+          是否闪光:false, 图标:"",
+          HP:"21/25", 经验:"362/460",
+          属性1:"水", 属性2:"无",
+          技能:"撞击/水枪/缩入壳中",
+          性格:"大胆", 特性:"激流",
+          携带道具:"无", 携带道具英文:"",
+          亲密度:68, 个体值:"25/15/22/17/21/14",
+          精灵球:"精灵球", 精灵球英文:"Poke Ball", 孵化剩余:""}
+  },
+  背包: {
+    "伤药":     {类型:"药品",   数量:4,  图标:""},
+    "解麻药":   {类型:"药品",   数量:2,  图标:""},
+    "解毒药":   {类型:"药品",   数量:3,  图标:""},
+    "全满药":   {类型:"药品",   数量:1,  图标:""},
+    "精灵球":   {类型:"精灵球", 数量:12, 图标:""},
+    "超级球":   {类型:"精灵球", 数量:5,  图标:""},
+    "高级球":   {类型:"精灵球", 数量:2,  图标:""},
+    "攻击增强剂":{类型:"战斗道具",数量:2, 图标:""},
+    "速度增强剂":{类型:"战斗道具",数量:1, 图标:""},
+    "樱子果":   {类型:"树果",   数量:3,  图标:""},
+    "桃桃果":   {类型:"树果",   数量:2,  图标:""},
+    "经验糖果S": {类型:"道具",   数量:4,  图标:""},
+    "招式学习器01":{类型:"招式学习器",数量:1,图标:""},
+    "招式记录12": {类型:"招式学习器",数量:2,图标:""},
+    "宝可梦图鉴":{类型:"重要物品",数量:1, 图标:""},
+    "自行车":   {类型:"重要物品",数量:1,  图标:""},
+    "咖喱食材": {类型:"食材",   数量:4,  图标:""},
+    "新鲜香草": {类型:"食材",   数量:2,  图标:""}
+  },
+  盒子: {
+    "草地": {
+      "1": {名字:"敲音猴",  等级:8,  性别:"♂", 图标:"", 是否闪光:false},
+      "2": {名字:"泪眼蜥",  等级:7,  性别:"♀", 图标:"", 是否闪光:false},
+      "3": {名字:"绿毛虫",  等级:6,  性别:"♂", 图标:"", 是否闪光:false},
+      "4": {名字:"妙蛙种子",等级:9,  性别:"♀", 图标:"", 是否闪光:false},
+      "5": {名字:"小火龙",  等级:10, 性别:"♂", 图标:"", 是否闪光:false},
+      "6": {名字:"杰尼龟",  等级:8,  性别:"♀", 图标:"", 是否闪光:false}
+    },
+    "冒险伙伴": {
+      "1": {名字:"绿毛虫",  等级:6,  性别:"♂", 图标:"", 是否闪光:false},
+      "2": {名字:"妙蛙种子",等级:9,  性别:"♀", 图标:"", 是否闪光:false},
+      "3": {名字:"小火龙",  等级:10, 性别:"♂", 图标:"", 是否闪光:false}
+    },
+    "等待整理": {},
+    "远征队":   {},
+    "收藏":     {},
+    "新朋友":   {}
+  },
+  附近宝可梦: {},
+  人际关系: {
+    "赫普":   {好感度:85, 注记:"从小认识的朋友，聪明但有些傲气。"},
+    "索妮亚": {好感度:72, 注记:"研究者，大教授的孙女，对远古神兽很感兴趣。"},
+    "玛俐":   {好感度:45, 注记:"在尖钉镇认识的训练家，实力不俗。"},
+    "丹帝":   {好感度:60, 注记:"现任冠军，态度和善，时常给予帮助。"}
+  },
+  劲敌: {
+    "赫普": {好感度:55, 注记:"同乡劲敌，总是走在自己前面，让人不服气。"}
+  },
+  通讯录: {
+    "泽芙": {好感度:30, 注记:"木杆镇精灵中心护士，热心肠，总是笑脸相迎。"}
+  },
+  任务: {
+    主线:"前往拳关市，挑战第三道馆馆主 卡布",
+    支线:"寻找在旷野地带失踪的绵绵羊群主人",
+    传说:"调查旷野地带出现的异常能量波动现象"
+  },
+  世界事件: {
+    附近遭遇:"林中发现稀有闪光精灵目击报告",
+    地区新闻:"冠军杯预选赛报名截止日期临近，各地训练家汇聚",
+    区域动态:"旷野地带今日天气：雷暴，特殊精灵出现率大幅提升"
+  },
+  环境: {当前地点:"机擎市", 日期:"11月12日", 时间:"下午三点", 赛程:"伽勒尔道馆挑战"},
+  繁育: {蛋:"", 剩余步数:0, 存放:""},
+  战场: {场景:"", 规则:"", 场上:{}, 各方:{}}
+};
 
 const MENU = [
   {key:"dex",label:"图鉴",icon:"xmenu_button_icon_pokedex_00^s-render.png",title:"POKÉDEX"},
@@ -123,32 +251,226 @@ const MENU = [
   {key:"battle",label:"战场",nativeIcon:"icon_bs.png",title:"BATTLE"},
   {key:"settings",label:"设置",icon:"xmenu_button_icon_config_00^s-render.png",title:"OPTIONS"}
 ];
-const PARTY_MOCK = [
-  {name:"敲音猴",dex:"#810",level:8,gender:"♂",types:["草"],hp:"19 / 26",exp:"328",nextExp:"91",trainer:"伯劳",trainerId:"852516",metDate:"2026年11月04日",metPlace:"化朗镇",metLevel:"Lv.5",ability:"茂盛",abilityDescription:"HP 减少的时候，草属性的招式威力会提高。",nature:"胆小",held:"无",stats:[19,14,14,11,11,17],sprite:"assets/pokemon/poke_icon_0810_00s_n.png",moves:[["抓","一般",34,35],["叫声","一般",39,40],["木枝突刺","草",35,40],["挑衅","恶",20,20]]},
-  {name:"泪眼蜥",dex:"#816",level:7,gender:"♀",types:["水"],hp:"18 / 23",exp:"226",nextExp:"74",trainer:"伯劳",trainerId:"852516",metDate:"2026年11月04日",metPlace:"化朗镇",metLevel:"Lv.5",ability:"激流",abilityDescription:"HP 减少的时候，水属性的招式威力会提高。",nature:"认真",held:"无",stats:[26,16,15,27,18,24],sprite:"assets/pokemon/poke_icon_0816_00s_n.png",moves:[["拍击","一般",33,35],["水枪","水",24,25],["瞪眼","一般",30,30],["水之波动","水",18,20]]},
-  {name:"绿毛虫",dex:"#010",level:6,gender:"♂",types:["虫"],hp:"16 / 20",exp:"142",nextExp:"48",trainer:"伯劳",trainerId:"852516",metDate:"2026年11月04日",metPlace:"化朗镇",metLevel:"Lv.3",ability:"鳞粉",abilityDescription:"不会受到招式的追加效果影响。",nature:"温和",held:"无",stats:[20,15,13,10,12,14],sprite:"assets/pokemon/poke_icon_0010_00s_n.png",moves:[["撞击","一般",28,35],["吐丝","虫",38,40]]},
-  {name:"妙蛙种子",dex:"#001",level:9,gender:"♀",types:["草","毒"],hp:"24 / 29",exp:"401",nextExp:"116",trainer:"伯劳",trainerId:"852516",metDate:"2026年11月04日",metPlace:"化朗镇",metLevel:"Lv.5",ability:"茂盛",abilityDescription:"HP 减少的时候，草属性的招式威力会提高。",nature:"内敛",held:"无",stats:[29,16,17,23,22,16],sprite:"assets/pokemon/poke_icon_0001_00s_n.png",moves:[["撞击","一般",30,35],["藤鞭","草",24,25],["生长","一般",39,40]]},
-  {name:"小火龙",dex:"#004",level:10,gender:"♂",types:["火"],hp:"27 / 31",exp:"526",nextExp:"143",trainer:"伯劳",trainerId:"852516",metDate:"2026年11月04日",metPlace:"化朗镇",metLevel:"Lv.5",ability:"猛火",abilityDescription:"HP 减少的时候，火属性的招式威力会提高。",nature:"急躁",held:"无",stats:[31,20,16,24,17,25],sprite:"assets/pokemon/poke_icon_0004_00s_n.png",moves:[["抓","一般",31,35],["叫声","一般",38,40],["火花","火",22,25]]},
-  {name:"杰尼龟",dex:"#007",level:8,gender:"♀",types:["水"],hp:"21 / 25",exp:"362",nextExp:"98",trainer:"伯劳",trainerId:"852516",metDate:"2026年11月04日",metPlace:"化朗镇",metLevel:"Lv.4",ability:"激流",abilityDescription:"HP 减少的时候，水属性的招式威力会提高。",nature:"大胆",held:"无",stats:[25,15,22,17,21,14],sprite:"assets/pokemon/poke_icon_0007_00s_n.png",moves:[["撞击","一般",30,35],["水枪","水",23,25],["缩入壳中","水",37,40]]}
-];
-const DEX_MOCK = [
-  {no:"001",name:"敲音猴",caught:true,seen:true,index:0},
-  {no:"002",name:"啪咚猴",caught:false,seen:true,index:1},
-  {no:"003",name:"狙射树枭",caught:false,seen:false,index:0},
-  {no:"004",name:"炎兔儿",caught:false,seen:false,index:1},
-  {no:"005",name:"腾蹴小将",caught:false,seen:false,index:0},
-  {no:"006",name:"闪焰王牌",caught:false,seen:false,index:1},
-  {no:"007",name:"泪眼蜥",caught:true,seen:true,index:1},
-  {no:"008",name:"绿毛虫",caught:true,seen:true,index:2},
-  {no:"009",name:"妙蛙种子",caught:true,seen:true,index:3},
-  {no:"010",name:"小火龙",caught:true,seen:true,index:4},
-  {no:"011",name:"杰尼龟",caught:true,seen:true,index:5},
-  {no:"012",name:"毛辫羊",caught:false,seen:true,index:0},
-  {no:"013",name:"贪心栗鼠",caught:false,seen:false,index:0},
-  {no:"014",name:"稚山雀",caught:false,seen:false,index:1},
-  {no:"015",name:"来电汪",caught:false,seen:false,index:0}
-];
-let dexCatalog=null;
+// PARTY_MOCK 已废弃，由 parseStat() 从 MOCK_STAT 生成
+// ============================================
+// swshBridge：数据桥接层（对齐弦九 v6.0.23 接口）
+// 优先级: window.__pkmHudApi > WIN.Mvu > localStorage备份 > MOCK_STAT
+// ============================================
+const swshBridge = {
+  _win: (function(){try{if(window.parent&&window.parent!==window&&window.parent.document){return window.parent;}}catch(e){}return window;})(),
+
+  // 获取弦九完整 stat_data（三级降级）
+  getStat: function() {
+    // 优先级1：弦九新版公开 API（v6.0.23 起，window.__pkmHudApi）
+    try {
+      var api = this._win.__pkmHudApi || window.__pkmHudApi;
+      if (api && typeof api.getStatData === 'function') {
+        var d = api.getStatData();
+        if (d && d.训练家) { console.log('[swshBridge] 来源: __pkmHudApi'); return d; }
+      }
+    } catch(e) {}
+
+    // 优先级2：直接调 Mvu 插件（兼容旧版弦九）
+    try {
+      var mv = this._win.Mvu || window.Mvu;
+      if (mv && mv.getMvuData) {
+        var mes = this._win.document.querySelectorAll('.mes');
+        for (var i = mes.length - 1; i >= 0; i--) {
+          var mid = parseInt(mes[i].getAttribute('mesid') || '');
+          if (isNaN(mid)) continue;
+          var r = mv.getMvuData({type:'message', message_id:mid});
+          if (r && r.stat_data && r.stat_data.训练家) { console.log('[swshBridge] 来源: Mvu'); return r.stat_data; }
+        }
+      }
+    } catch(e) {}
+
+    // 优先级3：localStorage 备份
+    try {
+      var chatKey = (this._win.SillyTavern && this._win.SillyTavern.getContext &&
+                    this._win.SillyTavern.getContext().chatId) || 'default';
+      var backup = JSON.parse(localStorage.getItem('pk_mvu_backup_' + chatKey) || 'null');
+      if (backup && backup.训练家) { console.log('[swshBridge] 来源: localStorage'); return backup; }
+    } catch(e) {}
+
+    // 兜底：MOCK_STAT
+    console.log('[swshBridge] 来源: MOCK_STAT（demo兜底）');
+    return MOCK_STAT;
+  },
+
+  // 人际关系（人际/劲敌/通讯录三合一）
+  getRelations: function(stat) {
+    var result = [], seen = {};
+    function add(obj, role) {
+      for (var n in (obj||{})) {
+        if (!seen[n]) { seen[n] = true; result.push({name:n, role:role, 好感度:+(obj[n].好感度)||0, 注记:obj[n].注记||''}); }
+      }
+    }
+    add(stat.人际关系, '人际'); add(stat.劲敌, '劲敌'); add(stat.通讯录, '通讯录');
+    return result;
+  }
+};
+
+// ============================================
+// parseStat：弦九格式 → Demo 格式转换层
+// ============================================
+
+// 精灵图资源：本地图鉴编号映射（扩展时补充）
+var SPRITE_NDEX_MAP = {
+  '敲音猴':'0810','啪咚猴':'0811','狙射树枭':'0812',
+  '炎兔儿':'0813','腾蹴小将':'0814','闪焰王牌':'0815',
+  '泪眼蜥':'0816','撞冰鱼':'0817','独胆将':'0818',
+  '绿毛虫':'0010','铁蛹':'0011','巴大蝶':'0012',
+  '妙蛙种子':'0001','妙蛙草':'0002','妙蛙花':'0003',
+  '小火龙':'0004','火恐龙':'0005','喷火龙':'0006',
+  '杰尼龟':'0007','卡咪龟':'0008','水箭龟':'0009',
+  '皮卡丘':'0025','雷丘':'0026','小磁怪':'0081','磁怪':'0082'
+};
+
+function resolveSprite(mon) {
+  if (!mon || !mon.名字 || mon.名字 === '空') return '';
+  // 1. 自定义图标（弦九 DIY 功能，直接用 URL）
+  if (mon.图标 && mon.图标.length > 0) return mon.图标;
+  // 2. 本地 poke_icon 资源（需有对应文件）
+  var ndex = SPRITE_NDEX_MAP[mon.名字];
+  if (ndex) return 'assets/pokemon/poke_icon_' + ndex + '_00s_n.png';
+  // 3. 返回空，渲染时显示占位
+  return '';
+}
+
+// 背包分类配置（颜色/图标与 BAGS_MOCK 保持一致）
+var BAG_CATEGORY_CONFIG = {
+  '药品':      {icon:'回复.png',      color:'#ffa6c4'},
+  '精灵球':    {icon:'精灵球.png',    color:'#ff9494'},
+  '战斗道具':  {icon:'战斗道具.png',  color:'#ffb98b'},
+  '树果':      {icon:'树果.png',      color:'#86c270'},
+  '道具':      {icon:'道具.png',      color:'#94c8ff'},
+  '招式学习器':{icon:'招式学习器.png',color:'#c49dff'},
+  '重要物品':  {icon:'重要物品.png',  color:'#ffdf94'},
+  '食材':      {icon:'食材.png',      color:'#7fd4c0'}
+};
+// 物品说明（弦九不提供，本地维护常用项）
+var ITEM_DESC_MAP = {
+  '伤药':'回复少量 HP。', '好伤药':'大幅回复 HP。', '全满药':'完全回复 HP，并治愈所有异常状态。',
+  '解麻药':'治愈麻痹状态。', '解毒药':'治愈中毒状态。', '解眠药':'治愈睡眠状态。',
+  '精灵球':'捕捉野生宝可梦的道具。', '超级球':'比精灵球更容易捕捉。', '高级球':'捕捉能力较强的精灵球。',
+  '攻击增强剂':'战斗中提升攻击。', '速度增强剂':'战斗中提升速度。',
+  '樱子果':'治愈麻痹状态。', '桃桃果':'治愈中毒状态。',
+  '经验糖果S':'给予宝可梦少量经验。', '宝可梦图鉴':'记录遇见和捕获的宝可梦。',
+  '自行车':'可以快速移动的折叠自行车。', '招式学习器01':'让宝可梦学会新的招式。'
+};
+// 物品图标编号（粗略映射，后续可细化）
+var ITEM_ICON_MAP = {
+  '伤药':'0017','好伤药':'0025','全满药':'0025','解麻药':'0022','解毒药':'0019',
+  '精灵球':'0004','超级球':'0003','高级球':'0002','特殊球':'0001',
+  '攻击增强剂':'0027','速度增强剂':'0029','樱子果':'0034','桃桃果':'0036',
+  '经验糖果S':'0033','宝可梦图鉴':'0035','自行车':'0038',
+  '咖喱食材':'0037','新鲜香草':'0040','招式学习器01':'0029','招式记录12':'0029'
+};
+
+function parseStat(stat) {
+  stat = stat || MOCK_STAT;
+  var trainerName = (stat.训练家 && stat.训练家.名字) || '';
+
+  // ── 1. 解析队伍 → PARTY 格式 ──
+  var party = [];
+  var rawTeam = stat.队伍 || {};
+  for (var i = 1; i <= 6; i++) {
+    var p = rawTeam[String(i)];
+    if (!p || !p.名字 || p.名字 === '空') {
+      party.push({name:'', sprite:'', hp:'0/0', level:0, gender:'', types:[], dex:'',
+                  exp:'0', nextExp:'0', trainer:'', trainerId:'——',
+                  ability:'', abilityDescription:'', nature:'', held:'',
+                  stats:[0,0,0,0,0,0], moves:[], metDate:'', metPlace:'', metLevel:''});
+      continue;
+    }
+    // 解析 HP "19/26"
+    var hpParts = String(p.HP||'0/0').split('/');
+    var hpStr = hpParts[0].trim() + ' / ' + (hpParts[1]||'0').trim();
+    // 解析经验 "328/419"
+    var expParts = String(p.经验||'0/0').split('/');
+    // 解析属性
+    var types = [p.属性1||''];
+    if (p.属性2 && p.属性2 !== '无') types.push(p.属性2);
+    types = types.filter(function(t){return !!t;});
+    // 解析招式（无 PP，只留名字和属性，属性暂时标'—'）
+    var moves = String(p.技能||'').split('/').filter(function(m){return !!m.trim();})
+                  .map(function(m){return [m.trim(), '—'];});
+    // 解析个体值 "31/14/14/11/11/17" → stats 数组
+    var ivParts = String(p.个体值||'').split('/').map(function(v){return parseInt(v,10)||0;});
+    while (ivParts.length < 6) ivParts.push(0);
+    party.push({
+      name: p.名字,
+      nickname: p.昵称||'',
+      level: parseInt(p.等级,10)||1,
+      gender: p.性别||'',
+      shiny: !!(p.是否闪光),
+      types: types,
+      hp: hpStr,
+      exp: expParts[0].trim(),
+      nextExp: expParts[1] ? (parseInt(expParts[1],10) - parseInt(expParts[0],10)).toString() : '0',
+      dex: '', // 图鉴编号由 dex-list.json 匹配，这里留空
+      trainer: trainerName,
+      trainerId: '——',       // 弦九不提供训练家ID
+      metDate: '',            // 弦九不提供相遇记录
+      metPlace: '',
+      metLevel: '',
+      ability: p.特性||'',
+      abilityDescription: '', // 由 swshBridge.fetchAbility() 异步填充（暂时留空）
+      nature: p.性格||'',
+      held: (p.携带道具&&p.携带道具!=='无') ? p.携带道具 : '无',
+      stats: ivParts,         // 个体值展示（非种族值/实际数值）
+      moves: moves,
+      sprite: resolveSprite(p)
+    });
+  }
+
+  // ── 2. 解析背包 → BAGS 格式 ──
+  var bagMap = {};
+  var rawBag = stat.背包 || {};
+  for (var itemName in rawBag) {
+    var item = rawBag[itemName];
+    var cat = item.类型 || '道具';
+    if (!bagMap[cat]) bagMap[cat] = [];
+    bagMap[cat].push([
+      itemName,
+      ITEM_DESC_MAP[itemName] || '',
+      item.数量 || 0,
+      ITEM_ICON_MAP[itemName] || '0001'
+    ]);
+  }
+  var catOrder = ['药品','精灵球','战斗道具','树果','道具','招式学习器','重要物品','食材'];
+  var bags = catOrder.filter(function(c){return !!bagMap[c];}).map(function(cat) {
+    var cfg = BAG_CATEGORY_CONFIG[cat] || {icon:'道具.png',color:'#94c8ff'};
+    return {name:cat, icon:cfg.icon, color:cfg.color, items:bagMap[cat]};
+  });
+  if (!bags.length) bags = [{name:'道具',icon:'道具.png',color:'#94c8ff',items:[['（背包为空）','',0,'0001']]}];
+
+  // ── 3. 解析盒子 → BOXES 格式 ──
+  var boxes = [];
+  var rawBoxes = stat.盒子 || {};
+  var boxNames = Object.keys(rawBoxes);
+  boxNames.forEach(function(boxName) {
+    var slots = rawBoxes[boxName] || {};
+    // 把盒子格位里的精灵匹配到 party 索引（先按名字找）
+    var pokemonIndices = [];
+    Object.keys(slots).forEach(function(slotKey) {
+      var bp = slots[slotKey];
+      if (!bp || !bp.名字 || bp.名字 === '空') return;
+      // 在 party 里找同名精灵的索引
+      for (var pi = 0; pi < party.length; pi++) {
+        if (party[pi].name === bp.名字) { pokemonIndices.push(pi); return; }
+      }
+    });
+    boxes.push({name:boxName, pokemon:pokemonIndices});
+  });
+  if (!boxes.length) boxes = [{name:'草地',pokemon:[]},{name:'冒险伙伴',pokemon:[]}];
+
+  return {party:party, bags:bags, boxes:boxes};
+}
+
+// ── 初始化：加载数据，生成 PARTY/BAGS/BOXES ──
+var _parsedStat = parseStat(swshBridge.getStat());
+
 let dexRegionalCatalog=null;
 let dexCatalogPromise=null;
 let dexCategory="all";
@@ -160,36 +482,17 @@ function loadDexCatalog(){if(dexCatalogPromise)return dexCatalogPromise;const lo
 function dexCategoryEntries(){if(!dexCatalog||!dexCatalog.length)return DEX;const m=String(dexCategory||'all');if(m==='all')return dexCatalog;if(m.indexOf('gen-')===0){const g=Number(m.slice(4));return dexCatalog.filter(function(d){return d.generation===g;});}if(m.indexOf('region-')===0&&dexRegionalCatalog){const region=m.slice(7),ids={};(dexRegionalCatalog[region]||[]).forEach(function(item){ids[String(item.ndex||item.id||'').padStart(3,'0')]=true;});return dexCatalog.filter(function(d){return !!ids[d.no];});}return dexCatalog;}
 function dexCategoryLabel(value){const v=String(value||'all');if(v==='all')return '全国图鉴';if(v.indexOf('gen-')===0)return '第'+v.slice(4)+'世代';if(v.indexOf('region-')===0)return v.slice(7);return '全国图鉴';}
 function dexCategoryOptionsHTML(){const sel=function(value){return String(dexCategory)===String(value)?' aria-selected="true"':'';};const labels=[];labels.push(['all','全国图鉴']);if(dexCategoryMode==='generation'){for(let g=1;g<=10;g++)labels.push(['gen-'+g,'第'+g+'世代']);}else{const regions=dexRegionalCatalog?Object.keys(dexRegionalCatalog):['关都','城都','丰缘','神奥','合众','卡洛斯','阿罗拉','伽勒尔','铠岛','王冠雪原','帕底亚','北上乡','蓝莓学院'];regions.forEach(function(region){labels.push(['region-'+region,region]);});}return labels.map(function(item,index){const tone=Math.round(34+(index/Math.max(1,labels.length-1))*154);const text=tone>72?'#252629':'#f5f7fa';const row=Math.floor(index/3);return '<button class="dex-category-option" type="button" role="option" data-dex-category="'+esc(item[0])+'"'+sel(item[0])+' style="--dex-option-index:'+index+';--dex-option-row-index:'+row+';--dex-tone:'+tone+'%;--dex-label:'+text+';color:'+text+'">'+esc(item[1])+'</button>';}).join('');}
-const BAGS_MOCK = [
-  {name:"回复",icon:"回复.png",color:"#ffa6c4",items:[["伤药","回复少量 HP。",4,"0017"],["解麻药","治愈麻痹状态。",2,"0022"],["解毒药","治愈中毒状态。",3,"0019"]]},
-  {name:"精灵球",icon:"精灵球.png",color:"#ff9494",items:[["精灵球","捕捉野生宝可梦的道具。",12,"0004"],["超级球","比精灵球更容易捕捉。",5,"0003"],["高级球","捕捉能力较强的球。",2,"0002"]]},
-  {name:"战斗道具",icon:"战斗道具.png",color:"#ffb98b",items:[["攻击增强剂","战斗中提升攻击。",2,"0027"],["速度增强剂","战斗中提升速度。",1,"0029"]]},
-  {name:"树果",icon:"树果.png",color:"#86c270",items:[["樱子果","治愈麻痹状态。",3,"0034"],["桃桃果","治愈中毒状态。",2,"0036"]]},
-  {name:"道具",icon:"道具.png",color:"#94c8ff",items:[["全满药","回复 HP 并治愈异常状态。",1,"0025"],["经验糖果 S","给予宝可梦少量经验。",4,"0033"]]},
-  {name:"招式学习器",icon:"招式学习器.png",color:"#c49dff",items:[["招式学习器 01","让宝可梦学会新的招式。",1,"0029"],["招式记录 12","记录可学习的招式。",2,"0029"]]},
-  {name:"重要物品",icon:"重要物品.png",color:"#ffdf94",items:[["宝可梦图鉴","记录遇见和捕获的宝可梦。",1,"0035"],["自行车","可以快速移动的折叠自行车。",1,"0038"]]},
-  {name:"食材",icon:"食材.png",color:"#7fd4c0",items:[["咖喱食材","用于露营烹饪。",4,"0037"],["新鲜香草","提升料理风味。",2,"0040"]]}
-];
-const BOXES_MOCK = [
-  {name:"草地",pokemon:[0,1,2,3,4,5]},
-  {name:"冒险伙伴",pokemon:[2,3,4]},
-  {name:"等待整理",pokemon:[]},
-  {name:"远征队",pokemon:[]},
-  {name:"收藏",pokemon:[]},
-  {name:"新朋友",pokemon:[]},
-  {name:"培育",pokemon:[]},
-  {name:"备用",pokemon:[]}
-];
+const BAGS_MOCK = null;   // 已废弃，由 parseStat() 从 MOCK_STAT 生成
+const BOXES_MOCK = null;  // 已废弃，由 parseStat() 从 MOCK_STAT 生成
 
 // ============================================
-// ============================================
-// 数据源（使用Mock数据，弦九接入通过 swshBridge.getStat() 在渲染时动态读取）
+// 数据源（从 parseStat 生成，弦九接入只需替换 swshBridge.getStat() 返回值）
 // ============================================
 
-const PARTY = PARTY_MOCK;
-const BAGS  = BAGS_MOCK;
-const DEX   = DEX_MOCK;
-const BOXES = BOXES_MOCK;
+const PARTY = _parsedStat.party;
+const BAGS  = _parsedStat.bags;
+const DEX   = [];   // 由 dexCatalog 动态加载，兜底为空数组
+const BOXES = _parsedStat.boxes;
 
 const TABS = ["概要","数值","招式","信息","奖章"];
 const TAB_SVGS = [
@@ -217,31 +520,6 @@ const SETTINGS = [
 ];
 const SETTING_DEFAULTS = [2,1,1,0,0,0,0,0,1,0,1,0];
 const BOX_TEAM = {party:[0,1,2,3,4,5]};
-/* ── 弦九接口桥接层 ── */
-const MOCK_STAT={
-  训练家:{名字:"伯劳",活力:3,活力上限:3,金钱:31400,徽章:"木杆|石锁",身份:"训练家",声望:"12 新人",气场:"无",可命令等级:20},
-  人际关系:{"赫普":{好感度:85,注记:"从小认识的朋友，聪明但有些傲气。"},"索妮亚":{好感度:72,注记:"研究者，大教授的孙女，对远古神兽很感兴趣。"},"玛俐":{好感度:45,注记:"在尖钉镇认识的训练家，实力不俗。"},"丹帝":{好感度:60,注记:"现任冠军，态度和善，时常给予帮助。"}},
-  劲敌:{"赫普":{好感度:55,注记:"同乡劲敌，总是走在自己前面，让人不服气。"}},
-  通讯录:{"泽芙":{好感度:30,注记:"木杆镇精灵中心护士，热心肠，总是笑脸相迎。"}},
-  任务:{主线:"前往拳关市，挑战第三道馆馆主 卡布",支线:"寻找在旷野地带失踪的绵绵羊群主人",传说:"调查旷野地带出现的异常能量波动现象"},
-  世界事件:{附近遭遇:"林中发现稀有闪光精灵目击报告",地区新闻:"冠军杯预选赛报名截止日期临近，各地训练家汇聚",区域动态:"旷野地带今日天气：雷暴，特殊精灵出现率大幅提升"},
-  环境:{当前地点:"机擎市",日期:"11月12日",时间:"下午三点",赛程:"伽勒尔道馆挑战"}
-};
-const swshBridge={
-  _win:(function(){try{if(window.parent&&window.parent!==window&&window.parent.document){return window.parent;}}catch(e){}return window;})(),
-  getLiveStatData:function(){
-    try{var mv=this._win.Mvu||window.Mvu;if(!mv||!mv.getMvuData)return null;
-    var mes=this._win.document.querySelectorAll('.mes');
-    for(var i=mes.length-1;i>=0;i--){var mid=parseInt(mes[i].getAttribute('mesid')||'');if(isNaN(mid))continue;
-    var d=mv.getMvuData({type:'message',message_id:mid});if(d&&d.stat_data&&d.stat_data.训练家)return d.stat_data;}}catch(e){}return null;
-  },
-  getStat:function(){return this.getLiveStatData()||MOCK_STAT;},
-  getRelations:function(stat){
-    var result=[],seen={};
-    function add(obj,role){for(var n in (obj||{})){if(!seen[n]){seen[n]=true;result.push({name:n,role:role,好感度:+(obj[n].好感度)||0,注记:obj[n].注记||''});}}}
-    add(stat.人际关系,'人际');add(stat.劲敌,'劲敌');add(stat.通讯录,'通讯录');return result;
-  }
-};
 const S = {view:"home",stack:[],menu:0,party:0,tab:0,dex:0,bag:0,item:0,box:0,boxMon:0,boxSource:"box",boxDetail:false,boxPanel:"none",boxPanelOrigin:"none",setting:0,relation:0,settingValues:SETTING_DEFAULTS.slice(),theme:"day"};
 let manualLayout=false;
 let boxModalConfirm=null;
@@ -381,7 +659,7 @@ function renderDetail(){
   let pane="";
   if(S.tab===0){pane='<div class="profile-overview"><div class="profile-row"><span>名字</span><span>'+esc(mon.name)+'</span></div><div class="profile-row"><span>属性</span><span><b class="profile-type">'+typeIconTags(mon.types)+'</b></span></div><div class="profile-row"><span>初训家</span><span>'+esc(mon.trainer)+'</span></div><div class="profile-row"><span>ID No.</span><span>'+esc(mon.trainerId)+'</span></div><div class="profile-exp"><div class="profile-exp-line"><span>现在的经验值</span><b>'+esc(mon.exp)+'</b></div></div><div class="profile-exp"><div class="profile-exp-line"><span>距离下一级　还有</span><b>'+esc(mon.nextExp)+'</b></div><div class="profile-exp-track"><i></i></div></div><div class="profile-mark-row" aria-label="奖章标记"><span>◉</span><span>●</span><span>▲</span><span>■</span><span>♥</span><span>★</span><span>◆</span></div></div>';}
   if(S.tab===1){pane='<div class="profile-stats"><div class="radar-wrap">'+radarMarkup(mon.stats,mon.hp)+'</div><div class="profile-stat-foot"><span>极巨化等级</span><b>▰ ▰ ▰ ▰ ▱ ▱ ▱ ▱ ▱ ▱</b></div><div class="profile-stat-foot"><span>特性</span><b>'+esc(mon.ability)+'</b></div><p class="profile-description">'+esc(mon.abilityDescription)+'</p></div>';}
-  if(S.tab===2){pane='<div class="profile-moves">'+mon.moves.map(function(move){return '<div class="profile-move"><strong class="profile-move-name">'+esc(move[0])+'</strong><span class="profile-move-type" data-type="'+esc(move[1])+'">'+typeIconTags([move[1]])+'</span><span class="profile-move-pp">'+esc(move[2])+'/'+esc(move[3])+'</span></div>';}).join("")+'</div>';}
+  if(S.tab===2){pane='<div class="profile-moves">'+mon.moves.map(function(move){return '<div class="profile-move"><strong class="profile-move-name">'+esc(move[0])+'</strong><span class="profile-move-type" data-type="'+esc(move[1])+'">'+typeIconTags([move[1]])+'</span></div>';}).join("")+'</div>';}
   if(S.tab===3){pane='<div class="profile-info"><p><span class="emphasis">'+esc(mon.nature)+'</span>的性格。</p><p>'+esc(mon.metDate)+'<br>在<span class="emphasis">'+esc(mon.metPlace)+'</span>，<br>遇见了当时'+esc(mon.metLevel)+'的它。</p><p>身体强壮。</p></div>';}
   if(S.tab===4){pane='<div class="profile-medals">没有奖章</div>';}
   return '<div class="detail-screen"><nav class="detail-tabs" role="tablist" aria-label="宝可梦详情分页"><button class="detail-tab-icon" type="button" data-action="prev-tab" aria-label="上一页">‹</button>'+tabs+'<button class="detail-tab-icon" type="button" data-action="next-tab" aria-label="下一页">›</button></nav>'+pokemonBanner(mon,"detail-banner")+'<section class="detail-pane">'+pane+'</section><section class="detail-art"><div class="model-rings" aria-hidden="true"></div>'+monSprite(mon,"profile-sprite")+'</section></div>';
@@ -444,7 +722,7 @@ function openBoxTransferModal(){const mon=boxCurrentPokemon();if(!mon)return;if(
 const TYPE_ICON_KEYS={"一般":"normal","格斗":"kakutou","飞行":"hikou","毒":"doku","地面":"jimen","岩石":"iwa","虫":"mushi","幽灵":"ghost","钢":"hagane","火":"honoo","水":"mizu","草":"kusa","电":"denki","超能力":"esper","冰":"koori","龙":"dragon","恶":"aku","妖精":"yousei"};
 function typeIconTags(types){return '<span class="box-type-row">'+types.map(function(type){const key=TYPE_ICON_KEYS[type]||"normal";return '<img class="box-type" src="assets/types/'+key+'.png" alt="'+esc(type)+'" title="'+esc(type)+'">';}).join('')+'</span>';}
 function boxTypeTags(mon){return '<div class="box-type-row">'+mon.types.map(function(type){const key=TYPE_ICON_KEYS[type]||"normal";return '<img class="box-type" src="assets/types/'+key+'.png" alt="'+esc(type)+'" title="'+esc(type)+'">';}).join('')+'</div>';}
-function boxPreviewHTML(mon){return boxDetailHTML(mon);}function boxDetailHTML(mon){if(!mon)return '<div class="box-empty-preview"><div>点击队伍或盒子里的宝可梦查看资料<small>悬停只显示名称和等级</small></div></div>';const stats=STAT_NAMES.map(function(name,i){return '<div class="box-stat"><span>'+esc(name)+'</span><b>'+esc(mon.stats[i])+'</b></div>';}).join('');const moves=mon.moves.map(function(move){return '<div class="box-move"><strong>'+esc(move[0])+'</strong><span>'+esc(move[1])+'</span><small>'+esc(move[2])+'/'+esc(move[3])+' PP</small></div>';}).join('');const facts='<div class="box-detail-facts"><span>编号</span><b>'+esc(mon.dex)+'</b><span>性别</span><b>'+esc(mon.gender)+'</b><span>HP</span><b>'+esc(mon.hp)+'</b><span>持有物</span><b>'+esc(mon.held||"无")+'</b><span>性格</span><b>'+esc(mon.nature)+'性格</b><span>训练家</span><b>'+esc(mon.trainer)+' · '+esc(mon.trainerId)+'</b></div>';return '<article class="box-detail-card"><header class="box-detail-top"><strong>'+esc(mon.name)+'</strong><span>Lv.'+esc(mon.level)+'</span></header><div class="box-detail-content"><div class="box-detail-hero"><div class="box-detail-art">'+monSprite(mon,"box-detail-sprite")+'</div><div class="box-detail-hero-meta">'+boxTypeTags(mon)+'<p>特性：'+esc(mon.ability)+'</p></div></div>'+facts+'<div class="box-stat-grid">'+stats+'</div><div class="box-ability"><span>特性说明</span><strong>'+esc(mon.ability)+'</strong><small>'+esc(mon.abilityDescription)+'</small></div><section class="box-moves"><h4>招式</h4>'+moves+'</section>'+boxDetailActionHTML(mon)+'</div></article>';}
+function boxPreviewHTML(mon){return boxDetailHTML(mon);}function boxDetailHTML(mon){if(!mon)return '<div class="box-empty-preview"><div>点击队伍或盒子里的宝可梦查看资料<small>悬停只显示名称和等级</small></div></div>';const stats=STAT_NAMES.map(function(name,i){return '<div class="box-stat"><span>'+esc(name)+'</span><b>'+esc(mon.stats[i])+'</b></div>';}).join('');const moves=mon.moves.map(function(move){return '<div class="box-move"><strong>'+esc(move[0])+'</strong><span>'+esc(move[1])+'</span></div>';}).join('');const facts='<div class="box-detail-facts"><span>编号</span><b>'+esc(mon.dex)+'</b><span>性别</span><b>'+esc(mon.gender)+'</b><span>HP</span><b>'+esc(mon.hp)+'</b><span>持有物</span><b>'+esc(mon.held||"无")+'</b><span>性格</span><b>'+esc(mon.nature)+'性格</b><span>训练家</span><b>'+esc(mon.trainer)+' · '+esc(mon.trainerId)+'</b></div>';return '<article class="box-detail-card"><header class="box-detail-top"><strong>'+esc(mon.name)+'</strong><span>Lv.'+esc(mon.level)+'</span></header><div class="box-detail-content"><div class="box-detail-hero"><div class="box-detail-art">'+monSprite(mon,"box-detail-sprite")+'</div><div class="box-detail-hero-meta">'+boxTypeTags(mon)+'<p>特性：'+esc(mon.ability)+'</p></div></div>'+facts+'<div class="box-stat-grid">'+stats+'</div><div class="box-ability"><span>特性说明</span><strong>'+esc(mon.ability)+'</strong><small>'+esc(mon.abilityDescription)+'</small></div><section class="box-moves"><h4>招式</h4>'+moves+'</section>'+boxDetailActionHTML(mon)+'</div></article>';}
 function boxPortraitPreviewHTML(mon){return boxDetailHTML(mon);}function boxPartyMarkup(){return boxPartySlots().map(function(pokemonIndex){if(pokemonIndex===null)return `<div class='box-party-row box-party-row--empty' aria-hidden='true'></div>`;const mon=PARTY[pokemonIndex];return `<button class='box-party-row' type='button' data-boxparty='${pokemonIndex}' aria-pressed='${String(S.boxSource==='party'&&S.boxMon===pokemonIndex)}' aria-label='预览队伍中的${esc(mon.name)}'>${monSprite(mon,'box-party-sprite')}<span class='box-party-meta'><strong>${esc(mon.name)}</strong>${typeIconTags(mon.types)}</span><span class='box-party-level'>Lv.${esc(mon.level)}</span></button>`;}).join('');}
 function renderBoxPage(){const box=BOXES[S.box],mon=boxCurrentPokemon(),count=box.pokemon.length,slotCount=count<20?25:30+Math.max(0,Math.ceil((count-25)/5))*5,isScrollable=count>=20,slots=Array.from({length:slotCount},function(_,slot){const pokemonIndex=box.pokemon[slot];if(pokemonIndex===undefined)return '<div class="box-slot is-empty" aria-hidden="true"></div>';const p=PARTY[pokemonIndex];return '<button class="box-slot" type="button" data-boxmon="'+pokemonIndex+'" aria-label="'+esc(p.name)+', '+esc(p.dex)+'" aria-pressed="'+String(S.boxSource==="box"&&S.boxMon===pokemonIndex)+'"><span class="box-slot-art">'+monSprite(p,"box-slot-sprite")+'</span><span class="box-slot-hover-label"><b>'+esc(p.name)+'</b><small>Lv.'+esc(p.level)+'</small></span></button>';}).join('');const boxOptions=BOXES.map(function(item,index){return '<option value="'+index+'"'+(index===S.box?' selected':'')+'>'+esc(item.name)+'</option>';}).join('');const boxNav='<header class="box-storage-head"><button class="box-switch" type="button" data-action="box-prev" aria-label="上一个盒子">'+swshIcon("chevron",24)+'</button><button class="box-portrait-team-toggle" type="button" data-action="box-team-open" aria-label="打开队伍">队伍</button><select class="box-title-select" data-action="box-select" aria-label="选择盒子">'+boxOptions+'</select><button class="box-rename-button" type="button" data-action="box-rename" aria-label="修改盒子名称"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20h4L19 9l-4-4L4 16v4Z"/><path d="m13.5 6.5 4 4"/></svg></button><button class="box-new-button" type="button" data-action="box-new" aria-label="新建盒子">＋</button><button class="box-switch" type="button" data-action="box-next" aria-label="下一个盒子">'+swshIcon("chevron",24)+'</button></header>';return '<div class="box-screen box-screen--landscape" data-panel="'+esc(S.boxPanel)+'"><button class="box-portrait-scrim" type="button" data-action="box-panel-close" aria-label="关闭面板"></button><aside class="box-team-pane"><div class="box-team-heading"><span>队伍</span></div><div class="box-team-list">'+boxPartyMarkup()+'</div></aside><section class="box-storage-pane">'+boxNav+'<div class="box-grid'+(isScrollable?' is-scrollable':'')+'" role="grid" aria-label="'+esc(box.name)+'，'+slotCount+'个储存位">'+slots+'</div></section><aside class="box-info-pane" aria-live="polite">'+boxDetailHTML(mon)+'</aside><nav class="box-party-strip" aria-label="队伍宝可梦">'+boxPartySlots().map(function(pokemonIndex){if(pokemonIndex===null)return '<span class="box-party-chip box-party-chip--empty" aria-hidden="true"></span>';const p=PARTY[pokemonIndex];return '<button class="box-party-chip" type="button" data-boxparty="'+pokemonIndex+'" aria-label="'+esc(p.name)+'" aria-pressed="'+String(S.boxSource==="party"&&S.boxMon===pokemonIndex)+'">'+monSprite(p,"box-party-chip-sprite")+'</button>';}).join('')+'</nav><section class="box-portrait-preview" aria-live="polite">'+boxPortraitPreviewHTML(mon)+'</section><section class="box-detail-overlay" '+(S.boxPanel==="detail"?"":"hidden")+' aria-label="宝可梦详细资料">'+(S.boxPanel==="detail"?boxDetailHTML(mon):"")+'</section><div class="box-info-scrollbar" aria-hidden="true"><span class="box-info-scrollbar-thumb"></span></div></div>';}
 function updateBoxSelection(index,source){S.boxSource=source;S.boxMon=index;S.boxDetail=true;const portraitLayout=document.querySelector('.demo[data-layout="portrait"]');if(S.view==="box"&&portraitLayout){S.boxPanelOrigin=S.boxPanel==="team"?"team":"none";S.boxPanel="detail";render();return;}const mon=boxCurrentPokemon();app.querySelectorAll(".box-slot[data-boxmon]").forEach(function(button){button.setAttribute("aria-pressed",String(source==="box"&&Number(button.dataset.boxmon)===index));});app.querySelectorAll("[data-boxparty]").forEach(function(button){button.setAttribute("aria-pressed",String(source==="party"&&Number(button.dataset.boxparty)===index));});const info=app.querySelector(".box-info-pane"),portrait=app.querySelector(".box-portrait-preview"),overlay=app.querySelector(".box-detail-overlay");if(info)info.innerHTML=boxDetailHTML(mon);if(portrait)portrait.innerHTML=boxPortraitPreviewHTML(mon);if(overlay){overlay.innerHTML=boxDetailHTML(mon);overlay.hidden=true;}updateBoxInfoScrollbar();}
