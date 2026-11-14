@@ -1,0 +1,22 @@
+/* Keep the larger portrait hero usable: reserve enough height for sprite, name and switch control. */
+.demo[data-layout="portrait"] .app[data-view="team"] .party-screen{grid-template-rows:12% 31% 57%}
+.demo[data-layout="portrait"] .app[data-view="team"] .party-hero .profile-sprite{width:200px;height:125px;max-width:72%;max-height:none;object-fit:contain}
+/* Hero icons are 136x112 atlas canvases with transparent margins; scale only the portrait hero artwork, not row icons. */
+.demo[data-layout="portrait"] .app[data-view="team"] .party-hero .profile-sprite{transform:translateY(-10px) scale(1.25);transform-origin:center center}
+/* Use the full portrait team-list height evenly, and shorten each row horizontally. */
+.demo[data-layout="portrait"] .app[data-view="team"] .party-list{
+  width:84%;
+  max-width:340px;
+  display:grid;
+  grid-template-columns:minmax(0,1fr);
+  grid-template-rows:repeat(6,minmax(0,1fr));
+  align-content:stretch;
+  justify-items:stretch;
+  gap:6px;
+  padding:6px 0 8px;
+}
+.demo[data-layout="portrait"] .app[data-view="team"] .party-member{
+  width:100%;
+  min-height:0;
+  height:100%;
+}
