@@ -755,48 +755,60 @@ function renderDexDetail(){
   var name=S.dexDetailName||'';
   var ndex=S.dexDetailNdex||0;
   var enSlug=_dexNameMap[name]||'';
+  if(!enSlug&&dexCatalog){var ce2=dexCatalog.filter(function(d){return d.catalogName===name||d.name===name;})[0];if(ce2&&ce2.no&&!ndex)ndex=parseInt(ce2.no,10)||0;}
   var noStr=String(ndex).padStart(3,'0');
-  var catalogEntry=dexCatalog?dexCatalog.filter(function(d){return d.name===name||d.catalogName===name;})[0]:null;
+  var catalogEntry=dexCatalog?dexCatalog.filter(function(d){return d.catalogName===name||d.name===name;})[0]:null;
   if(catalogEntry&&!ndex){ndex=parseInt(catalogEntry.no,10)||0;noStr=String(ndex).padStart(3,'0');}
   var spriteUrl=enSlug?xianjuSpriteUrl(enSlug,false):'';
   var homeSpriteUrl=enSlug?('https://raw.githubusercontent.com/xianjiu0926/Pokemon/main/pokemon-sprites/static/pokeos/normal/'+enSlug+'.png'):'';
-  var types=(catalogEntry&&catalogEntry.types)?catalogEntry.types.filter(function(t){return!!t;}):[];
-  var html='<div class="dex-detail-screen">'+
-    '<div class="dex-detail-left">'+
-      (homeSpriteUrl?'<img class="dex-detail-sprite" src="'+esc(homeSpriteUrl)+'" alt="'+esc(name)+'" onerror="if(this.src!==\''+esc(spriteUrl)+'\')this.src=\''+esc(spriteUrl)+'\';else this.style.display=\'none\'">':'<div class="dex-detail-loading">图片加载中…</div>')+
-    '</div>'+
-    '<div class="dex-detail-right">'+
-      '<div class="dex-detail-header">'+
-        '<span class="dex-detail-no">No.'+esc(noStr)+'</span>'+
-        (spriteUrl?'<img class="dex-detail-header-icon" src="'+esc(spriteUrl)+'" alt="">':'')+
-        '<span class="dex-detail-name-text">'+esc(name)+'</span>'+
-        '<span class="dex-detail-gender-icons"><span class="dex-detail-gender-m">♂</span><span class="dex-detail-gender-f">♀</span></span>'+
-      '</div>'+
-      '<div id="dexDetailTable" class="dex-detail-table"><div class="dex-detail-loading">加载详情中…</div></div>'+
-    '</div>'+
+  var cacheKey=name||String(ndex);
+  var d=_pkmDetailCache[cacheKey]||null;
+
+  // 如果缓存没有，先渲染骨架，异步 fetch 后调 render() 重进（届时缓存有数据，直接走下面的完整渲染）
+  if(!d){
+    fetchPkmDetail(name,ndex,function(result){
+      if(result&&S.view==='dex-detail'&&S.dexDetailName===name)render();
+    });
+  }
+
+  // 左侧精灵图
+  var leftHTML='<div class="dex-detail-left">'+
+    (homeSpriteUrl?'<img class="dex-detail-sprite" src="'+esc(homeSpriteUrl)+'" alt="'+esc(name)+'" onerror="if(this.src!==\''+esc(spriteUrl)+'\')this.src=\''+esc(spriteUrl)+'\';else this.style.display=\'none\'">':'<div class="dex-detail-loading">图片加载中…</div>')+
   '</div>';
-  // 异步加载详情填充表格
-  fetchPkmDetail(name,ndex,function(d){
-    var table=app.querySelector('#dexDetailTable');
-    if(!table)return;
-    if(!d){table.innerHTML='<div class="dex-detail-loading">暂无详细数据</div>';return;}
+
+  // 右侧头部黑条（始终显示）
+  var headerHTML='<div class="dex-detail-header">'+
+    '<span class="dex-detail-no">No.'+esc(noStr)+'</span>'+
+    (spriteUrl?'<img class="dex-detail-header-icon" src="'+esc(spriteUrl)+'" alt="">':'')+
+    '<span class="dex-detail-name-text">'+esc(name)+'</span>'+
+    '<span class="dex-detail-gender-icons"><span class="dex-detail-gender-m">♂</span><span class="dex-detail-gender-f">♀</span></span>'+
+  '</div>';
+
+  // 右侧数据区（有缓存则完整渲染，否则显示 loading）
+  var dataHTML='';
+  if(!d){
+    dataHTML='<div class="dex-detail-table"><div class="dex-detail-loading">加载详情中…</div></div>';
+  } else {
+    var types=(catalogEntry&&catalogEntry.types)?catalogEntry.types.filter(function(t){return!!t;}):[];
     var t1=(d.types&&d.types[0])||(types[0]||'');
     var t2=(d.types&&d.types[1])||(types[1]||'');
-    var typeHTML=t1?typeIconTags([t1].concat(t2?[t2]:[])):(types.length?typeIconTags(types):'—');
+    var typeHTML=t1?typeIconTags([t1].concat(t2&&t2!=='无'?[t2]:[])):(types.length?typeIconTags(types):'—');
     var rows=[['属性',typeHTML],['身高',d.height!=null?d.height+' m':'—'],['体重',d.weight!=null?d.weight+' kg':'—'],['对战次数','0']];
     var rowsHTML=rows.map(function(r){return '<div class="dex-detail-row"><span class="dex-detail-row-label">'+esc(r[0])+'</span><span class="dex-detail-row-value">'+r[1]+'</span></div>';}).join('');
-    table.innerHTML=(d.species?'<div class="dex-detail-species-row">'+esc(d.species)+'</div>':'')+rowsHTML;
+    dataHTML='<div class="dex-detail-table">'+(d.species?'<div class="dex-detail-species-row">'+esc(d.species)+'</div>':'')+rowsHTML+'</div>';
     // 种族值
     if(d.stats&&(d.stats.hp||d.stats.atk)){
-      var sv=d.stats;var statRows=[['HP',sv.hp||0],['物攻',sv.atk||0],['物防',sv.def||0],['特攻',sv.spa||0],['特防',sv.spd||0],['速度',sv.spe||0]];
-      var statsEl=document.createElement('div');statsEl.className='dex-detail-stats-grid';
-      statsEl.innerHTML=statRows.map(function(r){return '<div class="dex-detail-stat"><span class="dex-detail-stat-label">'+esc(r[0])+'</span><span class="dex-detail-stat-value">'+r[1]+'</span></div>';}).join('');
-      var right=app.querySelector('.dex-detail-right');if(right)right.appendChild(statsEl);
+      var sv=d.stats;
+      var statRows=[['HP',sv.hp||0],['物攻',sv.atk||0],['物防',sv.def||0],['特攻',sv.spa||0],['特防',sv.spd||0],['速度',sv.spe||0]];
+      dataHTML+='<div class="dex-detail-stats-grid">'+statRows.map(function(r){return '<div class="dex-detail-stat"><span class="dex-detail-stat-label">'+esc(r[0])+'</span><span class="dex-detail-stat-value">'+r[1]+'</span></div>';}).join('')+'</div>';
     }
     // 介绍
-    if(d.desc){var descEl=document.createElement('div');descEl.className='dex-detail-desc';descEl.textContent=d.desc;var right2=app.querySelector('.dex-detail-right');if(right2)right2.appendChild(descEl);}
-  });
-  return html;
+    if(d.desc){dataHTML+='<div class="dex-detail-desc">'+esc(d.desc)+'</div>';}
+  }
+
+  return '<div class="dex-detail-screen">'+leftHTML+
+    '<div class="dex-detail-right">'+headerHTML+dataHTML+'</div>'+
+  '</div>';
 }
 function updateDexScrollbar(){const list=app.querySelector(".dex-list"),track=app.querySelector(".dex-scrollbar"),thumb=track&&track.querySelector(".dex-scrollbar-thumb");if(!list||!track||!thumb)return;list.onscroll=updateDexScrollbar;const viewport=list.clientHeight,total=list.scrollHeight,trackHeight=track.clientHeight;if(!trackHeight)return;const maxScroll=Math.max(0,total-viewport),thumbHeight=maxScroll?Math.min(trackHeight,Math.max(28,trackHeight*viewport/total)):trackHeight,maxThumbTop=Math.max(0,trackHeight-thumbHeight);thumb.style.height=thumbHeight+"px";thumb.style.top=(maxScroll?maxThumbTop*list.scrollTop/maxScroll:0)+"px";track.classList.toggle("is-disabled",maxScroll<=1);track.setAttribute("aria-valuenow",String(maxScroll?Math.round(list.scrollTop/maxScroll*100):0))}
 function setDexScrollPosition(clientY,track){const list=app.querySelector(".dex-list"),thumb=track&&track.querySelector(".dex-scrollbar-thumb");if(!list||!track||!thumb)return;const r=track.getBoundingClientRect(),travel=r.height-thumb.offsetHeight,max=list.scrollHeight-list.clientHeight;if(travel<=0||max<=0)return;list.scrollTop=Math.max(0,Math.min(1,(clientY-r.top-thumb.offsetHeight/2)/travel))*max;updateDexScrollbar()}
