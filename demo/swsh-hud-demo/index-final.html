@@ -729,7 +729,7 @@ function renderDetail(){
   if(S.tab===4){pane='<div class="profile-medals">没有奖章</div>';}
   return '<div class="detail-screen"><nav class="detail-tabs" role="tablist" aria-label="宝可梦详情分页"><button class="detail-tab-icon" type="button" data-action="prev-tab" aria-label="上一页">‹</button>'+tabs+'<button class="detail-tab-icon" type="button" data-action="next-tab" aria-label="下一页">›</button></nav>'+pokemonBanner(mon,"detail-banner")+'<section class="detail-pane">'+pane+'</section><section class="detail-art"><div class="model-rings" aria-hidden="true"></div>'+monSprite(mon,"profile-sprite")+'</section></div>';
 }
-// ── 图鉴详情页：数据获取 + 渲染 ──
+// ── 图鉴详情：辅助缓存与数据加载 ──
 var _pkmDetailCache={};
 function genFileOfNo(no){var n=parseInt(no,10);if(n>=1&&n<=151)return'gen-01.json';if(n>=152&&n<=251)return'gen-02.json';if(n>=252&&n<=386)return'gen-03.json';if(n>=387&&n<=493)return'gen-04.json';if(n>=494&&n<=649)return'gen-05.json';if(n>=650&&n<=721)return'gen-06.json';if(n>=722&&n<=809)return'gen-07.json';if(n>=810&&n<=905)return'gen-08.json';if(n>=906&&n<=1025)return'gen-09.json';return'gen-10.json';}
 function fetchPkmDetail(name,ndex,cb){
@@ -751,6 +751,135 @@ function fetchPkmDetail(name,ndex,cb){
     })
     .catch(function(){cb(null);});
 }
+var _evoCache=null;
+var _evoCbs=[];
+var _evoLoading=false;
+var _movesetCache={};
+var _movesetLoading={};
+var _dexDetailLv=50;
+var _dexDetailFormIdx=0;
+
+function fetchEvoData(cb){
+  if(_evoCache){cb(_evoCache);return;}
+  if(_evoLoading){_evoCbs.push(cb);return;}
+  _evoLoading=true;_evoCbs.push(cb);
+  fetch('https://raw.githubusercontent.com/xianjiu0926/Pokemon/main/evolution.json')
+    .then(function(r){return r.ok?r.json():null;})
+    .then(function(j){
+      _evoCache=(j&&j.data)||[];_evoLoading=false;
+      var c=_evoCbs.slice();_evoCbs=[];
+      c.forEach(function(fn){try{fn(_evoCache);}catch(e){}});
+    })
+    .catch(function(){_evoLoading=false;var c=_evoCbs.slice();_evoCbs=[];c.forEach(function(fn){fn(null);});});
+}
+
+function fetchMoveset(ndex,cb){
+  var key=String(ndex);
+  if(_movesetCache[key]!==undefined){cb(_movesetCache[key]||null);return;}
+  if(_movesetLoading[key]){cb(null);return;}
+  _movesetLoading[key]=true;
+  var file='movesets/pokemon-'+('000'+key).slice(-4)+'.json';
+  fetch('https://raw.githubusercontent.com/xianjiu0926/Pokemon/main/'+file)
+    .then(function(r){return r.ok?r.json():null;})
+    .then(function(j){_movesetCache[key]=j;_movesetLoading[key]=false;cb(j);})
+    .catch(function(){_movesetCache[key]=null;_movesetLoading[key]=false;cb(null);});
+}
+
+function statRange(base,lv,isHp,isShed){
+  var b=parseInt(base,10);if(isNaN(b))return'—';
+  if(isShed&&isHp)return'1';
+  var mn=Math.floor((2*b)*lv/100)+(isHp?lv+10:5);
+  var mx=Math.floor((2*b+31+63)*lv/100)+(isHp?lv+10:5);
+  if(!isHp){mn=Math.floor(mn*0.9);mx=Math.floor(mx*1.1);}
+  return mn+'~'+mx;
+}
+
+function dexStatsHTML(stats,ndex,lv){
+  if(!stats)return'';
+  var isShed=(ndex===292);
+  var rows=[['HP',stats.hp,true],['物攻',stats.atk,false],['物防',stats.def,false],['特攻',stats.spa,false],['特防',stats.spd,false],['速度',stats.spe,false]];
+  var total=0;
+  var body=rows.map(function(r){
+    var b=parseInt(r[1],10)||0;total+=b;
+    var range=statRange(b,lv,r[2],isShed);
+    return '<div class="dex-detail-stat-row"><span class="dex-detail-stat-name">'+esc(r[0])+'</span><span class="dex-detail-stat-base">'+b+'</span><span class="dex-detail-stat-range">'+range+'</span></div>';
+  }).join('');
+  body+='<div class="dex-detail-stat-total"><span>总和 '+total+'</span></div>';
+  var sliderPct=Math.round((lv-1)/99*100);
+  var sliderHTML='<div class="dex-detail-stats-title">'+
+    '<span class="dex-detail-lv-label">等级</span>'+
+    '<div class="dex-detail-lv-slider" id="dexLvSlider">'+
+      '<div class="dex-detail-lv-track"></div>'+
+      '<div class="dex-detail-lv-fill" style="width:'+sliderPct+'%"></div>'+
+      '<div class="dex-detail-lv-thumb" style="left:'+sliderPct+'%"></div>'+
+    '</div>'+
+    '<span class="dex-detail-lv-val" id="dexLvVal">'+lv+'级</span>'+
+  '</div>';
+  return '<div class="dex-detail-stats-block"><div class="dex-detail-block-title">种族值</div>'+sliderHTML+body+'</div>';
+}
+
+function dexEvoHTML(d){
+  if(!d||!d.evolveChainId)return'';
+  var ndex=parseInt(d.ndex||0,10);
+  var html='<div class="dex-detail-evo"><div class="dex-detail-block-title">进化链</div><div class="dex-evo-chain" id="dexEvoChain"><span style="color:rgba(0,0,0,.4);font-size:11px">加载中…</span></div></div>';
+  fetchEvoData(function(list){
+    var el=app&&app.querySelector('#dexEvoChain');if(!el)return;
+    if(!list){el.innerHTML='<span style="color:#888;font-size:11px">暂无进化数据</span>';return;}
+    var chain=null;
+    for(var i=0;i<list.length;i++){if(String(list[i].id)===String(d.evolveChainId)){chain=list[i].chain;break;}}
+    if(!chain||!chain.length){el.innerHTML='<span style="color:#888;font-size:11px">独立不进化</span>';return;}
+    el.innerHTML=chain.map(function(c){
+      var hlFrom=c.from===ndex?' class="dex-evo-self"':'';
+      var hlTo=c.to===ndex?' class="dex-evo-self"':'';
+      var cond=String(c.cond||'').replace(/[；;]\s*$/,'');
+      return '<div class="dex-evo-row"><span class="dex-evo-from"'+hlFrom+'>'+esc(c.fromName||('#'+c.from))+'</span><span class="dex-evo-cond">→ '+(cond?esc(cond):'进化')+'</span><span class="dex-evo-to"'+hlTo+'>'+esc(c.toName||('#'+c.to))+'</span></div>';
+    }).join('');
+  });
+  return html;
+}
+
+function dexMovesHTML(d){
+  if(!d||!d.ndex)return'';
+  var ndex=parseInt(d.ndex,10)||0;if(!ndex)return'';
+  var html='<div class="dex-detail-moves"><div class="dex-detail-block-title">可学招式</div>'+
+    '<div class="dex-mv-tabs"><button class="dex-mv-tab active" data-dex-mvtab="levelup">等级</button><button class="dex-mv-tab" data-dex-mvtab="machine">学习器</button></div>'+
+    '<div id="dexMvPanel"><div class="dex-detail-loading" style="padding:8px 0">招式加载中…</div></div>'+
+  '</div>';
+  fetchMoveset(ndex,function(ms){
+    var el=app&&app.querySelector('#dexMvPanel');if(!el)return;
+    if(!ms){el.innerHTML='<span style="color:#888;font-size:11px;padding:4px 0">暂无招式数据</span>';return;}
+    var gens=(ms&&ms.allgen)||[];
+    var g=null;
+    for(var i=gens.length-1;i>=0;i--){if(gens[i].levelup&&gens[i].levelup.length&&gens[i].gen!=='lgplge'){g=gens[i];break;}}
+    if(!g&&gens.length)g=gens[gens.length-1];
+    el._moveData={g:g};
+    renderDexMvPanel(el,'levelup',g);
+  });
+  return html;
+}
+
+function renderDexMvPanel(el,tab,g){
+  if(!el||!g)return;
+  var list=tab==='levelup'?(g.levelup||[]).slice().sort(function(a,b){return (a[1]-b[1])||(a[0]-b[0]);}):
+                           (g.machine||[]);
+  var head='<div class="dex-mv-head"><span class="dex-mv-lv">'+(tab==='levelup'?'等级':'-')+'</span><span class="dex-mv-name">招式名</span><span>属性</span></div>';
+  if(!list||!list.length){el.innerHTML=head+'<div style="color:#888;font-size:11px;padding:4px 0;text-align:center">暂无</div>';return;}
+  el.innerHTML=head+list.map(function(item){
+    var id=tab==='levelup'?item[0]:item;
+    var lv=tab==='levelup'?(item[1]||'-'):'—';
+    return '<div class="dex-mv-row"><span class="dex-mv-lv">'+lv+'</span><span class="dex-mv-name">#'+id+'</span><span></span></div>';
+  }).join('');
+}
+
+function dexSpriteForForm(d,formIdx,shiny){
+  if(!d||!d.forms)return{home:'',anim:''};
+  var f=d.forms[formIdx]||d.forms[0]||{};
+  var en=(f.en||'').toLowerCase()||(d.enname||'').toLowerCase();
+  if(!en)return{home:'',anim:''};
+  var sp=shiny?'shiny':'normal';
+  return{home:'https://raw.githubusercontent.com/xianjiu0926/Pokemon/main/pokemon-sprites/static/pokeos/'+sp+'/'+en+'.png',anim:xianjuSpriteUrl(en,shiny)};
+}
+
 function renderDexDetail(){
   var name=S.dexDetailName||'';
   var ndex=S.dexDetailNdex||0;
@@ -759,56 +888,86 @@ function renderDexDetail(){
   var noStr=String(ndex).padStart(3,'0');
   var catalogEntry=dexCatalog?dexCatalog.filter(function(d){return d.catalogName===name||d.name===name;})[0]:null;
   if(catalogEntry&&!ndex){ndex=parseInt(catalogEntry.no,10)||0;noStr=String(ndex).padStart(3,'0');}
-  var spriteUrl=enSlug?xianjuSpriteUrl(enSlug,false):'';
-  var homeSpriteUrl=enSlug?('https://raw.githubusercontent.com/xianjiu0926/Pokemon/main/pokemon-sprites/static/pokeos/normal/'+enSlug+'.png'):'';
   var cacheKey=name||String(ndex);
   var d=_pkmDetailCache[cacheKey]||null;
 
-  // 如果缓存没有，先渲染骨架，异步 fetch 后调 render() 重进（届时缓存有数据，直接走下面的完整渲染）
   if(!d){
     fetchPkmDetail(name,ndex,function(result){
-      if(result&&S.view==='dex-detail'&&S.dexDetailName===name)render();
+      if(result&&S.view==='dex-detail'&&S.dexDetailName===name){
+        var nd=parseInt(result.ndex||ndex,10)||0;
+        fetchEvoData(function(){});
+        if(nd)fetchMoveset(nd,function(){});
+        render();
+      }
     });
   }
 
-  // 左侧精灵图
+  var spriteInfo=d?dexSpriteForForm(d,_dexDetailFormIdx,false):{home:'',anim:''};
+  var fallbackAnim=enSlug?xianjuSpriteUrl(enSlug,false):'';
+  var homeSpriteUrl=spriteInfo.home||('https://raw.githubusercontent.com/xianjiu0926/Pokemon/main/pokemon-sprites/static/pokeos/normal/'+enSlug+'.png');
+  var animSpriteUrl=spriteInfo.anim||fallbackAnim;
+
   var leftHTML='<div class="dex-detail-left">'+
-    (homeSpriteUrl?'<img class="dex-detail-sprite" src="'+esc(homeSpriteUrl)+'" alt="'+esc(name)+'" onerror="if(this.src!==\''+esc(spriteUrl)+'\')this.src=\''+esc(spriteUrl)+'\';else this.style.display=\'none\'">':'<div class="dex-detail-loading">图片加载中…</div>')+
+    (homeSpriteUrl?'<img class="dex-detail-sprite" id="dexDetailSprite" src="'+esc(homeSpriteUrl)+'" alt="'+esc(name)+'" onerror="if(this.src!==\''+esc(animSpriteUrl)+'\')this.src=\''+esc(animSpriteUrl)+'\';else this.style.display=\'none\'">':'<div class="dex-detail-loading">图片加载中…</div>')+
   '</div>';
 
-  // 右侧头部黑条（始终显示）
+  var miniSprite=animSpriteUrl?'<img class="dex-detail-header-icon" src="'+esc(animSpriteUrl)+'" alt="">':'';
   var headerHTML='<div class="dex-detail-header">'+
-    '<span class="dex-detail-no">No.'+esc(noStr)+'</span>'+
-    (spriteUrl?'<img class="dex-detail-header-icon" src="'+esc(spriteUrl)+'" alt="">':'')+
+    '<span class="dex-detail-no">No.'+esc(noStr)+'</span>'+miniSprite+
     '<span class="dex-detail-name-text">'+esc(name)+'</span>'+
     '<span class="dex-detail-gender-icons"><span class="dex-detail-gender-m">♂</span><span class="dex-detail-gender-f">♀</span></span>'+
   '</div>';
 
-  // 右侧数据区（有缓存则完整渲染，否则显示 loading）
-  var dataHTML='';
   if(!d){
-    dataHTML='<div class="dex-detail-table"><div class="dex-detail-loading">加载详情中…</div></div>';
-  } else {
-    var types=(catalogEntry&&catalogEntry.types)?catalogEntry.types.filter(function(t){return!!t;}):[];
-    var t1=(d.types&&d.types[0])||(types[0]||'');
-    var t2=(d.types&&d.types[1])||(types[1]||'');
-    var typeHTML=t1?typeIconTags([t1].concat(t2&&t2!=='无'?[t2]:[])):(types.length?typeIconTags(types):'—');
-    var rows=[['属性',typeHTML],['身高',d.height!=null?d.height+' m':'—'],['体重',d.weight!=null?d.weight+' kg':'—'],['对战次数','0']];
-    var rowsHTML=rows.map(function(r){return '<div class="dex-detail-row"><span class="dex-detail-row-label">'+esc(r[0])+'</span><span class="dex-detail-row-value">'+r[1]+'</span></div>';}).join('');
-    dataHTML='<div class="dex-detail-table">'+(d.species?'<div class="dex-detail-species-row">'+esc(d.species)+'</div>':'')+rowsHTML+'</div>';
-    // 种族值
-    if(d.stats&&(d.stats.hp||d.stats.atk)){
-      var sv=d.stats;
-      var statRows=[['HP',sv.hp||0],['物攻',sv.atk||0],['物防',sv.def||0],['特攻',sv.spa||0],['特防',sv.spd||0],['速度',sv.spe||0]];
-      dataHTML+='<div class="dex-detail-stats-grid">'+statRows.map(function(r){return '<div class="dex-detail-stat"><span class="dex-detail-stat-label">'+esc(r[0])+'</span><span class="dex-detail-stat-value">'+r[1]+'</span></div>';}).join('')+'</div>';
-    }
-    // 介绍
-    if(d.desc){dataHTML+='<div class="dex-detail-desc">'+esc(d.desc)+'</div>';}
+    return '<div class="dex-detail-screen">'+leftHTML+
+      '<div class="dex-detail-right">'+headerHTML+'<div class="dex-detail-table"><div class="dex-detail-loading">加载详情中…</div></div></div></div>';
   }
 
+  var currentForm=d.forms?d.forms[_dexDetailFormIdx]||(d.forms[0]||{}):d;
+  var forms=d.forms||[];
+  // forms 数组里只有 name/label，真实数据在根 d 对象
+  var formBar=forms.length>1?'<div class="dex-detail-formbar">'+forms.map(function(f,i){
+    return '<button class="dex-detail-form-btn'+(i===_dexDetailFormIdx?' active':'')+'" data-dex-form="'+i+'">'+esc(f.label||f.name||'普通')+'</button>';
+  }).join('')+'</div>':'';
+
+  // 属性：d.types 是数组
+  var t1=(d.types&&d.types[0])||'';var t2=(d.types&&d.types[1])||'';
+  var types=[t1].concat(t2&&t2!=='无'?[t2]:[]).filter(function(t){return!!t;});
+  var typeHTML=types.length?typeIconTags(types):'—';
+  // 特性：d.abilities 是数组 [主1, 主2, 隐藏]
+  var abArr=Array.isArray(d.abilities)?d.abilities.filter(Boolean):[];
+  var abMain=abArr.slice(0,2).join('／')||'—';
+  var abHidden=abArr[2]?'<span style="font-size:.85em;color:#888"> 隐藏: '+esc(abArr[2])+'</span>':'';
+  var abiliHTML=abMain+abHidden;
+  // 蛋组：d.eggGroups 是数组
+  var eggHTML=Array.isArray(d.eggGroups)?d.eggGroups.filter(Boolean).join(' / '):'—';
+  // 捕获率：字段名是 catchRate（驼峰）
+  var catchRate=d.catchRate!=null?d.catchRate:(d.catchrate!=null?d.catchrate:'—');
+  var catchPct=(catchRate!='—'&&!isNaN(parseInt(catchRate,10)))?' ('+((parseInt(catchRate,10)/7.65).toFixed(1))+'%)':'';
+
+  var rows=[
+    ['介绍',d.desc?'<span style="font-size:.9em;line-height:1.6">'+esc(d.desc)+'</span>':'—'],
+    ['分类',esc(d.species||'—')],
+    ['属性',typeHTML],
+    ['特性',abiliHTML],
+    ['全国图鉴','#'+esc(noStr)],
+    ['身高',d.height!=null?esc(String(d.height))+' m':'—'],
+    ['体重',d.weight!=null?esc(String(d.weight))+' kg':'—'],
+    ['蛋组',esc(eggHTML)],
+    ['捕获率',esc(String(catchRate))+catchPct]
+  ];
+  var rowsHTML=rows.map(function(r){return '<div class="dex-detail-row"><span class="dex-detail-row-label">'+esc(r[0])+'</span><span class="dex-detail-row-value">'+r[1]+'</span></div>';}).join('');
+  var tableHTML='<div class="dex-detail-table">'+(d.species?'<div class="dex-detail-species-row">'+esc(d.species)+'</div>':'')+rowsHTML+'</div>';
+
+  var currentStats=d.stats;
+  var statsHTML=dexStatsHTML(currentStats,parseInt(d.ndex||ndex,10),_dexDetailLv);
+  var evoHTML=dexEvoHTML(d);
+  var movesHTML=dexMovesHTML(d);
+
   return '<div class="dex-detail-screen">'+leftHTML+
-    '<div class="dex-detail-right">'+headerHTML+dataHTML+'</div>'+
-  '</div>';
+    '<div class="dex-detail-right">'+
+      headerHTML+formBar+tableHTML+statsHTML+evoHTML+movesHTML+
+    '</div></div>';
 }
 function updateDexScrollbar(){const list=app.querySelector(".dex-list"),track=app.querySelector(".dex-scrollbar"),thumb=track&&track.querySelector(".dex-scrollbar-thumb");if(!list||!track||!thumb)return;list.onscroll=updateDexScrollbar;const viewport=list.clientHeight,total=list.scrollHeight,trackHeight=track.clientHeight;if(!trackHeight)return;const maxScroll=Math.max(0,total-viewport),thumbHeight=maxScroll?Math.min(trackHeight,Math.max(28,trackHeight*viewport/total)):trackHeight,maxThumbTop=Math.max(0,trackHeight-thumbHeight);thumb.style.height=thumbHeight+"px";thumb.style.top=(maxScroll?maxThumbTop*list.scrollTop/maxScroll:0)+"px";track.classList.toggle("is-disabled",maxScroll<=1);track.setAttribute("aria-valuenow",String(maxScroll?Math.round(list.scrollTop/maxScroll*100):0))}
 function setDexScrollPosition(clientY,track){const list=app.querySelector(".dex-list"),thumb=track&&track.querySelector(".dex-scrollbar-thumb");if(!list||!track||!thumb)return;const r=track.getBoundingClientRect(),travel=r.height-thumb.offsetHeight,max=list.scrollHeight-list.clientHeight;if(travel<=0||max<=0)return;list.scrollTop=Math.max(0,Math.min(1,(clientY-r.top-thumb.offsetHeight/2)/travel))*max;updateDexScrollbar()}
@@ -856,6 +1015,7 @@ function openDexDetail(i){
   S.dex=i;
   S.dexDetailName=entries[i].catalogName||entries[i].name||'';
   S.dexDetailNdex=parseInt(entries[i].no,10)||0;
+  _dexDetailFormIdx=0; // 重置形态
   pushView('dex-detail');
 }
 function updateBagRibbon(){
@@ -1049,6 +1209,35 @@ function stepParty(direction){const available=PARTY.map(function(p,i){return p.s
 function selectDex(i){openDexDetail(i);}
 function openDetails(){if(!PARTY[S.party].sprite){feedback("空位没有宝可梦资料");return;}S.tab=0;pushView("party-detail");}
 document.addEventListener("pointerdown",function(event){
+  // 种族值等级滑块
+  var lvSlider=event.target.closest&&event.target.closest('#dexLvSlider');
+  if(lvSlider&&S.view==='dex-detail'){
+    lvSlider.setPointerCapture&&lvSlider.setPointerCapture(event.pointerId);
+    var r=lvSlider.getBoundingClientRect();
+    var pct=Math.max(0,Math.min(1,(event.clientX-r.left)/r.width));
+    _dexDetailLv=Math.round(1+pct*99);
+    var fill=lvSlider.querySelector('.dex-detail-lv-fill');
+    var thumb=lvSlider.querySelector('.dex-detail-lv-thumb');
+    var val=document.getElementById('dexLvVal');
+    if(fill)fill.style.width=(pct*100)+'%';
+    if(thumb)thumb.style.left=(pct*100)+'%';
+    if(val)val.textContent=_dexDetailLv+'级';
+    // 更新种族值范围
+    var statsBlock=app&&app.querySelector('.dex-detail-stats-block');
+    if(statsBlock){
+      var cacheKey=S.dexDetailName||String(S.dexDetailNdex);
+      var d=_pkmDetailCache[cacheKey];
+      if(d){
+        var fi=_dexDetailFormIdx;var f=(d.forms&&d.forms[fi])||{};var st=f.stats||d.stats;
+        var nd=parseInt(d.ndex||S.dexDetailNdex,10)||0;
+        var isShed=nd===292;
+        var rows=[['HP',st&&st.hp,true],['物攻',st&&st.atk,false],['物防',st&&st.def,false],['特攻',st&&st.spa,false],['特防',st&&st.spd,false],['速度',st&&st.spe,false]];
+        statsBlock.querySelectorAll('.dex-detail-stat-range').forEach(function(el,i){if(rows[i])el.textContent=statRange(rows[i][1],_dexDetailLv,rows[i][2],isShed);});
+      }
+    }
+    event.preventDefault();return;
+  }
+  // 设置滚动条
   const track=event.target.closest&&event.target.closest(".settings-scrollbar");
   if(!track||S.view!=="settings"||track.classList.contains("is-disabled"))return;
   settingsScrollbarDrag={track:track,pointerId:event.pointerId};
@@ -1153,6 +1342,17 @@ document.addEventListener("click",function(event){
   if(target.dataset.party!==undefined){const i=Number(target.dataset.party);if(S.view==="bag"){S.party=i;app.querySelectorAll(".bag-party-list .party-member").forEach(function(row){row.setAttribute("aria-pressed",String(Number(row.dataset.party)===i));});return;}if(i===S.party)openDetails();else selectParty(i);return;}
   if(target.dataset.tab!==undefined){S.tab=Number(target.dataset.tab);render();return;}
   if(target.dataset.relation!==undefined&&S.view==="relations"){updateRelationDetail(Number(target.dataset.relation));return;}
+  if(target.dataset.dexForm!==undefined&&S.view==='dex-detail'){
+    _dexDetailFormIdx=parseInt(target.dataset.dexForm,10)||0;render();return;
+  }
+  if(target.dataset.dexMvtab!==undefined){
+    var panel=app.querySelector('#dexMvPanel');
+    if(panel&&panel._moveData){
+      app.querySelectorAll('.dex-mv-tab').forEach(function(b){b.classList.toggle('active',b===target);});
+      renderDexMvPanel(panel,target.dataset.dexMvtab,panel._moveData.g);
+    }
+    return;
+  }
   if(target.dataset.dex!==undefined){selectDex(Number(target.dataset.dex));return;}
   if(target.dataset.bag!==undefined){updateBagCategory(Number(target.dataset.bag));return;}
   if(target.dataset.item!==undefined){updateBagSelection(Number(target.dataset.item));return;}

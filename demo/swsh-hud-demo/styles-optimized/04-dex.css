@@ -23,10 +23,354 @@
 
 /* ══════════════════════════════════════════
    图鉴详情页 (dex-detail) — 中心展示型背景
-   和图鉴列表共用 data-module="dex" 橙红底色
+   参考设置页5段渐变，颜色采用图鉴橙红系
    ══════════════════════════════════════════ */
-.app[data-view="dex-detail"] .backdrop{background:#f27651}
-.app[data-theme="night"][data-view="dex-detail"] .backdrop{background:#493333}
+
+/* 图鉴详情的 CSS 变量（复用 dex 的颜色体系）*/
+.app[data-view="dex-detail"]{
+  --dex-detail-edge-left: #fff3f0;
+  --dex-detail-band:      #f4a68a;
+  --dex-detail-main:      #f27651;
+  --dex-detail-edge-right:#fbe0d8;
+  --dex-detail-angle:     114deg;
+}
+.app[data-theme="night"][data-view="dex-detail"]{
+  --dex-detail-edge-left: #2e1f1a;
+  --dex-detail-band:      #5a3028;
+  --dex-detail-main:      #493333;
+  --dex-detail-edge-right:#3a2820;
+}
+
+/* backdrop: 5段全屏渐变，左右都有条带，和设置页结构相同 */
+.app[data-view="dex-detail"] .backdrop{
+  background: var(--dex-detail-main);
+}
+.app[data-view="dex-detail"] .backdrop::before{
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    var(--dex-detail-angle),
+    var(--dex-detail-edge-left) 0 11.3%,
+    var(--dex-detail-band)      11.3% 22%,
+    var(--dex-detail-main)      22% 79%,
+    var(--dex-detail-band)      79% 89.3%,
+    var(--dex-detail-edge-right) 89.3% 100%
+  );
+}
+.app[data-view="dex-detail"] .backdrop::after{
+  content: none;
+}
+
+/* ── 两栏布局 ── */
+.dex-detail-screen{
+  display:grid;
+  grid-template-columns:42% 58%;
+  height:100%;
+  overflow:hidden;
+  position:relative;
+}
+
+/* ── 左侧：精灵大图区域 ── */
+.dex-detail-left{
+  position:relative;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding:6% 2% 6% 4%;
+}
+.dex-detail-sprite{
+  width:min(90%,280px);
+  height:auto;
+  image-rendering:auto;
+  filter:drop-shadow(0 8px 24px rgba(0,0,0,.28));
+}
+
+/* ── 右侧：数据滚动区域 ── */
+.dex-detail-right{
+  display:flex;
+  flex-direction:column;
+  padding:3% 3% 3% 0;
+  gap:5px;
+  min-height:0;
+  overflow-y:auto;
+  /* 自定义滚动条 */
+  scrollbar-width:thin;
+  scrollbar-color:rgba(255,255,255,.35) transparent;
+}
+.dex-detail-right::-webkit-scrollbar{width:4px}
+.dex-detail-right::-webkit-scrollbar-thumb{background:rgba(255,255,255,.35);border-radius:2px}
+
+/* 形态切换按钮栏 */
+.dex-detail-formbar{
+  display:flex;
+  flex-wrap:wrap;
+  gap:4px;
+  flex-shrink:0;
+}
+.dex-detail-form-btn{
+  padding:3px 10px;
+  font-size:clamp(10px,1.1cqw,12px);
+  border:1px solid rgba(255,255,255,.5);
+  border-radius:999px;
+  background:rgba(0,0,0,.18);
+  color:#fff;
+  cursor:pointer;
+  white-space:nowrap;
+}
+.dex-detail-form-btn.active{
+  background:rgba(0,0,0,.55);
+  border-color:#fff;
+  font-weight:700;
+}
+
+/* 顶部黑条：No.xxx + 精灵名 + 性别图标 */
+.dex-detail-header{
+  display:flex;
+  align-items:stretch;
+  background:#111;
+  color:#fff;
+  border-radius:3px;
+  overflow:hidden;
+  flex-shrink:0;
+  min-height:clamp(36px,7cqh,52px);
+}
+.dex-detail-no{
+  display:flex;
+  align-items:center;
+  background:#e84828;
+  color:#fff;
+  font-weight:800;
+  font-size:clamp(10px,1.3cqw,14px);
+  padding:0 10px;
+  flex-shrink:0;
+  white-space:nowrap;
+}
+.dex-detail-header-icon{
+  width:clamp(24px,3.2cqw,34px);
+  height:clamp(24px,3.2cqw,34px);
+  image-rendering:pixelated;
+  object-fit:contain;
+  align-self:center;
+  margin:0 4px;
+  flex-shrink:0;
+}
+.dex-detail-name-text{
+  flex:1;
+  display:flex;
+  align-items:center;
+  font-size:clamp(15px,2.2cqw,26px);
+  font-weight:800;
+  padding:0 8px;
+  letter-spacing:.02em;
+}
+.dex-detail-gender-icons{
+  display:flex;
+  align-items:center;
+  gap:3px;
+  padding:0 10px;
+  font-size:clamp(10px,1.2cqw,14px);
+}
+.dex-detail-gender-m{color:#7cc4f8}
+.dex-detail-gender-f{color:#f88ca8}
+
+/* 信息表格 */
+.dex-detail-table{
+  background:rgba(255,255,255,.95);
+  border-radius:3px;
+  overflow:hidden;
+  box-shadow:0 2px 8px rgba(0,0,0,.18);
+  flex-shrink:0;
+}
+.app[data-theme="night"] .dex-detail-table{background:rgba(26,34,46,.95)}
+
+.dex-detail-species-row{
+  background:#d2d2d2;
+  text-align:center;
+  padding:clamp(5px,1cqh,9px) 14px;
+  font-size:clamp(11px,1.4cqw,14px);
+  font-weight:500;
+  color:#333;
+  border-bottom:2px solid #e84828;
+}
+.app[data-theme="night"] .dex-detail-species-row{background:rgba(44,56,72,.9);color:#b8cce0;border-bottom-color:#5a7ba0}
+
+.dex-detail-row{
+  display:grid;
+  grid-template-columns:38% 62%;
+  align-items:stretch;
+  border-bottom:1px solid #e8e8e8;
+  min-height:clamp(28px,4.5cqh,40px);
+}
+.dex-detail-row:last-child{border-bottom:none}
+.app[data-theme="night"] .dex-detail-row{border-bottom-color:rgba(80,100,130,.25)}
+
+.dex-detail-row-label{
+  display:flex;
+  align-items:center;
+  padding:5px 10px;
+  font-size:clamp(10px,1.3cqw,13px);
+  color:#555;
+  background:#f6f6f6;
+  border-right:2px solid #e84828;
+  flex-shrink:0;
+}
+.app[data-theme="night"] .dex-detail-row-label{background:rgba(36,48,62,.8);color:#8aaccc;border-right-color:#5a7ba0}
+
+.dex-detail-row-value{
+  display:flex;
+  align-items:center;
+  flex-wrap:wrap;
+  padding:5px 12px;
+  font-size:clamp(10px,1.3cqw,13px);
+  color:#111;
+  gap:4px;
+  background:#fff;
+}
+.app[data-theme="night"] .dex-detail-row-value{background:rgba(26,34,46,.9);color:#d8e8f8}
+
+/* 种族值栏 — 带等级滑块 */
+.dex-detail-stats-block{
+  background:rgba(255,255,255,.95);
+  border-radius:3px;
+  padding:8px 10px;
+  box-shadow:0 2px 8px rgba(0,0,0,.14);
+  flex-shrink:0;
+}
+.app[data-theme="night"] .dex-detail-stats-block{background:rgba(26,34,46,.95)}
+.dex-detail-stats-title{
+  font-size:clamp(9px,1.1cqw,12px);
+  color:#888;
+  margin-bottom:5px;
+  display:flex;
+  align-items:center;
+  gap:6px;
+}
+.dex-detail-lv-label{font-size:clamp(9px,1cqw,11px);color:#888;}
+.dex-detail-lv-val{font-size:clamp(10px,1.1cqw,13px);font-weight:800;color:#333;min-width:28px;}
+.app[data-theme="night"] .dex-detail-lv-val{color:#c8dce8}
+/* 滑块 */
+.dex-detail-lv-slider{
+  flex:1;
+  height:4px;
+  position:relative;
+  cursor:pointer;
+}
+.dex-detail-lv-track{position:absolute;inset:0;background:rgba(0,0,0,.18);border-radius:2px}
+.dex-detail-lv-fill{position:absolute;left:0;top:0;bottom:0;background:#e84828;border-radius:2px;width:50%}
+.dex-detail-lv-thumb{position:absolute;top:50%;width:12px;height:12px;margin-top:-6px;margin-left:-6px;background:#fff;border:2px solid #e84828;border-radius:50%;box-shadow:0 1px 3px rgba(0,0,0,.4);left:50%}
+.dex-detail-stat-row{
+  display:grid;
+  grid-template-columns:4em 2em 1fr;
+  gap:4px 6px;
+  align-items:center;
+  font-size:clamp(9px,1.1cqw,12px);
+  line-height:1.5;
+}
+.dex-detail-stat-name{color:#666;white-space:nowrap}
+.app[data-theme="night"] .dex-detail-stat-name{color:#607080}
+.dex-detail-stat-base{font-weight:800;color:#222;text-align:right}
+.app[data-theme="night"] .dex-detail-stat-base{color:#c8dce8}
+.dex-detail-stat-range{color:#555;font-size:.9em}
+.app[data-theme="night"] .dex-detail-stat-range{color:#8aaccc}
+.dex-detail-stat-bar-wrap{background:#e8e8e8;border-radius:2px;height:5px;overflow:hidden}
+.app[data-theme="night"] .dex-detail-stat-bar-wrap{background:rgba(80,100,120,.3)}
+.dex-detail-stat-bar{height:100%;border-radius:2px;background:#e84828;min-width:2px}
+.dex-detail-stat-total{font-weight:800;color:#222;grid-column:1/-1;text-align:right;border-top:1px solid #e8e8e8;padding-top:3px;margin-top:2px}
+.app[data-theme="night"] .dex-detail-stat-total{color:#c8dce8;border-top-color:rgba(80,100,120,.25)}
+
+/* 进化链 */
+.dex-detail-evo{
+  background:rgba(255,255,255,.95);
+  border-radius:3px;
+  padding:8px 10px;
+  box-shadow:0 2px 8px rgba(0,0,0,.14);
+  flex-shrink:0;
+}
+.app[data-theme="night"] .dex-detail-evo{background:rgba(26,34,46,.95)}
+.dex-detail-block-title{
+  font-size:clamp(9px,1.1cqw,12px);
+  color:#888;
+  margin-bottom:5px;
+  font-weight:600;
+  letter-spacing:.04em;
+}
+.app[data-theme="night"] .dex-detail-block-title{color:#607080}
+.dex-evo-chain{display:flex;flex-direction:column;gap:3px}
+.dex-evo-row{
+  display:grid;
+  grid-template-columns:1fr auto 1fr;
+  gap:4px;
+  align-items:center;
+  font-size:clamp(9px,1.1cqw,12px);
+}
+.dex-evo-from{text-align:right;color:#333}
+.dex-evo-cond{text-align:center;color:#888;font-size:.85em;padding:0 4px}
+.dex-evo-to{text-align:left;color:#333}
+.app[data-theme="night"] .dex-evo-from,.app[data-theme="night"] .dex-evo-to{color:#c8dce8}
+.dex-evo-self{color:#e84828;font-weight:700}
+
+/* 招式列表 */
+.dex-detail-moves{
+  background:rgba(255,255,255,.95);
+  border-radius:3px;
+  padding:8px 10px;
+  box-shadow:0 2px 8px rgba(0,0,0,.14);
+  flex-shrink:0;
+}
+.app[data-theme="night"] .dex-detail-moves{background:rgba(26,34,46,.95)}
+.dex-mv-tabs{display:flex;gap:5px;margin-bottom:6px}
+.dex-mv-tab{
+  padding:2px 10px;
+  font-size:clamp(9px,1cqw,11px);
+  border:1px solid #ccc;
+  border-radius:2px;
+  background:#f5f5f5;
+  color:#555;
+  cursor:pointer;
+}
+.dex-mv-tab.active{background:#e84828;border-color:#e84828;color:#fff;font-weight:700}
+.app[data-theme="night"] .dex-mv-tab{background:rgba(36,48,62,.8);border-color:rgba(80,100,130,.4);color:#8aaccc}
+.app[data-theme="night"] .dex-mv-tab.active{background:#5a3028;border-color:#8a4030;color:#fff}
+.dex-mv-head,.dex-mv-row{
+  display:grid;
+  grid-template-columns:3em 1fr 56px;
+  gap:2px 6px;
+  font-size:clamp(9px,1.05cqw,11px);
+  min-height:22px;
+  align-items:center;
+  border-bottom:1px solid #f0f0f0;
+  padding:1px 0;
+}
+.app[data-theme="night"] .dex-mv-head,.app[data-theme="night"] .dex-mv-row{border-bottom-color:rgba(80,100,130,.15)}
+.dex-mv-head{color:#888;font-weight:600;border-bottom-color:#ddd}
+.dex-mv-lv{text-align:center;color:#666}
+.dex-mv-name{color:#222;font-weight:500}
+.app[data-theme="night"] .dex-mv-name{color:#c8dce8}
+
+/* loading/desc */
+.dex-detail-loading{color:rgba(255,255,255,.65);text-align:center;padding:20px 16px;font-size:12px}
+.dex-detail-desc{
+  background:rgba(255,255,255,.95);
+  border-radius:3px;
+  padding:8px 12px;
+  font-size:clamp(10px,1.3cqw,13px);
+  line-height:1.8;
+  color:#222;
+  box-shadow:0 2px 8px rgba(0,0,0,.14);
+  border-left:3px solid #e84828;
+  flex-shrink:0;
+}
+.app[data-theme="night"] .dex-detail-desc{background:rgba(26,34,46,.95);color:#c8dce8;border-left-color:#5a7ba0}
+
+/* ── 竖屏适配 ── */
+.demo[data-layout="portrait"] .app[data-view="dex-detail"] .dex-detail-screen{
+  grid-template-columns:1fr;
+  grid-template-rows:38% 62%;
+}
+.demo[data-layout="portrait"] .app[data-view="dex-detail"] .dex-detail-left{padding:3% 4%}
+.demo[data-layout="portrait"] .app[data-view="dex-detail"] .dex-detail-sprite{width:min(55%,180px)}
+.demo[data-layout="portrait"] .app[data-view="dex-detail"] .dex-detail-right{padding:0 4% 4%}
 
 .dex-detail-screen{
   display:grid;
