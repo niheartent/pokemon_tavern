@@ -548,8 +548,8 @@ let dexCategory="all";
 let dexCategoryMode="region";
 let dexCategoryOpen=false;
 function dexGenerationOf(no){const n=Number(no)||0;return n<=151?1:n<=251?2:n<=386?3:n<=493?4:n<=649?5:n<=721?6:n<=809?7:n<=905?8:n<=1025?9:10;}
-function dexPartyMatch(no){const target=Number(no)||0;for(let i=0;i<PARTY.length;i++){const m=String(PARTY[i].dex||'').match(/\d+/);if(m&&Number(m[0])===target)return i;}return -1;}
-function loadDexCatalog(){if(dexCatalogPromise)return dexCatalogPromise;const localDex=window.PK_DEX_CATALOG||null,localRegions=window.PK_REGIONAL_DEX||null;dexCatalogPromise=Promise.all([localDex?Promise.resolve(localDex):fetch("assets/data/dex-list.json").then(function(r){return r.ok?r.json():null;}),localRegions?Promise.resolve(localRegions):fetch("assets/data/regional-dex.json").then(function(r){return r.ok?r.json():null;})]).then(function(parts){const raw=parts[0]&&Array.isArray(parts[0].data)?parts[0].data:[];dexCatalog=raw.map(function(item){const no=Number(item.no)||0;const partyIndex=dexPartyMatch(no);const party=partyIndex>=0?PARTY[partyIndex]:null;return {no:String(no).padStart(3,'0'),name:party?party.name:String(item.name||''),catalogName:String(item.name||''),caught:!!party,seen:!!party,index:partyIndex,generation:dexGenerationOf(no),types:item.types||[]};}).filter(function(item){return item.no!=='000';});dexRegionalCatalog=parts[1]&&typeof parts[1]==='object'?parts[1]:{};if(S.view==='dex')render();return {entries:dexCatalog,regions:dexRegionalCatalog};}).catch(function(){dexCatalog=null;dexRegionalCatalog=null;return null;});return dexCatalogPromise;}
+function dexPartyMatch(no,catalogName){const target=Number(no)||0;for(let i=0;i<PARTY.length;i++){const m=String(PARTY[i].dex||'').match(/\d+/);if(m&&Number(m[0])===target)return i;if(catalogName&&PARTY[i].name===catalogName)return i;}return -1;}
+function loadDexCatalog(){if(dexCatalogPromise)return dexCatalogPromise;const localDex=window.PK_DEX_CATALOG||null,localRegions=window.PK_REGIONAL_DEX||null;dexCatalogPromise=Promise.all([localDex?Promise.resolve(localDex):fetch("assets/data/dex-list.json").then(function(r){return r.ok?r.json():null;}),localRegions?Promise.resolve(localRegions):fetch("assets/data/regional-dex.json").then(function(r){return r.ok?r.json():null;})]).then(function(parts){const raw=parts[0]&&Array.isArray(parts[0].data)?parts[0].data:[];dexCatalog=raw.map(function(item){const no=Number(item.no)||0;const partyIndex=dexPartyMatch(no,String(item.name||''));const party=partyIndex>=0?PARTY[partyIndex]:null;return {no:String(no).padStart(3,'0'),name:party?party.name:String(item.name||''),catalogName:String(item.name||''),caught:!!party,seen:!!party,index:partyIndex,generation:dexGenerationOf(no),types:item.types||[]};}).filter(function(item){return item.no!=='000';});dexRegionalCatalog=parts[1]&&typeof parts[1]==='object'?parts[1]:{};if(S.view==='dex')render();return {entries:dexCatalog,regions:dexRegionalCatalog};}).catch(function(){dexCatalog=null;dexRegionalCatalog=null;return null;});return dexCatalogPromise;}
 function dexCategoryEntries(){if(!dexCatalog||!dexCatalog.length)return DEX;const m=String(dexCategory||'all');if(m==='all')return dexCatalog;if(m.indexOf('gen-')===0){const g=Number(m.slice(4));return dexCatalog.filter(function(d){return d.generation===g;});}if(m.indexOf('region-')===0&&dexRegionalCatalog){const region=m.slice(7),ids={};(dexRegionalCatalog[region]||[]).forEach(function(item){ids[String(item.ndex||item.id||'').padStart(3,'0')]=true;});return dexCatalog.filter(function(d){return !!ids[d.no];});}return dexCatalog;}
 function dexCategoryLabel(value){const v=String(value||'all');if(v==='all')return '全国图鉴';if(v.indexOf('gen-')===0)return '第'+v.slice(4)+'世代';if(v.indexOf('region-')===0)return v.slice(7);return '全国图鉴';}
 function dexCategoryOptionsHTML(){const sel=function(value){return String(dexCategory)===String(value)?' aria-selected="true"':'';};const labels=[];labels.push(['all','全国图鉴']);if(dexCategoryMode==='generation'){for(let g=1;g<=10;g++)labels.push(['gen-'+g,'第'+g+'世代']);}else{const regions=dexRegionalCatalog?Object.keys(dexRegionalCatalog):['关都','城都','丰缘','神奥','合众','卡洛斯','阿罗拉','伽勒尔','铠岛','王冠雪原','帕底亚','北上乡','蓝莓学院'];regions.forEach(function(region){labels.push(['region-'+region,region]);});}return labels.map(function(item,index){const tone=Math.round(34+(index/Math.max(1,labels.length-1))*154);const text=tone>72?'#252629':'#f5f7fa';const row=Math.floor(index/3);return '<button class="dex-category-option" type="button" role="option" data-dex-category="'+esc(item[0])+'"'+sel(item[0])+' style="--dex-option-index:'+index+';--dex-option-row-index:'+row+';--dex-tone:'+tone+'%;--dex-label:'+text+';color:'+text+'">'+esc(item[1])+'</button>';}).join('');}
@@ -830,6 +830,15 @@ function renderBag(){
 function bagRowsMarkup(items){return items.map(function(it,i){return '<button class="item-row selection-target" type="button" data-item="'+i+'" aria-pressed="'+String(i===S.item)+'"><img class="item-icon" src="assets/bag/items/item_'+esc(it[3]||"0017")+'.png" alt=""><span class="row-name">'+esc(it[0])+'</span><span class="row-meta"><span>×</span><b>'+it[2]+'</b></span></button>';}).join("");}
 function bagDescriptionMarkup(item){return '<h3>'+esc(item[0])+'</h3><p>'+esc(item[1])+'</p><p style="margin-top:9px">持有数量：×'+item[2]+'</p>';}
 function updateDexSelection(i){
+  // hover 时只更新选中高亮，不跳页
+  const entries=dexCategoryEntries();
+  if(!entries[i])return;
+  S.dex=i;
+  app.querySelectorAll(".data-row").forEach(function(row){row.setAttribute("aria-pressed",String(Number(row.dataset.dex)===i));});
+  updateSelectionArrow();
+}
+function openDexDetail(i){
+  // click 时才跳转详情页
   const entries=dexCategoryEntries();
   if(!entries[i])return;
   S.dex=i;
@@ -1025,7 +1034,7 @@ function render(){
 }
 function selectParty(i){if(!PARTY[i])return;S.party=i;render();}
 function stepParty(direction){const available=PARTY.map(function(p,i){return p.sprite?i:-1;}).filter(function(i){return i>=0;});if(!available.length)return;let at=available.indexOf(S.party);at=(at+direction+available.length)%available.length;selectParty(available[at]);}
-function selectDex(i){updateDexSelection(i);}
+function selectDex(i){openDexDetail(i);}
 function openDetails(){if(!PARTY[S.party].sprite){feedback("空位没有宝可梦资料");return;}S.tab=0;pushView("party-detail");}
 document.addEventListener("pointerdown",function(event){
   const track=event.target.closest&&event.target.closest(".settings-scrollbar");
